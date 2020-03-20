@@ -1,0 +1,41 @@
+To do with program:
+
+xxx. Implement target current/field spinbox
+    xxx) design
+    xxx) magnet
+    xxx) main
+        xxx) include changing limits on range
+    xxx) visa_mag
+xxx. Remove hold times completely
+    xxx) design
+    xxx) magnet
+    xxx) main
+    xxx) visa_mag
+xxx. Make ramp setpoints ramp upbounds (for defining how ramping works)
+xxx. Change ZAD to 'Ramp to zero' button with hard coded presets
+    xxx) design
+    xxx) magnet
+    xxx) main
+    xxx) visa_mag
+xxx. remove quench temperature functionality but maintain note about implementing later
+    xxx) design
+    xxx) magnet
+    xxx) main
+    xxx) visa_mag
+6. Alter/implement config file stuff for changes
+7. Implement/fix VISA for everything
+    xxx) mag.set_pars()
+8. Implement input validation for magnet current/field (in main)
+9. Add tooltips to:
+    a) set_setpoints button
+    b) set_ramps button
+10. Mag config stuff
+11. Update probe_station_params.yaml
+12. Mag calibration stuff
+13. Update imports to reflect project structure changes
+    a) Fix main imports based on instrument subdirectories
+    b) Fix instrument visa imports
+        i) visa_out to visa_abc
+        ii) abc sibling directory
+
+implement Path stuff and replace 'with-open'
