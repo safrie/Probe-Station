@@ -1,0 +1,159 @@
+Keithley:
+    address: 12
+
+    # Measurement optios are:
+    # 'diffCon', 'delta', 'pulseDelta', 'pDeltStair', and 'pDeltLog'
+    measType: 'diffCon'
+    # Range options are 'Best' and 'Fixed'
+    sourceRangeType: 'Best'
+    # Source range options are:
+    # 2e-9, 20e-9, 200e-9, 2e-6, 20e-6, 200e-6, 2e-3, 20e-3, 100e-3 A
+    sourceRange: 20e-6
+    complianceVolt: 10.00
+    complianceAbort: false
+    # Voltmeter range options are 10e-3, 100e-3, 1.0, 10.0, 100.0 V
+    meterRange: 10e-3
+    
+    diffCon:
+        # Unit options are 'volts', 'siemens', 'ohms', 'avgW', and 'peakW'.
+        unit: 'volts'
+        # Currents are in uA
+        startCurrent: -10.00
+        stopCurrent: 10.00
+        stepCurrent: 0.100
+        deltaCurrent: 0.05
+        # Measurement rate is in power line cycles (1/60Hz)
+        measRate: 1
+        # Measurement delay in ms between output change and measurement
+        measDelay: 2.00
+        # This is a repeating filter
+        filterOn: false
+        # Window is % of range
+        filterWindow: 0.0
+        filterCount: 10
+    
+    delta:
+        # Unit options are 'volts', 'siemens', 'ohms', 'avgW', and 'peakW'.
+        unit: 'volts'
+        # Currents are in uA
+        highCurrent: 10.00
+        lowCurrent: -10.00
+        pulseCount: 100
+        # Measurement rate in PLC (1/60Hz)
+        measRate: 1
+        # Measurement delay in ms between output change and measurement
+        measDelay: 2.00
+        filterOn: false
+        # Filter types are 'Moving' and 'Repeating'
+        filterType: 'Moving'
+        # Window is % of range
+        filterWindow: 0.0
+        filterCount: 10
+    
+    pulseDelta:
+        # Unit options are 'volts', 'siemens', 'ohms', 'avgW', and 'peakW'.
+        unit: 'volts'
+        # currents are in uA
+        highCurrent: 10.00
+        lowCurrent: 0.00
+        pulseCount: 100
+        # Pulse width in us
+        pulseWidth: 110
+        # Cycle interval in PLC
+        cycleInt: 5
+        # Measurement delay in us between output change and measurement.
+        # Should be < pulseWidth
+        measDelay: 16.00
+        lowMeas: true
+        filterOn: false
+        # Filter types are 'Moving' and 'Repeating'
+        filterType: 'Moving'
+        # Window is % of range
+        filterWindow: 0.0
+        filterCount: 10
+        
+    pDeltStair:
+        # Unit options are 'volts', 'siemens', 'ohms', 'avgW', and 'peakW'.
+        unit: 'volts'
+        # Currents are in uA
+        startCurrent: 0.00
+        stopCurrent: 10.00
+        stepCurrent: 0.10
+        # points is calculated in the program. DO NOT CHANGE
+        points: 0
+        sweeps: 1
+        # Pulse width in us
+        pulseWidth: 120
+        # Cycle time in s
+        cycleTime: 5
+        # Measurement delay in us between output change and measurement.
+        # Should be < pulseWidth
+        measDelay: 16.00
+        lowMeas: true
+        # This is a moving filter
+        filterOn: false
+        filterWindow: 0.00
+        filterCount: 10
+        
+    pDeltLog:
+        # Unit options are 'volts', 'siemens', 'ohms', 'avgW', and 'peakW'.
+        unit: 'volts'
+        # Currents are in uA
+        startCurrent: 1.00
+        stopCurrent: 10.00
+        points: 50
+        sweeps: 1
+        # Pulse width in us
+        pulseWidth: 120
+        # Cycle time in s
+        cycleTime: 5
+        # Measurement delay in us between output change and measurement.
+        # Should be < pulseWidth
+        measDelay: 16.00
+        lowMeas: true
+        # This is a moving filter
+        filterOn: false
+        filterWindow: 0.00
+        filterCount: 10
+
+Temperature:
+    # Units are in K/TIME (find out time)
+    address: 11
+    # 'controlled' temperatures are the stage and rad shield. 'all' is all.
+    tempsToMeasure: 'controlled'
+    controlRad: false
+    radSetpoint: 300
+    radRamp: 0
+    radPower: 0
+    controlStage: false
+    stageSetpoint: 300
+    stageRamp: 0
+    stagePower: 0
+
+Magnet:
+    # Boolean for whether or not to measure magnet while ramping
+    measure: True
+    address: 2
+    # Number of discrete segments you want to define unique ramp rates along
+    # the magnet range
+    segs: 4
+    # Options are 'Amps', 'Tesla', and 'Kilogauss'
+    fieldUnit: 'Amps'
+    # Options are 'Seconds' and 'Minutes'
+    timeUnit: 'Minutes'
+    # Path to calibration curve file (optional, not recommended.)
+    calibrationFile: None
+    # Magnet target field or current in fieldUnit.
+    target: 1
+    # Magnet setpoints in fieldUnit for upper bounds on each ramp segment.
+    rampSetpoints: [0.5, 1, 2, 3]
+    # Ramp rates are in fieldUnit/timeUnit. These are the ramp rates for the
+    # segments defined by rampSetpoints.
+    rampRates: [0.5, 0.5, 0.5, 0.5]
+    quenchDetect: true
+    # Temperature in K at which magnet is in danger of quenching.
+    # Factory value is 6.5K. Not currently implemented.
+    quenchTemp: 6.5
+
+    voltLimit: 100
+    currLimit: 60
