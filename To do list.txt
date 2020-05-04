@@ -1,27 +1,6 @@
 To do with program:
 
-xxx. Implement target current/field spinbox
-    xxx) design
-    xxx) magnet
-    xxx) main
-        xxx) include changing limits on range
-    xxx) visa_mag
-xxx. Remove hold times completely
-    xxx) design
-    xxx) magnet
-    xxx) main
-    xxx) visa_mag
-xxx. Make ramp setpoints ramp upbounds (for defining how ramping works)
-xxx. Change ZAD to 'Ramp to zero' button with hard coded presets
-    xxx) design
-    xxx) magnet
-    xxx) main
-    xxx) visa_mag
-xxx. remove quench temperature functionality but maintain note about implementing later
-    xxx) design
-    xxx) magnet
-    xxx) main
-    xxx) visa_mag
+
 6. Alter/implement config file stuff for changes
 7. Implement/fix VISA for everything
     xxx) mag.set_pars()
