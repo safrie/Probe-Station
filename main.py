@@ -25,11 +25,12 @@ import sys
 # import pyqtgraph as pg
 
 # from pathlib import Path
-# from ruamel_yaml import YAML
+# import inspect
+from ruamel_yaml import YAML
 from qtpy import QtGui, QtWidgets
 from qtpy.QtWidgets import QFileDialog, QMessageBox, QInputDialog, QMainWindow
 # from qtpy.QtGui import QFileDialog, QMessageBox, QInputDialog, QMainWindow
-from typing import Union, Optional, List
+from typing import Union, Optional, List, Dict
 from pathlib import Path
 
 from design import (Ui_PlotWindow, Ui_KeithWindow, Ui_TempWindow,
@@ -202,23 +203,17 @@ class ProbeGui(QMainWindow):
 
     """
 
-    yaml = YAML()
-    save = Save()
-    config = Config()
-    keith = Keith()
-    temp = Temp()
-    mag = Mag()
-    list_box = QInputDialog()
-    list_box.setInputMode(0)
+    # yaml = YAML()
+    # save = Save()
+    # config = Config()
+    # keith = Keith()
+    # temp = Temp()
+    # mag = Mag()
 
     def __init__(self) -> None:
         """Initialize overarching program and allow for threading."""
         super().__init__()
-        # self.save = Save()
-        # self.config = Config()
-        # self.keith = Keith()
-        # self.temp = Temp()
-#        self.mag = Mag()
+
         self.init_ui()
 
     def init_ui(self, parent=None) -> None:
@@ -226,6 +221,13 @@ class ProbeGui(QMainWindow):
         # ???: What does this do??? Why here instead of __init__?
         # ???: Should it be setupUi instead?
         super(ProbeGui, self).__init__(parent)
+        self.list_box = QInputDialog()
+        self.list_box.setInputMode(0)
+        self.save = Save()
+        self.config = Config()
+        self.keith = Keith()
+        self.temp = Temp()
+        self.mag = Mag()
         self.init_plwind()
         self.init_swind()
         self.init_kwind()
@@ -249,10 +251,11 @@ class ProbeGui(QMainWindow):
         # self.swind.setupUi(self.swind_qmw)
         self.swind.signals_slots = {
                     ui.keithleyButton: self.toggle_kwind,
-                    ui.magnetButton: no,  # self.toggle_magw,
-                    ui.tempButton: no}  # self.toggle_tempw}
+                    ui.magnetButton: self.toggle_mwind,
+                    ui.tempButton: self.toggle_twind}
         for k, v in self.swind.signals_slots.items():
             k.clicked.connect(v)
+        print('Selectwindow initialized')
         self.swind.window.show()
 # %% Keithley section
 
@@ -786,7 +789,7 @@ class ProbeGui(QMainWindow):
             elif 'Number Points' in ui.field4Label.text():
                 ui.field4Spinbox.setValue(meas.num_points)
         if 'Rate' in ui.rateLabel.text():
-                                        ui.rateSpinbox.setValue(meas.meas_rate)
+            ui.rateSpinbox.setValue(meas.meas_rate)
         elif 'Interval' in ui.rateLabel.text():
             ui.rateSpinbox.setValue(meas.cycle_int)
         elif 'Time' in ui.rateLabel.text():
@@ -1030,9 +1033,9 @@ class ProbeGui(QMainWindow):
             'button1': {},
             # TODO: Connect runButton.
             'button2': {ui.setButton: self.set_temp_pars,
-                        ui.runButton: start_temp},
+                        ui.runButton: self.start_temp},
             'checkbox': {ui.tMeasureCheckbox: self.set_temp_measure,
-                         ui.radControlCheckbox: set_temp_rad_control,
+                         ui.radControlCheckbox: self.set_temp_rad_control,
                          ui.stageControlCheckbox: self.set_temp_stage_control}
             }
 
@@ -1196,7 +1199,8 @@ class ProbeGui(QMainWindow):
         self.temp_ui_internal.update(d1)
 
     def set_temp_to_measure(self,
-            measured: Optional[Union[int, str]] = None) -> None:
+                            measured: Optional[Union[int, str]] = None
+                            ) -> None:
         """Set which temperatures to measure to measured or to UI value."""
         # TODO: Test set_temp_to_measure
         temp, combobox = self.temp, self.twind.ui.measureTypeCombobox
@@ -1225,7 +1229,7 @@ class ProbeGui(QMainWindow):
         self.set_temp_pars()
         self.toggle_temp_for_run(True)
         (self.tdata_str, self.tsdata_rows,
-                self.tdata_cols) = self.temp.run(wait=10)
+         self.tdata_cols) = self.temp.run(wait=10)
         self.toggle_temp_for_run(False)
         ui.startButton.setChecked(False)
         print(f'Temperature data length: {len(self.tsdata_rows)}')
@@ -1245,12 +1249,12 @@ class ProbeGui(QMainWindow):
         for k, v in self.temp_ui_internal.items():
             k(v)
 
-    def toggle_temp_for_run(running=bool) -> None:
+    def toggle_temp_for_run(self, running=bool) -> None:
         # TODO: Test toggle_temp_for_run
         """Enable/disable LakeShore336 UI based on if measurement running."""
         for k, v in self.twind.signals_slots['combo'].items():
             k.setEnabled(not running)
-        for k, v in self.twind.signals_slots['checkbox'].items()
+        for k, v in self.twind.signals_slots['checkbox'].items():
             k.setCheckable(not running)
         self.twind.signals_slots.GPIBSpinbox.setReadOnly(running)
         self.trunning = running
@@ -1265,9 +1269,10 @@ class ProbeGui(QMainWindow):
             'combo': {
                 # Comboboxes.  Disable at start of measurement.
                 # Signal is currentIndexChanged.
-                ui.mMeasureCombobox: set_mag_measure,
-                ui.fieldUnitCombobox: set_mag_field_unit,
-                ui.timeUnitCombobox: set_mag_time_unit
+                # TODO: Determine if using mMeasureCombobox and implement.
+                # ui.mMeasureCombobox: self.set_mag_measure,
+                ui.fieldUnitCombobox: self.set_mag_field_unit,
+                ui.timeUnitCombobox: self.set_mag_time_unit
                 },
             'field': {
                 # Fields/spinboxes in which to type/enter settings.
@@ -1276,17 +1281,17 @@ class ProbeGui(QMainWindow):
                 ui.COMSpinbox: self.set_mag_address,
                 ui.targetSpinbox: self.set_mag_target,
                 ui.segmentsSpinbox: self.set_mag_ramp_segments,
-#                ui.quenchTempSpinbox: self.set_mag_quench_temp,
+                # ui.quenchTempSpinbox: self.set_mag_quench_temp,
                 ui.voltLimitSpinbox: self.set_mag_volt_limit,
                 ui.currLimitSpinbox: self.set_mag_curr_limit,
-                ui.calibrationFile: self.load_mag_calibration
+                ui.mCalibrationFile: self.load_mag_calibration
                 },
             'button1': {
                 # Buttons set to do nothing during measurement.
                 # Signal is clicked.
                 ui.setpointsButton: self.set_mag_ramp_setpoints,
                 ui.ratesButton: self.set_mag_ramp_rates,
-                ui.calibrationLoadButton: self.load_mag_calibration,
+                ui.mCalibrationLoadButton: self.load_mag_calibration,
                 ui.setButton: self.set_mag_pars,
                 ui.startButton: self.start_mag,
                 ui.configLoadButton: self.load_mag_config,
@@ -1303,6 +1308,7 @@ class ProbeGui(QMainWindow):
                 ui.mMeasureCheckbox: self.set_mag_measure,
                 ui.quenchDetCheckbox: self.set_mag_quench_detect
                 }
+            }
         for k, v in self.mwind.signals_slots['combo'].items():
             k.currentIndexChanged.connect(v)
         for k, v in self.mwind.signals_slots['field'].items():
@@ -1313,7 +1319,6 @@ class ProbeGui(QMainWindow):
             k.clicked.connect(v)
 
         self.mag_ui_internal = {
-            # TODO: Fill out mag functions
             self.set_mag_address: mag.address,
             self.set_mag_measure: mag.do_measure,
             self.set_mag_field_unit: mag.field_unit_idx,
@@ -1381,7 +1386,8 @@ class ProbeGui(QMainWindow):
         d1 = {self.set_mag_target: mag.target}
         self.mag_ui_internal.update(d1)
 
-    def set_mag_field_unit(self, idx: Optional[Union[int, str]] = None) -> None:
+    def set_mag_field_unit(self,
+                           idx: Optional[Union[int, str]] = None) -> None:
         # TODO: Test set_mag_field_unit
         """Set field/current unit of magnet power supply to idx or UI value."""
         mag, combobox = self.mag, self.mwind.ui.fieldUnitCombobox
@@ -1394,7 +1400,7 @@ class ProbeGui(QMainWindow):
         self.mag_ui_internal.update(d1)
         self.update_mag_labels()
 
-    def set_mag_time_unit(self, idx: Optional[Union[int, str]] = None) ->None:
+    def set_mag_time_unit(self, idx: Optional[Union[int, str]] = None) -> None:
         # TODO: Test set_mag_time_unit
         """Set the time unit of the magnet power supply to idx or UI value."""
         mag, combobox = self.mag, self.mwind.ui.timeUnitComboBox
@@ -1410,7 +1416,7 @@ class ProbeGui(QMainWindow):
     def set_mag_ramp_segments(self, segs: Optional[int] = None) -> None:
         # TODO: Test set_mag_ramp_segments
         """Set the number of ramp segments for magnet to segs or UI value.
-        
+
         Ramp segments define ranges at which the magnet will have a specified
         ramp rate.  In a two-segment setup, for instance, between 0 and 1 T
         the magnet could have a ramp rate of 0.25 T/min, and between 1 and 3 T
@@ -1431,7 +1437,7 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_mag_ramp_setpoints
         # TODO: Input validation on fields
         """Open dialog box to set magnet ramp setpoints.
-        
+
         For simplicity in the UI, the setpoints also serve as the ramp segment
         dividers.
         """
@@ -1444,9 +1450,9 @@ class ProbeGui(QMainWindow):
         else:
             title = f'{mag.setpoints_title} ({unit})'
             label = (f'Enter your list of magnet ramp setpoints in {unit}.\n'
-                    'Setpoints should be numbers separated by commas '
-                    '(e.g., 1, 2, 3).\n'
-                    f'Range is NUM1 {abbv} to NUM2 {abbv}.')
+                     'Setpoints should be numbers separated by commas '
+                     '(e.g., 1, 2, 3).\n'
+                     f'Range is NUM1 {abbv} to NUM2 {abbv}.')
             setpoints_text = self.list_box.getText(self, title, label)[0]
             setpoints_list = [float(x) for x in setpoints_text.split(', ')]
         mag.set_setpoints_list(setpoints_list)
@@ -1455,7 +1461,7 @@ class ProbeGui(QMainWindow):
         self.mag_ui_internal.update(d1)
         if len(setpoints_list) == len(mag.ramps_list) == mag.ramp_segments:
             for i in range(0, mag.ramp_segments):
-                mag.visa.set_rate(seg=i, rate=mag.ramps_list[i], 
+                mag.visa.set_rate(seg=i, rate=mag.ramps_list[i],
                                   upbound=setpoints_list[i], unit=unit_type)
 
     def set_mag_ramp_rates(self, ramps: Optional[List] = None) -> None:
@@ -1463,8 +1469,9 @@ class ProbeGui(QMainWindow):
         # TODO: Input validation on ramp rates (maxes)
         """Open dialog box to set magnet ramp rates."""
         mag = self.mag
-        funit, fabbv = mag.field_unit('Full'), mag.field_unit('Abbv')
-        tunit, tabbv = mag.time_unit('Full'), mag.time_unit('Abbv')
+        fabbv = mag.field_unit('Full'), mag.field_unit('Abbv')
+        tabbv = mag.time_unit('Full'), mag.time_unit('Abbv')
+        unit_type = 'curr' if fabbv == 'A' else 'field'
         if ramps is not None:
             ramps_list = [float(x) for x in ramps]
             ramps_text = ', '.join(ramps)
@@ -1485,7 +1492,8 @@ class ProbeGui(QMainWindow):
         if len(ramps_list) == len(mag.setpoints_list) == mag.ramp_segments:
             for i in range(0, mag.ramp_segments):
                 mag.visa.set_rate(seg=i, rate=ramps_list[i],
-                                  upbound=mag.setpoints_list[i], unit=unit_type)
+                                  upbound=mag.setpoints_list[i],
+                                  unit=unit_type)
 
     def set_mag_quench_detect(self, enable: Optional[bool] = None) -> None:
         # TODO: Test set_mag_quench_det
@@ -1501,18 +1509,18 @@ class ProbeGui(QMainWindow):
             mag.set_quench_detect(checkbox.isChecked())
         d1 = {self.set_mag_quench_detect: mag.quench_detect}
         self.mag_ui_internal.update(d1)
-        
+
     # def set_mag_quench_temp(self, temp: Optional[float] = None) -> None:
         # """Set temperature at which software will assert a magnet quench."""
         # mag, spinbox = self.mag, self.mwind.ui.quenchTempSpinbox
         # if temp is not None:
-            # mag.set_quench_temp(temp)
-            # spinbox.setValue(temp)
+        #     mag.set_quench_temp(temp)
+        #     spinbox.setValue(temp)
         # else:
-            # mag.set_quench_temp(spinbox.value())
+        #     mag.set_quench_temp(spinbox.value())
         # d1 = {self.set_mag_quench_temp: mag.quench_temp}
         # self.mag_ui_internal.update(d1)
-        
+
     def set_mag_volt_limit(self, limit: Optional[float] = None) -> None:
         # TODO: Test set_mag_volt_limit
         """Set the voltage output limit in V for the magnet."""
@@ -1524,7 +1532,7 @@ class ProbeGui(QMainWindow):
             mag.set_volt_limit(spinbox.value())
         d1 = {self.set_mag_volt_limit: mag.volt_limit}
         self.mag_ui_internal.update(d1)
-        
+
     def set_mag_curr_limit(self, limit: Optional[float] = None) -> None:
         # TODO: Test set_mag_curr_limit
         """Set the current output limit in A for the magnet."""
@@ -1536,7 +1544,7 @@ class ProbeGui(QMainWindow):
             mag.set_curr_limit(spinbox.value())
         d1 = {self.set_mag_curr_limit: mag.curr_limit}
         self.mag_ui_internal.update(d1)
-        
+
     def set_mag_zero(self, enable: Optional[bool] = None) -> None:
         # TODO: Test set_mag_zad
         """Enable/disable Zero After Done (ramp to 0 field after ramp)."""
@@ -1567,37 +1575,38 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_mag_pars
         """Send parameters to magnet power supply programmer.
 
-        This method will not enable output while there is not a ramp, but it 
+        This method will not enable output while there is not a ramp, but it
         will affect the ramps and setpoints if a ramp is running.
         """
         self.mag.set_pars()
 
     def start_mag(self) -> None:
-        # TODO: Test start_mag
+        # TODO: Implement and test start_mag
         """Begin magnet ramp and collect data."""
-        ui = self.mwind.ui
+        # ui = self.mwind.ui
         self.set_mag_pars()
         self.toggle_mag_for_run(True)
-        # TODO: Implement VISA 
 
-    def update_mag_labels(self, fidx: Optional[int] = None, 
+    def update_mag_labels(self, fidx: Optional[int] = None,
                           tidx: Optional[int] = None) -> None:
         # TODO: Test update_mag_labels
         """Update the ramp list labels to correspond to current units."""
         mag, ui = self.mag, self.mwind.ui
+        print(fidx)
         fabbv = (mag.field_unit('Abbv') if fidx is None
                  else mag.field_unit_switch['Abbv'][fidx])
         tabbv = (mag.time_unit('Abbv') if tidx is None
                  else mag.time_unit_switch['Abbv'][tidx])
-        targ_text = (f'ic Field ({fabbv})' if fidx < 2
+        targ_text = (f'ic Field ({fabbv})' if (fidx is not None and fidx < 2)
                      else f'Current ({fabbv})')
-        # HACK: fidx = 2 doesn't have a limit yet so put 0 in targ_range instead.
-        targ_range = mag.field_upper_limit[fidx] if fidx < 2 else 0
+        # HACK: fidx=2 doesn't have a limit yet so put 0 in targ_range instead.
+        targ_range = mag.field_upper_limit[fidx] if (fidx is not None
+                                                     and fidx < 2) else 0
         ui.targetLabel.setText(mag.target_label + targ_text)
         ui.targetSpinbox.setRange(-targ_range, targ_range)
         ui.setpointsLabel.setText(mag.setpoints_label + f'({fabbv})')
         ui.ratesLabel.setText(mag.ramps_label + f'({fabbv}/{tabbv})')
-        ui.holdLabel.setText(mag.hold_times_label + f'({tabbv})')
+        # ui.holdLabel.setText(mag.hold_times_label + f'({tabbv})')
 
     def update_mag_ui(self) -> None:
         # TODO: Test update_mag_ui
@@ -1880,6 +1889,7 @@ class ProbeGui(QMainWindow):
 
     def exit(self):
         """Stop all measurement safely and then close the program."""
+        # TODO: Stop other running scripts?
         if self.krunning:
             self.stop_keith()
         sys.exit()
