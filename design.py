@@ -31,6 +31,9 @@ class Ui_MainWindow(object, metaclass=ABCMeta):
         add_lower(QWidget)
     """
 
+    # def __init__(self):
+    #     print(f'caller = {inspect.stack()[1]}')
+
     @abstractmethod
     def setupUi(self, Window) -> Tuple[QWidget, QVBoxLayout]:
         """Set up the window's UI.  Extended/overridden in daughter methods."""
@@ -122,6 +125,9 @@ class Ui_PlotWindow(Ui_MainWindow):
         closeEvent(event): Overrides original behavior.
     """
 
+    def __init__(self):
+        super().__init__()
+
     def setupUi(self, PlotWindow) -> None:
         """Set up the main window UI (where plotting and stuff happens)."""
         (centralWidget, centralLayout) = super().setupUi(PlotWindow)
@@ -195,6 +201,9 @@ class Ui_KeithWindow(Ui_MainWindow):
         setupUi(QMainWindow)
         closeEvent(event)
     """
+
+    def __init__(self):
+        super().__init__()
 
     def setupUi(self, KeithWindow) -> None:
         """Initialize the UI elements for the Keithley window."""
@@ -518,7 +527,7 @@ class Ui_MagnetWindow(Ui_MainWindow):
         currLimitSpinbox: QDoubleSpinBox for magnet current limit setting.
         zeroButton: QPushButton for zeroing magnet.
         # TODO: If using, enter rampdown stuff.
-        mcalibrationFile: QLineEdit for calibration file path.
+        mCalibrationFile: QLineEdit for calibration file path.
         calibrationLoadButton: QPushButton for loading magnet calibration.
         setButton: QPushButton for setting parameters.
         startButton: QPushButton for starting a ramp.
@@ -526,6 +535,9 @@ class Ui_MagnetWindow(Ui_MainWindow):
     methods_
         setupUi(QMainWindow)
     """
+
+    def __init__(self):
+        super().__init__()
 
     def setupUi(self, MagWindow) -> None:
         """Set up UI window for magnet control."""
@@ -551,18 +563,18 @@ class Ui_MagnetWindow(Ui_MainWindow):
                                           objectName='mMeasureCheckBox')
         topLayout.addWidget(self.mMeasureCheckbox, 1, 0, 1, 1)
 
-        COMLabel = QLabel(paramWidget, text='COM Address', objectName='COMLabel')
+        COMLabel = QLabel(paramWidget, text='COM Address',
+                          objectName='COMLabel')
         paramLayout.addWidget(COMLabel, 0, 0, 1, 1)
         self.COMSpinbox = QSpinBox(paramWidget, objectName='COMSpinBox')
-        #TODO: Find COM address range
+        # TODO: Find COM address range
         # self.COMSpinbox.setRange(0, _)
         self.COMSpinbox.setValue(2)
         paramLayout.addWidget(self.COMSpinbox, 0, 1, 1, 1)
 
         self.targetLabel = QLabel(paramWidget, text='Target TEXT',
-                             objectName='TargetLabel')
+                                  objectName='TargetLabel')
         paramLayout.addWidget(self.targetLabel, 1, 0, 1, 1)
-
 
         self.targetSpinbox = QDoubleSpinBox(paramWidget,
                                             objectName='TargetSpinBox')
@@ -607,6 +619,8 @@ class Ui_MagnetWindow(Ui_MainWindow):
 
         self.setpointsButton = QPushButton(paramWidget, text='List',
                                            objectName='SetpointsButton')
+        # TODO: Set tooltip for SetpointsButton
+        self.setpointsButton.setToolTip('')
         paramLayout.addWidget(self.setpointsButton, 5, 1, 1, 1)
 
         self.ratesLabel = QLabel(paramWidget, text='Ramp rates UNIT',
@@ -673,7 +687,7 @@ class Ui_MagnetWindow(Ui_MainWindow):
         paramLayout.addWidget(self.currLimitSpinbox, 9, 1, 1, 1)
 
         self.zeroButton = QPushButton(paramWidget, text='Zero Magnet',
-                                     objectName='ZeroButton')
+                                      objectName='ZeroButton')
         paramLayout.addWidget(self.zeroButton, 10, 0, 1, 1)
 
         # TODO: Determine if using rampdown at all
@@ -693,21 +707,21 @@ class Ui_MagnetWindow(Ui_MainWindow):
         # self.rampdownSpinbox.setValue()
         rampdownLayout.addWidget(self.rampdownSpinbox)
 
-        mcalibrationFileLabel = QLabel(paramWidget,
+        mCalibrationFileLabel = QLabel(paramWidget,
                                        text='Magnet Calibration file:',
                                        objectName='MCalibrationFileLabel')
-        paramLayout.addWidget(mcalibrationFileLabel, 11, 0, 1, 1)
+        paramLayout.addWidget(mCalibrationFileLabel, 11, 0, 1, 1)
 
-        mcalibrationLayout = QHBoxLayout(objectName='MCalibrationLayout')
-        paramLayout.addLayout(mcalibrationLayout, 11, 1, 1, 1)
+        mCalibrationLayout = QHBoxLayout(objectName='MCalibrationLayout')
+        paramLayout.addLayout(mCalibrationLayout, 11, 1, 1, 1)
 
-        self.mcalibrationFile = QLineEdit(paramWidget,
+        self.mCalibrationFile = QLineEdit(paramWidget,
                                           objectName='MCalibrationFile')
-        mcalibrationLayout.addWidget(self.mcalibrationFile)
+        mCalibrationLayout.addWidget(self.mCalibrationFile)
 
-        self.mcalibrationLoadButton = QPushButton(
+        self.mCalibrationLoadButton = QPushButton(
             paramWidget, text='Load', objectName='MCalibrationLoadButton')
-        mcalibrationLayout.addWidget(self.mcalibrationLoadButton)
+        mCalibrationLayout.addWidget(self.mCalibrationLoadButton)
 
         centralLayout.addWidget(lowerFrame)
 
@@ -747,6 +761,9 @@ class Ui_TempWindow(Ui_MainWindow):
     methods_
         setupUi(QMainWindow)
     """
+
+    def __init__(self):
+        super().__init__()
 
     def setupUi(self, TempWindow) -> None:
         """Generate the UI for the temperature window."""
@@ -932,17 +949,17 @@ class Ui_SelectWindow(Ui_MainWindow):
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
-    # PlotWindow = QtWidgets.QMainWindow()
-    # Ui_PlotWindow().setupUi(PlotWindow)
-    # PlotWindow.show()
+    PlotWindow = QtWidgets.QMainWindow()
+    Ui_PlotWindow().setupUi(PlotWindow)
+    PlotWindow.show()
 
     # KeithWindow = QtWidgets.QMainWindow()
     # Ui_KeithWindow().setupUi(KeithWindow)
     # KeithWindow.show()
 #
-    MagWindow = QtWidgets.QMainWindow()
-    Ui_MagnetWindow().setupUi(MagWindow)
-    MagWindow.show()
+    # MagWindow = QtWidgets.QMainWindow()
+    # Ui_MagnetWindow().setupUi(MagWindow)
+    # MagWindow.show()
 
 # TempWindow looks perfect
     # TempWindow = QtWidgets.QMainWindow()
@@ -950,8 +967,8 @@ if __name__ == "__main__":
     # TempWindow.show()
 
 # SelectWindow looks perfect
-    # SelectWindow = QtWidgets.QMainWindow()
-    # Ui_SelectWindow().setupUi(SelectWindow)
-    # SelectWindow.show()
+    SelectWindow = QtWidgets.QMainWindow()
+    Ui_SelectWindow().setupUi(SelectWindow)
+    SelectWindow.show()
 
     sys.exit(app.exec_())
