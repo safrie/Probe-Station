@@ -141,6 +141,7 @@ class Mag(Instrument):
         self.zero = None
         self.field_unit_idx = 1
         self.time_unit_idx = 0
+        self.calibration_file = None
 
     def get_instr_type_str(self) -> str:
         """Return a string describing this instrument."""
@@ -166,14 +167,14 @@ class Mag(Instrument):
 
     def set_setpoints_list(self, setpts: list) -> None:
         """Set the list of magnet setpoints to setpts.
-        
+
         These are the ramp interval upper bounds.
         """
         self.setpoints_list = setpts
 
     def set_setpoints_text(self, setpts: str) -> None:
         """Set the setpoints string listing to setpts.
-        
+
         These are the ramp interval upper bounds.
         """
         self.setpoints_text = setpts
@@ -198,10 +199,10 @@ class Mag(Instrument):
         # TODO: Test set_quench_detect
         self.quench_detect = enable
         self.visa.set_quench_det(enable)
-        
+
 #    def set_quench_temp(self, temp: float) -> None:
 #        """Set magnet quench temperature.
-#        
+#
 #        This is the temperature at which THE SOFTWARE will assert a quench.
 #        """
 #        self.quench_temp = temp
@@ -275,20 +276,18 @@ class Mag(Instrument):
             raise ValueError(f'time_unit: form must be in {valid}.')
         else:
             return self.time_unit_switch[form][self.time_unit_idx]
-        
+
     def set_pars(self) -> None:
         # TODO: Test set_pars.
         """Send parameters to the AMI 430 but do not start ramping."""
         self.visa = visa
         if self.field_unit('Abbv') == 'A':
             visa.set_targ_curr(self.target)
-            unit = 'curr'
+            # unit = 'curr'
         else:
             visa.set_targ_field(self.target)
-            unit = 'field'
+            # unit = 'field'
         visa.set_ramp_segs(self.ramp_segments)
         for i in range(0, self.ramp_segments):
             visa.set_rate(seg=i, rate=self.ramps_list[i],
-                    upbound=self.setpoints_list[i])
-
-
+                          upbound=self.setpoints_list[i])
