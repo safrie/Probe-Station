@@ -13,7 +13,7 @@ Part of the V3 Probe Station Collection
 from abcs.visa_abc import Visa
 
 
-class vMag(visa_out.Visa):
+class vMag(Visa):
     # TODO: Determine if separately saving all the commands is necessary.
     """vMag contains the logic for communicating with the AMI 430.
 
