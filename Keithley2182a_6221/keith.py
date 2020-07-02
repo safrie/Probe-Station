@@ -213,6 +213,7 @@ class Keith(Instrument):
 
     def __init__(self) -> None:
         """Initialize instance of general Keithley control."""
+        print('Keith.__init__ called.')
         super().__init__()
         self.diffcon = DiffCon()
         self.delta = Delta()
