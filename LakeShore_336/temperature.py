@@ -9,8 +9,8 @@ Part of the V3 Probe Station Collection.
 @author: Sarah Friedensen
 """
 
-from instrument_abc import Instrument
-import visa_temp as visa
+from abcs.instrument_abc import Instrument
+import LakeShore_336.visa_temp as visa
 import time
 from typing import Union, Tuple
 

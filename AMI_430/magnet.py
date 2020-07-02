@@ -8,8 +8,8 @@ classes_
 Part of the V3 probe station collection.
 @author: Sarah Friedensen
 """
-from instrument_abc import Instrument
-from visa_mag import vMag as visa
+from abcs.instrument_abc import Instrument
+from AMI_430.visa_mag import vMag as visa
 from typing import Optional, Union
 from pathlib import Path
 

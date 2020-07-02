@@ -10,7 +10,7 @@ Part of the V3 Probe Station Collection
 @author: Sarah Friedensen
 """
 
-import visa_out
+from abcs.visa_abc import Visa
 
 
 class vMag(visa_out.Visa):

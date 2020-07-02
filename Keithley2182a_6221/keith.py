@@ -8,13 +8,14 @@ classes_
 Part of the V3 Probe Station Collection.
 @author: Sarah Friedensen
 """
-
-from instrument_abc import Instrument
-from keith_meas_types import (Delta, DiffCon, PDelta, PDeltaLog, PDeltaStair,
-                              filter_switch)
-from keith_meas_abc import KeithMeasure
+# import inspect
+from abcs.instrument_abc import Instrument
+from Keithley2182a_6221.keith_meas_types import (Delta, DiffCon, PDelta,
+                                                 PDeltaLog, PDeltaStair,
+                                                 filter_switch)
+from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 # import math
-from visa_keith import vKeith
+from Keithley2182a_6221.visa_keith import vKeith
 import numpy
 # import time
 from typing import Union, Optional, Tuple

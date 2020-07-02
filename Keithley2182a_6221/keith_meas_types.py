@@ -13,7 +13,7 @@ Part of the V3 probe station collection.
 @author: Sarah Friedensen
 """
 
-from keith_meas_abc import KeithMeasure
+from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 from typing import Union
 
 filter_switch = {

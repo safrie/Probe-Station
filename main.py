@@ -35,9 +35,9 @@ from pathlib import Path
 from design import (Ui_PlotWindow, Ui_KeithWindow, Ui_TempWindow,
                     Ui_MagnetWindow, Ui_SelectWindow)
 from file_io import Save, Config
-from temperature import Temp
-from keith import Keith
-from magnet import Mag
+from LakeShore_336.temperature import Temp
+from Keithley2182a_6221.keith import Keith
+from AMI_430.magnet import Mag
 
 
 def no():

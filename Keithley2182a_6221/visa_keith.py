@@ -10,7 +10,8 @@ Classes:
 @author: Sarah Friedensen
 """
 
-from visa_out import Visa
+from abcs.visa_abc import Visa
+# import inspect
 
 
 class vKeith(Visa):
