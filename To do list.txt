@@ -1,6 +1,5 @@
 To do with program:
-
-
+1. FIGURE OUT WHY PROGRAM NOT LOADING IN SPYDER
 6. Alter/implement config file stuff for changes
 7. Implement/fix VISA for everything
     xxx) mag.set_pars()
@@ -16,5 +15,6 @@ To do with program:
     b) Fix instrument visa imports
         i) visa_out to visa_abc
         ii) abc sibling directory
-
-implement Path stuff and replace 'with-open'
+14. Get graphing up and running
+15. implement Path stuff and replace 'with-open'
+16. Test Keithley measurement
