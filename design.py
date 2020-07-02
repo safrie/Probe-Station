@@ -15,6 +15,7 @@ import sys
 from typing import Tuple
 
 from abc import ABCMeta, abstractmethod
+# import inspect
 
 
 class Ui_MainWindow(object, metaclass=ABCMeta):
