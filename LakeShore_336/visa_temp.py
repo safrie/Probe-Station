@@ -10,13 +10,13 @@ Part of the V3 probe station collection
 @author: Sarah Friedensen
 """
 
-import visa_out
+from abcs.visa_abc import Visa
 from typing import Optional
 
 BINT1 = (1, 2)
 
 
-class vTemp(visa_out.Visa):
+class vTemp(Visa):
     """Generate and write commands to the LakeShore 336.
 
     vTemp inherits from Visa and extends __init__, check_connected, write_cmd,
@@ -66,11 +66,11 @@ class vTemp(visa_out.Visa):
         self.stage_ramp = ''
 
     def write(self, cmd: str) -> None:
-        """Extend visa_out's write_cmd to write to this instrument."""
+        """Extend visa_abc's write_cmd to write to this instrument."""
         super().write_cmd(self.thermo, cmd)
 
     def query(self, cmd: str) -> None:
-        """Extend visa_out's query_cmd to write to this instrument."""
+        """Extend visa_abc's query_cmd to write to this instrument."""
         return super().query_cmd(self.thermo, cmd)
 
     def check_connected(self, gpib: int) -> None:
