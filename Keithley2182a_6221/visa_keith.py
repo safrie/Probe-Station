@@ -118,6 +118,8 @@ class vKeith(Visa):
 
     def __init__(self, address: int) -> None:
         """Create a new instance and open resource at address."""
+        # print('visa_keith.__init__ called.')
+        # print(f'caller = {inspect.stack()[1]}')
         super().__init__()
 #        self.source_range_type_cmd = ''
         self.filter_on_cmd = ''
