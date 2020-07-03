@@ -32,6 +32,7 @@ class Save():
     methods_
         __init__()
         new(str list)
+        _write(str)
         header(str)
         data(str)
     """
@@ -49,21 +50,31 @@ class Save():
         self.name = None
         if name[0]:
             self.name = name
-            self.file = open(self.name[0], 'w+')
+            # self.file = open(self.name[0], 'w+')
+            self.file = Path(self.name[0])
             (self.base, self.ext) = os.path.splitext(name[0])
             self.file.close()
 
-        def header(self, hdr: str) -> None:
-            """Open the file and write the header information."""
-            if self.name[0] is not None:
-                with open(self.name[0], 'a') as self.file:
-                    self.file.write(hdr)
+    # TODO: Determine if _write() can replace both header() and data()
+    def _write(self, text: str) -> None:
+        """Open the file and write information to it."""
+        if self.name[0] is not None:
+            self.file.write_text(text)
 
-        def data(self, data: str) -> None:
-            """Open the file and write the data to it."""
-            if self.name[0] is not None:
-                with open(self.name[0], 'a') as self.file:
-                    self.file.write(data)
+    def header(self, hdr: str) -> None:
+        """Open the file and write the header information."""
+        if self.name[0] is not None:
+            self.file.write_text(hdr)
+        # if self.name[0] is not None:
+        #     with open(self.name[0], 'a') as self.file:
+        #         self.file.write(hdr)
+
+    def data(self, data: str) -> None:
+        """Open the file and write the data to it."""
+        if self.name[0] is not None:
+            self.file.write_text(data)
+            # with open(self.name[0], 'a') as self.file:
+            #     self.file.write(data)
 
 
 class Config():
