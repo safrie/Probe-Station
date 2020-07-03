@@ -1,6 +1,7 @@
 To do with program:
-1. FIGURE OUT WHY PROGRAM NOT LOADING IN SPYDER
+XXX. FIGURE OUT WHY PROGRAM NOT LOADING IN SPYDER
 6. Alter/implement config file stuff for changes
+    a) What changes?
 7. Implement/fix VISA for everything
     xxx) mag.set_pars()
 8. Implement input validation for magnet current/field (in main)
@@ -8,8 +9,10 @@ To do with program:
     a) set_setpoints button
     b) set_ramps button
 10. Mag config stuff
+    a) What stuff? Figure out and write in more detail.
 11. Update probe_station_params.yaml
 12. Mag calibration stuff
+    a) This is loading a calibration file or saving one.
 13. Update imports to reflect project structure changes
     a) Fix main imports based on instrument subdirectories
     b) Fix instrument visa imports
@@ -17,4 +20,7 @@ To do with program:
         ii) abc sibling directory
 14. Get graphing up and running
 15. implement Path stuff and replace 'with-open'
+    XXX) w/o to Path('filename').write_text('text')
+    b) Determine if self.base and self.ext are still useful.
+    c) Determine if header and data methods can be collapsed into _write
 16. Test Keithley measurement
