@@ -101,6 +101,7 @@ class Config():
         self.name = None
         self.file = None
         self.params = None
+        # TODO: Determine if self.base and self.ext are necessary
         self.base = None
         self.ext = None
         self.new = None
@@ -108,6 +109,7 @@ class Config():
     def load(self, name) -> None:
         """Load parameters from a config file.  Currently accepts only YAML."""
         self.name = name
+        # TODO: Determine if self.params loads properly with the Path object.
         self.file = Path(self.name)
         self.params = self.yaml.load(self.file)
 
