@@ -133,18 +133,23 @@ class vKeith(Visa):
         self.pdelt_log_arm_cmd = ''
 
         self.source = None
-        # HACK: Change meter_connected back to False after testing
-        self.meter_connected = True
+        self.meter_connected = False
         self.in_buffer = 0
         self.check_connected(address)
 
     def write(self, cmd: str) -> None:
         """Write cmd to the Keithleys."""
-        super().write(self.source, cmd)
+        if self.source is not None:
+            super().write(self.source, cmd)
+        else:
+            print('No write--Keithleys not connected')
 
     def query(self, cmd: str) -> str:
         """Return Keithleys' answer to the query cmd."""
-        return super().query(self.source, cmd)
+        if self.source is not None:
+            return super().query(self.source, cmd)
+        else:
+            print('No write--Keithleys not connected')
 
     def check_connected(self, addr: int) -> None:
         """Attempt to locate and connect to GPIB resource at addr.
@@ -250,8 +255,19 @@ class vKeith(Visa):
                + f'DELAY {round(delay * 1e-3, 6)}; '
                + f'CAB {"ON" if compl_abort else "OFF"}; '
                + 'ARM')
-        print(cmd)
-        return cmd
+        cmd_sim = (f"TRAC:CLE; TRAC:POIN {count}; "
+                   + f"SOUR:DCON:STAR {round(start * 1e-6, 9)}; "
+                   + f"SOUR:DCON:STOP {round(stop * 1e-6, 9)}; "
+                   + f"SOUR:DCON:STEP {round(step * 1e-6, 9)}; "
+                   + f"SOUR:DCON:DELTA {round(delta * 1e-6, 9)}; "
+                   + f"SOUR:DCON:DELAY {round(delay * 1e-3, 6)}; "
+                   + f"SOUR:DCON:CAB {'ON' if compl_abort else 'OFF'}; "
+                   + "SOUR:DCON ARM 1"
+                   )
+        # print(cmd)
+        # return(cmd)
+        print(cmd_sim)
+        return cmd_sim
 
     def arm_delta(self, high: float, low: float, delay: float, count: int,
                   compl_abort: bool) -> str:
@@ -265,12 +281,22 @@ class vKeith(Visa):
                + f':SOUR:DELT:HIGH {round(high * 1e-6, 9)}; '
                + f'LOW {round(low * 1e-6, 9)}; '
                # TODO: Test delay in arm_delta for proper units.
-               + f'DELAY {round(delay * 1e-3, 6)}; '
+               + f'DELAY {round(delay * 1e-3, 9)}; '
                + f'COUN {count}; '
                + f'CAB {"ON" if compl_abort else "OFF"}; '
                + 'ARM')
-        print(cmd)
-        return cmd
+        cmd_sim = (f"TRAC:CLE; TRAC:POIN {count}; "
+                   + f"SOUR:DELT:HIGH {round(high * 1e-6, 9)}; "
+                   + f"SOUR:DELT:LOW {round(low * 1e-6, 9)}; "
+                   + f"SOUR:DELT:DELAY {round(delay * 1e-3, 6)}; "
+                   + f"SOUR:DELT:COUN {count}; "
+                   + f"SOUR:DELT:CAB {'ON' if compl_abort else 'OFF'}; "
+                   + "SOUR:DELT:ARM 1"
+                   )
+        # print(cmd)
+        # return cmd
+        print(cmd_sim)
+        return(cmd_sim)
 
     def arm_pdelt(self, high: float, low: float, width: float, delay: float,
                   count: int, cycle_int: int, low_meas: bool) -> str:
@@ -291,8 +317,20 @@ class vKeith(Visa):
                + f'INT {cycle_int}; '  # Quasiperiod
                + f'LME {2 if low_meas else 1}; '
                + 'SWE OFF; ARM')
-        print(cmd)
-        return cmd
+        cmd_sim = (f"TRAC:CLE; TRAC:POIN {count}; "
+                   + f"SOUR:PDEL:HIGH {round(high * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:LOW {round(low * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:WIDT {round(width * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:SDEL {round(delay * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:COUN {count}; "
+                   + f"SOUR:PDEL:INT {cycle_int}; "
+                   + f"SOUR:PDEL:LME {2 if low_meas else 1}; "
+                   + "SOUR:PDEL:SWE OFF; SOUR:PDEL:ARM 1"
+                   )
+        # print(cmd)
+        # return cmd
+        print(cmd_sim)
+        return(cmd_sim)
 
     def arm_pdelt_stair(self, start: float, stop: float, step: float,
                         delay: float, width: float, cycle_time: float,
@@ -319,8 +357,22 @@ class vKeith(Visa):
                + f'COUN {count}; '
                + f'LME {2 if low_meas else 1}; '
                + 'SWE ON; ARM')
-        print(cmd)
-        return cmd
+
+        cmd_sim = (f"TRAC:CLE; TRAC:POIN {count * sweeps}; "
+                   + f"SOUR:SWE:SPAC LIN; "
+                   + f"SOUR:DEL {round(cycle_time, 6)}; "
+                   + f"SOUR:CURR:STAR {round(start * 1e-6, 9)}; "
+                   + f"SOUR:CURR:STOP {round(stop * 1e-6, 9)}; "
+                   + f"SOUR:CURR:STEP {round(step * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:WIDT {round(width * 1e-3, 9)}; "
+                   + f"SOUR:PDEL:SDEL {round(delay * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:COUN {count}; "
+                   + f"SOUR:PDEL:LME {2 if low_meas else 1}; "
+                   + "SOUR:PDEL:SWE ON; SOUR:PDEL:ARM 1")
+        # print(cmd)
+        # return cmd
+        print(cmd_sim)
+        return cmd_sim
 
     def arm_pdelt_log(self, start: float, stop: float, points: int,
                       delay: float, width: float, cycle_time: float,
@@ -348,8 +400,22 @@ class vKeith(Visa):
                + f'COUN {points}; '
                + f'LME {2 if low_meas else 1}; '
                + 'SWE ON; ARM')
-        print(cmd)
-        return cmd
+        cmd_sim = (f"TRAC:CLE; TRAC:POIN {points * sweeps}; "
+                   + "SOUR:SWE:SPAC LOG; "
+                   + f"SOUR:SWE:POIN {points}; "
+                   + f"SOUR:SWE:COUN {sweeps}; "
+                   + f"SOUR:DEL {round(cycle_time, 6)}; "
+                   + f"SOUR:CURR:STAR {round(start * 1e-6, 9)}; "
+                   + f"SOUR:CURR:STOP {round(stop * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:WIDT {round(width * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:SDEL {round(delay * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:COUN {points}; "
+                   + f"SOUR:PDEL:LME {2 if low_meas else 1}; "
+                   + "SOUR:PDEL:SWE ON; SOUR:PDEL:ARM 1")
+        # print(cmd)
+        # return cmd
+        print(cmd_sim)
+        return cmd_sim
 
     def reset(self) -> None:
         """Reset the keithleys to default values and clear data buffer."""
