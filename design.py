@@ -233,8 +233,7 @@ class Ui_KeithWindow(Ui_MainWindow):
         self.GPIBSpinbox = QSpinBox(paramWidget, objectName='GPIBSpinBox')
         self.GPIBSpinbox.setToolTip('GPIB address of Keithley 6221/2182a')
         self.GPIBSpinbox.setMinimum(0)
-        # TODO: Determine maximum
-#        self.GPIBSpinbox.setRange(0, )
+        self.GPIBSpinbox.setRange(0, 30)
         self.GPIBSpinbox.setValue(12)
         paramLayout.addWidget(self.GPIBSpinbox, 0, 1, 1, 1)
 
@@ -288,9 +287,9 @@ class Ui_KeithWindow(Ui_MainWindow):
         self.sourceRangeCombobox.addItem('2 nA')
         self.sourceRangeCombobox.addItem('20 nA')
         self.sourceRangeCombobox.addItem('200 nA')
-        self.sourceRangeCombobox.addItem('2 uA')
-        self.sourceRangeCombobox.addItem('20 uA')
-        self.sourceRangeCombobox.addItem('200 uA')
+        self.sourceRangeCombobox.addItem('2 \u03BCA')
+        self.sourceRangeCombobox.addItem('20 \u03BCA')
+        self.sourceRangeCombobox.addItem('200 \u03BCA')
         self.sourceRangeCombobox.addItem('2 mA')
         self.sourceRangeCombobox.addItem('20 mA')
         self.sourceRangeCombobox.addItem('100 mA')
@@ -948,11 +947,11 @@ class Ui_SelectWindow(Ui_MainWindow):
         centralLayout.addWidget(self.tempButton)
 
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    PlotWindow = QtWidgets.QMainWindow()
-    Ui_PlotWindow().setupUi(PlotWindow)
-    PlotWindow.show()
+# if __name__ == "__main__":
+#     app = QtWidgets.QApplication(sys.argv)
+#     PlotWindow = QtWidgets.QMainWindow()
+#     Ui_PlotWindow().setupUi(PlotWindow)
+#     PlotWindow.show()
 
     # KeithWindow = QtWidgets.QMainWindow()
     # Ui_KeithWindow().setupUi(KeithWindow)
@@ -968,8 +967,8 @@ if __name__ == "__main__":
     # TempWindow.show()
 
 # SelectWindow looks perfect
-    SelectWindow = QtWidgets.QMainWindow()
-    Ui_SelectWindow().setupUi(SelectWindow)
-    SelectWindow.show()
+    # SelectWindow = QtWidgets.QMainWindow()
+    # Ui_SelectWindow().setupUi(SelectWindow)
+    # SelectWindow.show()
 
-    sys.exit(app.exec_())
+    # sys.exit(app.exec_())
