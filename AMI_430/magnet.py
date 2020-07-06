@@ -105,19 +105,28 @@ class Mag(Instrument):
                      'Minutes': 'min'}
             }
 
-    # TODO: put in correct values for field_upper_limit
+    coil_constant = {0: 0.886,
+                     1: 8.86,
+                     2: 1}
+
     field_upper_limit = {0: 30,
                          1: 3,
-                         2: 'limit in A'}
+                         2: 26.3}
 
-    # TODO: put in correct values for ramp_upper_limit
-    ramp_upper_limit = {'seconds': {0: 'limit in kG/s',
-                                    1: 'limit in T/s',
-                                    2: 'limit in A/s'},
-                        'minutes': {0: 'limit in kG/min',
-                                    1: 'limit in T/min',
-                                    2: 'limit in A/min'}
+    ramp_upper_limit = {'seconds': {0: 11.3,
+                                    1: 1.13,
+                                    2: 10},
+                        'minutes': {0: 678,
+                                    1: 67.8,
+                                    2: 600}
                         }
+    ramp_lower_limit = {'seconds': {0: 1.88e-6,
+                                    1: 1.88e-7,
+                                    2: 1.67e-6},
+                        'minutes': {0: 1.13e-4,
+                                    1: 1.13e-5,
+                                    2: 1.0e-4}}
+
     setpoints_title = 'Magnetic Field Setpoints'
     ramp_title = 'Magnetic Field Ramp Rates'
     target_label = 'Target Magnet'
@@ -159,8 +168,8 @@ class Mag(Instrument):
     def set_ramp_segments(self, segs: int) -> None:
         """Set number of ramp segments for magnet range."""
         # TODO: Test set_ramp_segments
-        if int < 0:
-            raise ValueError('set_ramp_segments: segs must be positive.')
+        if int not in range(1, 11):
+            raise ValueError('set_ramp_segments: segs must be in [1, 10].')
         else:
             self.ramp_segments = segs
             self.visa.set_ramp_segs(segs)
