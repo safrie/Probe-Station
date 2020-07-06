@@ -10,6 +10,9 @@ import visa
 from abc import ABCMeta, abstractmethod
 from typing import Union
 
+simulator = ("C:/Users/sfrie/Box Sync/Penn_Private/Programs/Python/"
+             + "Probe_Station/V3/test_environment.yaml")
+
 
 class Visa():
     """Abstract base class for communicating with instruments over pyvisa.
@@ -40,8 +43,10 @@ class Visa():
 
     def __init__(self) -> list:
         """Open pyvisa resource manager and list connected instruments."""
-        self.rm = visa.ResourceManager()
+        # self.rm = visa.ResourceManager()
+        self.rm = visa.ResourceManager(f'{simulator}@sim')
         self.instruments = self.rm.list_resources()
+        print(self.instruments)
         return self.instruments
 
     @abstractmethod
@@ -54,16 +59,17 @@ class Visa():
         try:
             instr.write(cmd)
         except AttributeError:
-            print(f'{instr.__name__} is not connected.')
+            print('Instrument is not connected')
 
     def query(self, instr: visa.Resource, cmd: str) -> Union[str, None]:
         """If instr connected, query cmd and return result."""
+        out = None
         try:
             out = instr.query(cmd)
         except AttributeError:
-            print(f'{instr.__name__} is not connected.')
-            out = None
+            print('Instrument is not connected')
         finally:
+            print(out)
             return out
 
     def get_idn(self, instr: visa.Resource) -> None:
@@ -71,6 +77,6 @@ class Visa():
         try:
             out = instr.query(self.idn)
         except AttributeError:
-            print(f'{instr.__name__} is not connected.')
+            print('Instrument is not connected')
         else:
             print(out)
