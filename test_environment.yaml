@@ -1,0 +1,591 @@
+spec: "1.1"
+
+devices:
+    Keithley:
+        eom:
+            GPIB INSTR:
+                q: "\n"
+                r: "\n"
+        error: 
+            status_register:
+                - q: # TODO: Put in correct query
+                  command_error: 32
+                  query_error: 4
+        
+        channels:
+            measurement_shared:
+                ids: ["DCON", "DELT", "PDEL", "SWE", "CURR"]
+                can_select: True
+                properties:
+                    start:
+                        default: -10.0e-6
+                        getter:
+                            q: "SOUR:{ch_id}:STAR?"
+                            r: "{:+.6e}"
+                        setter:
+                            q: "SOUR:{ch_id}:STAR {:+.9f}"
+                            r: "{ch_id} start set to {:+.6e} A (sim)"
+                        specs:
+                            min: -105.0e-3
+                            max: 105.0e-3
+                            type: float
+                    stop:
+                        default: 10.0e-6
+                        getter:
+                            q: "SOUR:{ch_id}:STOP?"
+                            r: "{:+.6e}"
+                        setter:
+                            q: "SOUR:{ch_id}:STOP {:+.9f}"
+                            r: "{ch_id} stop set to {:+.6e} A (sim)"
+                        specs:
+                            min: -105.0e-3
+                            max: 105.0e-3
+                            type: float
+                    step:
+                        default: 1.0e-6
+                        getter:
+                            q: "SOUR:{ch_id}:STEP?"
+                            r: "{:+.6e}"
+                        setter:
+                            q: "SOUR:{ch_id}:STEP {:+.9f}"
+                            r: "{ch_id} step set to {:+.6e} A (sim)"
+                        specs:
+                            min: 0
+                            max: 105.0e-3
+                            type: float
+                    high:
+                        default: 1.0e-3
+                        getter:
+                            q: "SOUR:{ch_id}:HIGH?"
+                            r: "{:+.6e}"
+                        setter:
+                            q: "SOUR:{ch_id}:HIGH {:+.9f}"
+                            r: "{ch_id} high set to {:+.6e} A (sim)"
+                        specs:
+                            min: -105.0e-3
+                            max: 105.0e-3
+                            type: float
+                    low:
+                        default: -1.0e-3
+                        getter:
+                            q: "SOUR:{ch_id}:LOW?"
+                            r: "{:+.6e}"
+                        setter:
+                            q: "SOUR:{ch_id}:LOW {:+.9f}"
+                            r: "{ch_id} low set to {:+.6e} A (sim)"
+                        specs:
+                            min: -105.0e-3
+                            max: 105.0e-3
+                            type: float
+                    delay:
+                        default: 2.0e-3
+                        getter:
+                            q: "SOUR:{ch_id}:DELAY?"
+                            r: "{:.6e}"
+                        setter:
+                            q: "SOUR:{ch_id}:DELAY {:.9f}"
+                            r: "{ch_id} source delay set to {:.6e} s (sim)"
+                        specs:
+                            min: 1.0e-3
+                            max: 999999.999
+                            type: float
+                    count:
+                        default: 10
+                        getter:
+                            q: "SOUR:{ch_id}:COUN?"
+                            r: "{:d}"
+                        setter:
+                            q: "SOUR:{ch_id}:COUN {:d}"
+                            r: "{ch_id} count set to {:d}"
+                        specs:
+                            min: 1
+                            max: 65636
+                            type: int
+                    cab:
+                        default: OFF
+                        getter:
+                            q: "SOUR:{ch_id}:CAB?"
+                            r: "{:s}"
+                        setter:
+                            q: "SOUR:{ch_id}:CAB {:s}"
+                            r: "{ch_id} compliance abort set to {:s}"
+                        specs:
+                            valid: ["ON", "OFF"]
+                            type: str
+                    arm:
+                        default: 0
+                        getter:
+                            q: "SOUR:{ch_id}:ARM?"
+                            r: "{:d}"
+                        setter:
+                            q: "SOUR:{ch_id}:ARM {:d}"
+                            r: "{ch_id} arm set to {:d}"
+                        specs:
+                            valid: [0, 1]
+                            type: int
+            diffcon:
+                ids: "SOUR:DCON"
+                can_select: True
+                properties:
+                    delta:
+                        default: 1.0e-6
+                        getter:
+                            q: "{ch_id}:DELTA?"
+                            r: "{:.6e}"
+                        setter:
+                            q: "{ch_id}:DELTA {:.9f}"
+                            r: "Diffcon delta set to {:.6e} A (sim)"
+                        specs:
+                            min: 0
+                            max: 105.0e-3
+                            type: float
+            pdelta:
+                ids: ["SOUR:PDEL"]
+                can_select: True
+                properties:
+                    range_type: 
+                        default: BEST
+                        getter:
+                            q: "{ch_id}:RANG?"
+                            r: "{:s}"
+                        setter:
+                            q: "{ch_id}:RANG {:s}"
+                            r: "Pulse delta source range set to {:s} (sim)"
+                        specs:
+                            valid: ["FIXED", "BEST"]
+                            type: str
+                    width:
+                        default: 110.0e-6
+                        getter:
+                            q: "{ch_id}:WIDT?"
+                            r: "{:.4e}"
+                        setter: 
+                            q: "{ch_id}:WIDT {:.9f}"
+                            r: "Pulse delta pulse width set to {:.4e} (sim)"
+                        specs:
+                            min: 50.0e-6
+                            max: 12.0e-3
+                            type: float
+                    source_delay:
+                        default: 16.0e-6
+                        getter:
+                            q: "{ch_id}:SDEL?"
+                            r: "{:.9f}"
+                        setter:
+                            q: "{ch_id}:SDEL {:.9f}"
+                            r: "Pulse delta source delay set to {:.4e} (sim)"
+                        specs:
+                            min: 16.0e-6
+                            max: 11.966e-3
+                            type: float
+                    cycle_int:
+                        default: 5
+                        getter:
+                            q: "{ch_id}:INT?"
+                            r: "{:d}"
+                        setter:
+                            q: "{ch_id}:INT {:d}"
+                            r: "Pulse delta cycle interval set to {:d} (sim)"
+                        specs:
+                            min: 5
+                            max: 999999
+                            type: int
+                    low_meas:
+                        default: 2
+                        getter:
+                            q: "{ch_id}:LME?"
+                            r: "{:d}"
+                        setter:
+                            q: "{ch_id}:LME {:d}"
+                            r: "Pulse delta low measure set to {:d} (sim)"
+                        specs:
+                            valid: [1, 2]
+                            type: int
+            sweep:
+                ids: ["LOG", "LIN"]
+                can_select: True
+                properties:
+                    selected_channel:
+                        default: LIN
+                        getter:
+                            q: "SOUR:SWE:SPAC?"
+                            r: "{:s}"
+                        setter:
+                            q: "SOUR:SWE:SPAC {ch_id}"
+                            r: "Spacing set to {ch_id}"
+                        specs:
+                            type: str
+                    range_type:
+                        default: BEST
+                        getter:
+                            q: "SOUR:SWE:RANG?"
+                            r: "{:s}"
+                        setter:
+                            q: "SOUR:SWE:RANG {:s}"
+                            r: "Sweep range set to {:s} (sim)"
+                        specs:
+                            valid: ["FIXED", "BEST"]
+                            type: str
+                    points: # TODO: Determine if need "SOUR:SWE:POIN"
+                        default: 11
+                        getter:
+                            q: "SOUR:SWE:POIN?"
+                            r: "{:d}"
+                        setter:
+                            q: "SOUR:SWE:POIN {:d}"
+                            r: "Sweep points set to {:d} (sim)"
+                        specs:
+                            min: 1
+                            max: 65535
+                            type: int
+        dialogues:
+            - q: "*IDN?"
+              r: "Keithley 6221/2182a stack, simulated version"
+            - q: "SOUR:DCON:NVPR?"
+              r: 1
+            - q: "SOUR:SWE:ABOR"
+              r: "Sweep aborted." # TODO: Figure out if can actually call disarm 
+            - q: 'TRAC:DATA?'
+              r: "1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15"
+            - q: "TRAC:CLE"
+              r: "Data cleared from buffer (sim)"
+            - q: "INIT:IMM"
+              r: "Keithley running now (sim)"
+            - q: "*OPC?"
+              r: 1
+            - q: "CLE:IMM"
+              r: "Output zeroed and turned off."
+        properties:
+            format:
+                default: "RNUM, TST, SOUR, READ, AVOL"
+                getter:
+                    q: ":FORM:ELEM?"
+                    r: "{:s}"
+                setter:
+                    q: ":FORM:ELEM {:s}"
+                    r: "Formatting set to {:s} (sim)"
+            points:
+                default: 5
+                getter:
+                    q: "TRAC:POIN?"
+                    r: "{:d}"
+                setter:
+                    q: "TRAC:POIN {:d}"
+                    r: "Buffer points set to {:d} (sim)"
+                specs:
+                    min: 1
+                    max: 65536
+                    type: int
+            unit:
+                default: V
+                getter:
+                    q: "UNIT?"
+                    r: "{:s}"
+                setter:
+                    q: "UNIT {:s}"
+                    r: "Unit set to {:s} (sim)"
+                specs:
+                    valid: ["V", "OHMS", "W", "SIEM"]
+                    type: str
+            power: # TODO: Determine if need "UNIT" at beginning of commands
+                default: AVER
+                getter:
+                    q: "POWER?"
+                    r: "{:s}"
+                setter:
+                    q: "POWER {:s}"
+                    r: "Pulse delta power reading set to {:s} (sim)"
+                specs:
+                    valid: ["AVER", "PEAK"]
+                    type: str
+            source_range:
+                default: 200.0e-6
+                getter:
+                    q: "CURR:RANG?"
+                    r: "{:.2e}"
+                setter:
+                    q: "CURR:RANG {:.2e}"
+                    r: "Source range set to {:.2e} A (sim)"
+                specs:
+                    valid: [2.00e-9, 20.00e-9, 200.00e-9, 2.00e-6, 20.00e-6,
+                            200.00e-6, 2.00e-3, 20.00e-3, 100.00e-3]
+                    type: float
+            current_range_type:
+                default: OFF
+                getter:
+                    q: "CURR:RANG:AUTO?"
+                    r: "{:s}"
+                setter:
+                    q: "CURR:RANG:AUTO {:s}"
+                    r: "Current auto range set to {:s} (sim)"
+                specs:
+                    valid: ["ON", "OFF"]
+                    type: str
+            meter_rate:
+                default: 5
+                getter:
+                    q: "SYST:COMM:SER:SEND ':SENS:VOLT:NPLC?'"
+                    r: "{:.2f}"
+                setter:
+                    q: "SYST:COMM:SER:SEND ':SENS:VOLT:NPLC {:.2f}'"
+                    r: "Voltmeter measurement rate set to {:.2f} (sim)"
+                specs:
+                    min: 0.01
+                    max: 60
+                    type: float
+            meter_range:
+                default: 100.0
+                getter:
+                    q: "SYST:COMM:SER:SEND ':SENS:VOLT:RANG?'"
+                    r: "{:.2f}"
+                setter:
+                    q: "SYST:COMM:SER:SEND ':SENS:VOLT:RANG {:.2f}'"
+                    r: "Voltmeter range set to {:.2f} V (sim)"
+                specs:
+                    valid: [100.0e-3, 10.0e-3, 1.0, 10.0, 100.0]
+                    type: float
+            compliance_voltage:
+                default: 10
+                getter:
+                    q: "CURR:COMP?"
+                    r: "{:.2f}"
+                setter:
+                    q: "CURR:COMP {:.2f}"
+                    r: "Current compliance voltage set to {:.2f} V (sim)"
+                specs:
+                    min: 0.1
+                    max: 105
+                    type: float
+            pdelt_sweep_enable:
+                default: OFF
+                getter:
+                    q: "SOUR:PDEL:SWE?"
+                    r: "{:s}"
+                setter:
+                    q: "SOUR:PDEL:SWE {:s}"
+                    r: "Pulse delta sweep output set to {:s} (sim)"
+                specs:
+                    valid: ["ON", "OFF"]
+                    type: str
+            filter_enable:
+                default: OFF
+                getter:
+                    q: "SENS:AVER?"
+                    r: "{:s}"
+                setter:
+                    q: "SENS:AVER {:s}"
+                    r: "Filter set to {:s} (sim)"
+                specs:
+                    valid: ["OFF", "ON"]
+                    type: str
+            filter_type:
+                default: MOV
+                getter:
+                    q: "SENS:AVER:TCON?"
+                    r: "{:s}"
+                setter:
+                    q: "SENS:AVER:TCON {:s}"
+                    r: "Filter type set to {:s}"
+                specs:
+                    valid: ["MOV", "REP"]
+                    type: str
+            filter_window: # TODO: determine if need SENS:AVER
+                default: 0.00
+                getter:
+                    q: "SENS:AVER:WIND?"
+                    r: "{:.2f}"
+                setter:
+                    q: "WIND {:.2f}"
+                    r: "Filter window set to {:.2f} (sim)"
+                specs:
+                    min: 0
+                    max: 10
+                    type: float
+            filter_count: # TODO: Determine if need SENS:AVER
+                default: 10
+                getter:
+                    q: "SENS:AVER:COUN?"
+                    r: "{:d}"
+                setter:
+                    q: "COUN {:d}"
+                    r: "Filter count set to {:d} (sim)"
+                specs:
+                    min: 2
+                    max: 300
+                    type: int
+    AMI430: 
+        eom:
+            ASRL INSTR:
+                q: "\n"
+                r: "\r\n"
+        error: 
+            status_register:
+                - q: # TODO: Put in correct query
+                  command_error: 32
+                  query_error: 4
+        dialogues:
+            - q: "*IDN?"
+              r: "AMI 430 Power Supply Programmer, simulated version"
+        properties:
+            field_unit:
+                default: 1
+                getter:
+                    q: "FIELD:UNIT?"
+                    r: "{:d}"
+                setter:
+                    q: "CONF:FIELD:UNITS {:d}"
+                    r: "Field units set to {:d} (sim)"
+                specs:
+                    valid: [0, 1]
+                    type: int
+            time_unit:
+                default: 0
+                getter:
+                    q: "RAMP:RATE:UNITS?"
+                    r: "{:d}"
+                setter:
+                    q: "CONF:RAMP:RATE:UNITS {:d}"
+                    r: "Time units set to {:d} (sim)"
+                specs:
+                    valid: [0, 1]
+                    type: int
+            volt_limit:
+                default: 5
+                getter:
+                    q: "VOLT:LIM?"
+                    r: "{:.3f}"
+                setter:
+                    q: "CONF:VOLT:LIM {:.3f}"
+                    r: "Maget voltage limit set to {:.3f} (sim)"
+                specs:
+                    min: 0
+                    max: 5
+                    type: float
+            curr_lim:
+                default: 100
+                getter:
+                    q: "CURR:LIM?"
+                    r: "{:.3f}"
+                setter:
+                    q: "CONF:CURR:LIM {:.3f}"
+                    r: "Magnet current limit set to {:.3f} (sim)"
+                specs:
+                    min: 0
+                    max: 100
+                    type: float
+        channels:
+            options:
+                ids: ["CURR", "FIELD"]
+                can_select: True
+                properties:
+                    target:
+                        default: 5
+                        getter:
+                            q: "{ch_id}:TARG?"
+                            r: "{:+.3f}"
+                        setter:
+                            q: "CONF:{ch_id}:TARG {:+.3f}"
+                            r: "Target {ch_id} set to {:+.3f}"
+                        specs:  # TODO: How to tie in with limit vals?
+                            min: 0
+                            max: 100
+                            type: float
+                    # rate:
+                    #     default: 0.1
+                    #     getter: # TODO: Figure out how to get input right
+                    #         q: "RAMP:RATE:{ch_id}:{seg:d}?"
+                    #         r: "NULL"
+
+    LakeShore336: 
+        eom:
+            GPIB INSTR:
+                q: "\n"
+                r: "\r\n"
+        error: 
+            status_register:
+                - q: # TODO: Put in correct query
+                  command_error: 32
+                  query_error: 4
+        dialogues:
+            - q: "*IDN?"
+              r: "LakeShore 336 Temperature Controller, simulated version"
+        channels:
+            in:
+                ids: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                can_select: True
+                properties:
+                    temp:
+                        default: 300.0
+                        
+                        getter:
+                            q: "KRDG? {ch_id}"
+                            r: "{:.6f}"
+                        setter:
+                            q: "KRDG {ch_id} {:.6f}"
+                            r: "Temperature on {ch_id} set to {:.6f} (sim)"
+                        specs:
+                            min: 4.0
+                            max: 350.0
+                            type: float
+            out:
+                ids: [1, 2]
+                can_select: True
+                dialogues:
+                    - q: "RAMPST? {ch_id}"
+                      r: 0  # HACK: don't know how to access value--assume done
+                properties:
+                    ramp: # FIXME: Two-element response probably broken
+                        default: [0, 0]
+                        getter:
+                            q: "RAMP? {ch_id}"
+                            r: "{0:d}, {1:.1f}"
+                        setter:
+                            q: "RAMP {ch_id}, {0:d}, {1:.1f}"
+                            r: "Output {ch_id} ramp set to {1:.1f} K/min"
+                        specs:
+                            min: [0, 0]
+                            max: [ 1, 100 ]
+                            type: [int, float]
+                    setpoint:
+                        default: 300
+                        getter:
+                            q: "SETP? {ch_id}"
+                            r: "{:.6f}"
+                        setter:
+                            q: "SETP {ch_id}, {:.6f}"
+                            r: "Output {ch_id} set to {:.6f} K (sim)"
+                        specs:
+                            min: 3
+                            max: 350
+                            type: float
+                    enable_heater:
+                        default: 0
+                        getter:
+                            q: "RANGE? {ch_id}"
+                            r: "{:d}"
+                        setter:
+                            q: "RANGE {ch_id}, {:d}"
+                            r: "Output {ch_id} set to output range {:d} (sim)"
+                        specs:
+                            min: 0
+                            max: 4
+                            type: int
+                    # output_mode:  # FIXME: multi-element probably busted
+                    #     default: {mode: 0, inpt: 0, powup: 0}
+                    #     getter:
+                    #         q: "OUTMODE? {ch_id}"
+                    #         r: "{mode:d}, {inpt:d}, {powup:d}"
+                    #     setter:
+                    #         q: "OUTMODE {ch_id}, {mode:d}, {inpt:d}, {powup:d}"
+                    #         r: "Out {ch_id} set to mode {mode:d} on input {inpt:d}"
+                    #     specs:
+                    #         min: {mode: 0, inpt: 0, powup: 0}
+                    #         max: {mode: 5, inpt: 8, powup: 1}
+                    #         type: {mode: int, inpt: int, powup: int}
+resources:
+    GPIB::12::INSTR:
+        device: Keithley
+    ASRL2:
+        device: AMI430
+    GPIB::11::INSTR:
+        device: LakeShore336
