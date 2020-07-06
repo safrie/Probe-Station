@@ -94,16 +94,16 @@ class vMag(Visa):
             5: 'Formatted Output',
             6: 'Serial Interface',
             7: 'Ethernet Interface'}
-    qtarg_curr = 'curr:targ?\n'
-    qtarg_field = 'field:targ?\n'
-    qramp_segs = 'ramp:rate:seg?\n'
-    qmag_curr = 'curr:mag?\n'
-    qmag_field = 'field:mag?\n'
-    qquench_det = 'qu:det?\n'
-    qvolt_limit = 'volt:lim?\n'
-    qcurr_limit = 'curr:lim?\n'
-    qfield_unit = 'field:unit?\n'
-    qtime_unit = 'ramp:rate:units?\n'
+    qtarg_curr = 'CURR:TARG?'
+    qtarg_field = 'FIELD:TARG?'
+    qramp_segs = 'RAMP:RATE:SEG?'
+    qmag_curr = 'CURR:MAG?'
+    qmag_field = 'FIELD:MAG?'
+    qquench_det = 'QU:DET?'
+    qvolt_limit = 'VOLT:LIM?'
+    qcurr_limit = 'CURR:LIM?'
+    qfield_unit = 'FIELD:UNIT?'
+    qtime_unit = 'RAMP:RATE:UNITS?'
 
     def __init__(self, address: int) -> None:
         """Extend visa_out's init with 430 attributes and check connection."""
@@ -119,17 +119,22 @@ class vMag(Visa):
 
     def write(self, cmd: str) -> None:
         """Extend  write to automatically write to this instrument."""
-        super().write(self.mag, cmd)
+        if self.mag is not None:
+            super().write(self.mag, cmd)
+        else:
+            print('No write--magnet not connected')
 
     def query(self, cmd: str) -> str:
         """Extend query to automatically write to this instrument."""
-        return super().query(self.mag, cmd)
+        if self.mag is not None:
+            return super().query(self.mag, cmd)
+        else:
+            print('No query--magnet not connected')
 
     def check_connected(self, com: int) -> None:
-        # TODO: Fix based on actual listing for this instrument
         """See if instrument at COM in instrument list. If so, open it."""
         magnet_list = [x for x in super().__init__()
-                       if (str(com) and 'COM') in x]
+                       if (str(com) and 'ASRL') in x]
         if not magnet_list:
             self.mag = None
         else:
@@ -138,12 +143,12 @@ class vMag(Visa):
     def set_targ_curr(self, curr: float) -> None:
         # TODO: Test set_targ_curr
         """Create command to set target magnet current in amps."""
-        self.targ_curr_cmd = f'conf:curr:targ {curr}\n'
+        self.targ_curr_cmd = f'CONF:CURR:TARG {curr}'
 
     def set_targ_field(self, field: float) -> None:
         # TODO: Test set_targ_field
         """Create command to set target magnet field in fieldUnits."""
-        self.targ_field_cmd = f'conf:field:targ {field}\n'
+        self.targ_field_cmd = f'CONF:FIELD:TARG {field}'
 
     def set_ramp_segs(self, segs: int) -> None:
         # TODO: Test set_ramp_segs
@@ -156,7 +161,7 @@ class vMag(Visa):
             raise ValueError(
                   'set_ramp_segs: segs must be a positive integer.')
         else:
-            self.ramp_segs_cmd = f'conf:ramp:rate:seg {segs}\n'
+            self.ramp_segs_cmd = f'CONF:RAMP:RATE:SEG {segs}'
 
     def set_rate(self, seg: int, rate: float, upbound: float,
                  unit: str = 'curr') -> None:
@@ -174,7 +179,7 @@ class vMag(Visa):
             raise ValueError('set_rate: unit must be "curr" or "field".')
         else:
             self.rate_cmd = (
-                f'conf:ramp:rate:{unit} {seg},{rate},{upbound}\n')
+                f'CONF:RAMP:RATE:{unit} {seg},{rate},{upbound}')
             self.write(self.rate_cmd)
 
     def qrate(self, seg: int, unit: str) -> str:
@@ -189,18 +194,18 @@ class vMag(Visa):
         elif unit not in valid:
             raise ValueError(f'qrate: unit must be in {valid}.')
         else:
-            return self.query(f'ramp:rate:{unit}:{seg}?\n')
+            return self.query(f'RAMP:RATE:{unit}:{seg}?')
 
     def set_quench_det(self, enable: bool) -> None:
         # TODO: Test set_quench_det
         """Enable/disable automatic INSTRUMENT quench detection."""
-        cmd = f'conf:qu:det {int(enable)}\n'
+        cmd = f'CONF:QU:DET {int(enable)}'
         self.write(cmd)
 
     def qquench_det(self) -> str:
         # TODO: Test qquench_det
         """Return if quench detect enabled on 430 power supply programmer."""
-        return self.query('qu:det?\n')
+        return self.query('QU:DET?')
 
     def set_volt_limit(self, limit: float) -> None:
         # TODO: Test set_volt_limit
@@ -208,7 +213,7 @@ class vMag(Visa):
         if limit < 0:
             raise ValueError('set_volt_limit: limit must be positive.')
         else:
-            cmd = f'conf:volt:lim {limit}\n'
+            cmd = f'CONF:VOLT:LIM {limit}'
             self.write(cmd)
 
     def set_curr_limit(self, limit: float) -> None:
@@ -217,7 +222,7 @@ class vMag(Visa):
         if limit < 0:
             raise ValueError('set_curr_limit: limit must be positive.')
         else:
-            cmd = f'conf:curr:lim {limit}\n'
+            cmd = f'CONF:CURR:LIM {limit}'
             self.write(cmd)
 
     def set_field_unit(self, unit: bool) -> None:
@@ -226,7 +231,7 @@ class vMag(Visa):
 
         0/False sets field to kilogauss; 1/True sets it to tesla.
         """
-        cmd = f'conf:field:units {int(unit)}\n'
+        cmd = f'CONF:FIELD:UNITS {int(unit)}'
         self.write(cmd)
 
     def set_time_unit(self, unit: bool) -> None:
@@ -235,28 +240,28 @@ class vMag(Visa):
 
         0/False sets the time unit to seconds; 1/True sets it to minutes.
         """
-        cmd = f'conf:ramp:rate:units {int(unit)}\n'
+        cmd = f'CONF:RAMP:RATE:UNITS {int(unit)}'
         self.write(cmd)
 
     def ramp(self) -> None:
         # TODO: Test ramp
         """Tell 430 to ramp to target field/current with preset rates."""
-        self.write('ramp\n')
+        self.write('RAMP')
 
     def pause(self) -> None:
         # TODO: Test pause
         """Tell 430 to pause at present field/current."""
-        self.write('pause\n')
+        self.write('PAUSE')
 
     def zero(self) -> None:
         # TODO: Test zero
         """Ramp current down until output current is <0.1% Imax."""
-        self.write('zero\n')
+        self.write('ZERO')
 
     def qstate(self) -> str:
         # TODO: Test qstate
         """Return ramp/general state of instrument."""
-        return self.state_table[self.query('state?\n')]
+        return self.state_table[self.query('STATE?')]
 
     def set_enable_trig(self, mag_volt: bool, mag_curr: bool, mag_field: bool,
                         time: bool, format_out: bool, serial_out: bool,
@@ -273,7 +278,8 @@ class vMag(Visa):
         """
         bw_sum = (1*mag_volt + 2*mag_curr + 4*mag_field + 8*time
                   + 32*format_out + 64*serial_out + 128*ethernet_out)
-        self.enable_trig_cmd = f'*ete {bw_sum}\n'
+        self.enable_trig_cmd = f'*ETE {bw_sum}'
+        self.write(self.enable_trig_cmd)
 
     def qenable_trig(self) -> bin:
         # TODO: Test qenable_trig
@@ -282,14 +288,14 @@ class vMag(Visa):
         The bitstring corresponds to which bits of the register are
         enabled/disabled.
         """
-        return bin(self.query('*ete?\n'))
+        return bin(self.query('*ETE?'))
 
     def trig(self) -> str:
         # TODO: Test trig
         """Trigger output of data to the enabled interfaces."""
-        return self.query('*trg')
+        return self.query('*TRG')
 
     def quench(self, do: bool) -> None:
         # TODO: Test quench
         """Trigger a quench alert to shut down the magnet or clear a quench."""
-        self.write(f'qu {1 if do else 0}')
+        self.write(f'QU {1 if do else 0}')
