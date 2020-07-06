@@ -46,14 +46,15 @@ class vTemp(Visa):
     """
 
     input_idx_switch = {
-            1: 'A',
-            2: 'B',
-            3: 'C',
-            4: 'D1',
-            5: 'D2',
-            6: 'D3',
-            7: 'D4',
-            8: 'D5'}
+        0: None,
+        1: 'A',
+        2: 'B',
+        3: 'C',
+        4: 'D1',
+        5: 'D2',
+        6: 'D3',
+        7: 'D4',
+        8: 'D5'}
 
     def __init__(self, address) -> None:
         """Instantiate VISA control of LakeShore 336 Temperature Controller."""
@@ -67,18 +68,24 @@ class vTemp(Visa):
 
     def write(self, cmd: str) -> None:
         """Extend visa_abc's write_cmd to write to this instrument."""
-        super().write_cmd(self.thermo, cmd)
+        if self.thermo is not None:
+            super().write(self.thermo, cmd)
+        else:
+            print('No write--temperature controller not connected')
 
     def query(self, cmd: str) -> None:
         """Extend visa_abc's query_cmd to write to this instrument."""
-        return super().query_cmd(self.thermo, cmd)
+        if self.thermo() is not None:
+            return super().query(self.thermo, cmd)
+        else:
+            print('No query--temperature controller not connected.')
 
     def check_connected(self, gpib: int) -> None:
         """See if instrument in pyvisa instrument list. If so, open it."""
         thermo_list = [x for x in super().__init__()
                        if (str(gpib) and 'GPIB') in x]
         if not thermo_list:
-            self.thermo = False
+            self.thermo = None
         else:
             self.thermo = self.rm.open_resource(thermo_list[0])
 
@@ -90,10 +97,10 @@ class vTemp(Visa):
         rate in K/min. A rate of 0 will act as if the rate is infinite, and the
         output will try to get where it's going as fast as possible.
         """
-        if out_idx not in BINT1:
+        if out_idx not in (1, 2):
             raise ValueError('set_ramp: out_idx must be 1 or 2.')
             return
-        cmd = f'ramp {out_idx}, {int(enable)}, {rate}'
+        cmd = f'RAMP {out_idx}, {int(enable)}, {rate}'
         if out_idx == 1:
             self.rad_ramp = cmd
         else:
@@ -102,17 +109,17 @@ class vTemp(Visa):
 
     def qramp(self, out_idx: int) -> str:
         """Query the 336 to determine ramp rate for specified output."""
-        if out_idx not in BINT1:
+        if out_idx not in (1, 2):
             raise ValueError('query_ramp: out_idx must be 1 or 2.')
             return
-        cmd = f'ramp? {out_idx}'
+        cmd = f'RAMP? {out_idx}'
         out = self.query(cmd)
         return out
 
     def set_setpt(self, out_idx: int, temp: float) -> None:
         """Change output out_idx setpoint to value (in Kelvin)."""
-        cmd = f'setp {out_idx}, {temp}'
-        if out_idx not in BINT1:
+        cmd = f'SETP {out_idx}, {temp}'
+        if out_idx not in (1, 2):
             raise ValueError('set_setpt: out_idx must be 1 or 2.')
             return
         if out_idx == 1:
@@ -123,10 +130,10 @@ class vTemp(Visa):
 
     def qsetpt(self, out_idx: int) -> str:
         """Query the 336 for the output out_idx's setpoint in Kelvin."""
-        if out_idx not in BINT1:
+        if out_idx not in (1, 2):
             raise ValueError('qsetpt: out_idx must be 1 or 2.')
             return
-        cmd = f'setp? {out_idx}'
+        cmd = f'SETP? {out_idx}'
         out = self.query(cmd)
         return out
 
@@ -138,7 +145,7 @@ class vTemp(Visa):
         if in_idx not in range(1, 9):
             raise ValueError('qtemp: in_idx must be in range(1, 9).')
             return
-        cmd = f'krdg? {self.input_idx_switch[in_idx]}'
+        cmd = f'KRDG? {self.input_idx_switch[in_idx]}'
         out = self.query(cmd)
         return out
 
@@ -149,14 +156,14 @@ class vTemp(Visa):
         4 = Monitor Out, 5 = Warmup Supply. 'Off' is NOT for when you want to
         hold steady at a temperature.
         """
-        if out_idx not in BINT1:
+        if out_idx not in (1, 2):
             raise ValueError('enable_output: out_idx must be 1 or 2.')
             return
         if mode_idx not in range(0, 6):
             raise ValueError('enable_output: mode_idx must be in range(0, 6).')
             return
         in_idx = out_idx + 5
-        cmd = f'outmode {out_idx}, {mode_idx}, {in_idx}, 1'
+        cmd = f'OUTMODE {out_idx}, {mode_idx}, {in_idx}, 1'
         self.write(cmd)
 
     def enable_heater(self, out_idx: int, htr_idx: int) -> None:
@@ -164,12 +171,12 @@ class vTemp(Visa):
 
         Heater modes: 0 = Off, 1 = Low, 2 = Medium, 3 = High.
         """
-        if out_idx not in BINT1:
+        if out_idx not in (1, 2):
             raise ValueError('enable_heater: out_idx must be 1 or 2.')
             return
         if htr_idx not in range(0, 4):
             raise ValueError(
-                f'enable_heater: htr_idx must be in {range(0, 4)}.')
+                f'ENABLE_HEATER: htr_idx must be in {range(0, 4)}.')
             return
-        cmd = f'range {out_idx}, {htr_idx}'
+        cmd = f'RANGE {out_idx}, {htr_idx}'
         self.write(cmd)
