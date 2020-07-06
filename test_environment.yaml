@@ -426,6 +426,14 @@ devices:
         dialogues:
             - q: "*IDN?"
               r: "AMI 430 Power Supply Programmer, simulated version"
+            - q: "RAMP"
+              r: "Ramp started (sim)"
+            - q: "PAUSE"
+              r: "Ramp paused (sim)"
+            - q: "ZERO"
+              r: "Reducing current to 0 (sim)"
+            - q: "*TRG"  # TODO: Verify this is ok output data
+              r: "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
         properties:
             field_unit:
                 default: 1
@@ -450,7 +458,7 @@ devices:
                     valid: [0, 1]
                     type: int
             volt_limit:
-                default: 5
+                default: 2
                 getter:
                     q: "VOLT:LIM?"
                     r: "{:.3f}"
@@ -458,11 +466,11 @@ devices:
                     q: "CONF:VOLT:LIM {:.3f}"
                     r: "Maget voltage limit set to {:.3f} (sim)"
                 specs:
-                    min: 0
+                    min: 0.1
                     max: 5
                     type: float
             curr_lim:
-                default: 100
+                default: 30
                 getter:
                     q: "CURR:LIM?"
                     r: "{:.3f}"
@@ -471,31 +479,121 @@ devices:
                     r: "Magnet current limit set to {:.3f} (sim)"
                 specs:
                     min: 0
-                    max: 100
+                    max: 26.3
                     type: float
+            targ_curr:
+                default: 0
+                getter:
+                    q: "CURR:TARG?"
+                    r: "{:+.3f}"
+                setter:
+                    q: "CONF:CURR:TARG {:+.3f}"
+                    r: "Magnet target current set to {:+.3f}A (sim)"
+                specs:
+                    min: -26.3
+                    max: 26.3
+                    type: float
+            targ_field:
+                default: 0
+                getter:
+                    q: "FIELD:TARG?"
+                    r: "{:+.3f}"
+                setter:
+                    q: "CONF:FIELD:TARG {:+.3f}"
+                    r: "Magnet target field set to {:+.3f} T or kG (sim)"
+                specs:
+                    min: -30.0
+                    max: 30.0
+                    type: float
+            ramp_segs:
+                default: 1
+                getter:
+                    q: "RAMP:RATE:SEG?"
+                    r: "{:d}"
+                setter:
+                    q: "CONF:RAMP:RATE:SEG {:d}"
+                    r: "Magnet ramp segments set to {:d} (sim)"
+                specs:
+                    min: 1
+                    max: 10
+                    type: int
+            enable_trig:
+                default: 0
+                getter:
+                    q: "*ETE?"
+                    r: "{:d}"
+                setter:
+                    q: "*ETE {:d}"
+                    r: "Magnet trigger enable set to {:d} (sim)"
+                specs:
+                    min: 0
+                    max: 239
+                    type: int
+            state:
+                default: 8
+                getter:
+                    q: "STATE?"
+                    r: "{:d}"
+                # TODO: Set state from other commands? Not currently a feature
+                specs:
+                    min: 1
+                    max: 10
+                    type: int
+            quench_detect:
+                default: 1
+                getter:
+                    q: "QU:DET?"
+                    r: "{:d}"
+                setter:
+                    q: "CONF:QU:DET {:d}"
+                    r: "Magnet quench detect set to {:d} (sim)"
+                specs:
+                    valid: [0, 1]
+                    type: int
+            quench:
+                default: 0
+                getter:
+                    q: "QU?"
+                    r: "{:d}"
+                setter:
+                    q: "QU {:d}"
+                    r: "Magnet quench status set to {:d} (sim)"
+                specs:
+                    valid: [0, 1]
+                    type: int
         channels:
-            options:
-                ids: ["CURR", "FIELD"]
+            curr_segs:
+                ids: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                 can_select: True
                 properties:
-                    target:
-                        default: 5
+                    rate:  # FIXME: Figure out how to get numeric input
+                        default: "0.1, 26.3"
                         getter:
-                            q: "{ch_id}:TARG?"
-                            r: "{:+.3f}"
+                            q: "RAMP:RATE:CURR:{ch_id}?"
+                            r: "{:s}"
                         setter:
-                            q: "CONF:{ch_id}:TARG {:+.3f}"
-                            r: "Target {ch_id} set to {:+.3f}"
-                        specs:  # TODO: How to tie in with limit vals?
-                            min: 0
-                            max: 100
-                            type: float
-                    # rate:
-                    #     default: 0.1
-                    #     getter: # TODO: Figure out how to get input right
-                    #         q: "RAMP:RATE:{ch_id}:{seg:d}?"
-                    #         r: "NULL"
-
+                            q: "CONF:RAMP:RATE:CURR {ch_id}, {:s}"
+                            r: >-
+                                Ramp rate, upper bound for seg {ch_id} set to
+                                {:s} A/time, A (sim)
+                        specs:
+                            type: str
+            field_segs:
+                ids: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+                can_select: True
+                properties:
+                    rate:  # FIXME: Figure out how to get numeric input
+                        default: "0.0113, 3"
+                        getter:
+                            q: "RAMP:RATE:FIELD:{ch_id}?"
+                            r: "{:s}"
+                        setter:
+                            q: "CONF:RAMP:RATE:FIELD {ch_id}, {:s}"
+                            r: >-
+                                Ramp rate, upper bound for seg {ch_id} set to
+                                {:s} kG or T/time, kG or T (sim)
+                        specs:
+                            type: str
     LakeShore336: 
         eom:
             GPIB INSTR:
@@ -516,7 +614,6 @@ devices:
                 properties:
                     temp:
                         default: 300.0
-                        
                         getter:
                             q: "KRDG? {ch_id}"
                             r: "{:.6f}"
@@ -534,18 +631,18 @@ devices:
                     - q: "RAMPST? {ch_id}"
                       r: 0  # HACK: don't know how to access value--assume done
                 properties:
-                    ramp: # FIXME: Two-element response probably broken
-                        default: [0, 0]
+                    ramp: # FIXME: Get 2-element numeric input
+                        default: "0, 0"
                         getter:
                             q: "RAMP? {ch_id}"
-                            r: "{0:d}, {1:.1f}"
+                            r: "{:s}"
                         setter:
-                            q: "RAMP {ch_id}, {0:d}, {1:.1f}"
-                            r: "Output {ch_id} ramp set to {1:.1f} K/min"
+                            q: "RAMP {ch_id}, {:s}"
+                            r: >-
+                                Output {ch_id} ramp enable, rate set to {:s}
+                                K/min (sim)
                         specs:
-                            min: [0, 0]
-                            max: [ 1, 100 ]
-                            type: [int, float]
+                            type: str
                     setpoint:
                         default: 300
                         getter:
@@ -570,18 +667,20 @@ devices:
                             min: 0
                             max: 4
                             type: int
-                    # output_mode:  # FIXME: multi-element probably busted
-                    #     default: {mode: 0, inpt: 0, powup: 0}
-                    #     getter:
-                    #         q: "OUTMODE? {ch_id}"
-                    #         r: "{mode:d}, {inpt:d}, {powup:d}"
-                    #     setter:
-                    #         q: "OUTMODE {ch_id}, {mode:d}, {inpt:d}, {powup:d}"
-                    #         r: "Out {ch_id} set to mode {mode:d} on input {inpt:d}"
-                    #     specs:
-                    #         min: {mode: 0, inpt: 0, powup: 0}
-                    #         max: {mode: 5, inpt: 8, powup: 1}
-                    #         type: {mode: int, inpt: int, powup: int}
+                    output_mode:  # FIXME: Get multi-element numeric input
+                        default: "0, 0, 0"
+                        getter:
+                            q: "OUTMODE? {ch_id}"
+                            r: "{:s}"
+                        setter:
+                            q: "OUTMODE {ch_id}, {:s}"
+                            r: >- 
+                                Out {ch_id} set to mode, input, powerup enable
+                                {:s} (sim)
+                        specs:
+                            min: {mode: 0, inpt: 0, powup: 0}
+                            max: {mode: 5, inpt: 8, powup: 1}
+                            type: {mode: int, inpt: int, powup: int}
 resources:
     GPIB::12::INSTR:
         device: Keithley
