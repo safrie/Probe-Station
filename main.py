@@ -27,7 +27,7 @@ import sys
 # from pathlib import Path
 # import inspect
 from ruamel_yaml import YAML
-from qtpy import QtGui, QtWidgets
+from qtpy import QtGui, QtWidgets, QtCore
 from qtpy.QtWidgets import QFileDialog, QMessageBox, QInputDialog, QMainWindow
 # from qtpy.QtGui import QFileDialog, QMessageBox, QInputDialog, QMainWindow
 from typing import Union, Optional, List, Dict
@@ -65,6 +65,13 @@ class Window():
         if hasattr(self.ui, 'setupUi'):
             self.ui.setupUi(self.window)
         self.signals_slots = {}
+
+    # def eventFilter(self, source, event):
+    #     """Print close events, hopefully tell us who called it."""
+    #     if event.type() == QtCore.QEvent.Close:
+    #         title = source.windowTitle()
+    #         print(f'Title = {title}')
+    #         print(super(Window, self).eventFilter(source, event))
 
 
 class ProbeGui(QMainWindow):
@@ -344,6 +351,7 @@ class ProbeGui(QMainWindow):
         # TODO: Test to see if need to alter close_event to make invisible to
         # make this work.
         """Toggle visibility of the Keithley window."""
+        print(f'Type = {type(self.kwind)}')
         if enable is not None:
             self.kwind.window.setVisible(enable)
         else:
@@ -738,7 +746,7 @@ class ProbeGui(QMainWindow):
         """
         armed = self.keith.arm()
         if armed:
-            # ???: Is abort just for testing? It shouldn't disarm after arming?
+            # TODO: Abort just for testing. Delete this after all's good.
             self.keith.visa.write(self.keith.visa.abort_cmd)
         else:
             print("Arming didn't work.  Check the error queue.")
@@ -985,13 +993,15 @@ class ProbeGui(QMainWindow):
             # TODO: Figure out what to do with field3Spinbox (has current step)
             ui.field3Spinbox.setRange(0, bound)
             # TODO: Figure out what to do with field4Spinbox (has current delt)
-            ui.field4Spinbox.setRange((1, max_points) if idx else (0, bound))
+            f4range = (1, max_points) if idx else (0, bound)
+            ui.field4Spinbox.setRange(f4range[0], f4range[1])
         else:
             ui.current1Spinbox.setRange(-max_sb_curr, max_sb_curr)
             ui.current2Spinbox.setRange(-max_sb_curr, max_sb_curr)
             # TODO: Figure out what to do with field3Spinbox (current step)
             ui.field3Spinbox.setRange(-max_sb_curr, max_sb_curr)
-            ui.field4Spinbox.setRange((1, max_points) if idx else (0, bound))
+            f4range = (1, max_points) if idx else (0, bound)
+            ui.field4Spinbox.setRange(f4range[0], f4range[1])
 
     def toggle_keith_for_run(self, running: bool) -> None:
         # TODO: Test toggle_keith_for_run
@@ -1170,7 +1180,7 @@ class ProbeGui(QMainWindow):
             temp.set_setpoint(setpt, 'stage')
             spinbox.setValue(setpt)
         else:
-            temp.set_setpt(spinbox.value(), 'stage')
+            temp.set_setpoint(spinbox.value(), 'stage')
         d1 = {self.set_temp_stage_setpoint: temp.stage_setpoint}
         self.temp_ui_internal.update(d1)
 
@@ -1203,7 +1213,7 @@ class ProbeGui(QMainWindow):
                             ) -> None:
         """Set which temperatures to measure to measured or to UI value."""
         # TODO: Test set_temp_to_measure
-        temp, combobox = self.temp, self.twind.ui.measureTypeCombobox
+        temp, combobox = self.temp, self.twind.ui.measuredTempCombobox
         if measured is not None:
             temp.set_to_measure(measured)
             combobox.setCurrentIndex(temp.to_measure_idx)
