@@ -1,17 +1,15 @@
-#!/usr/bin/env python
-# coding=utf-8
+# -*- coding: utf-8 -*-
 """
 design.py contains all the logic for creating the user interface.
 
 @author: Sarah Friedensen
 """
-# from PyQt5 import QtCore, QtWidgets
-from qtpy import QtCore, QtWidgets
+
+from PyQt5 import QtCore, QtWidgets
 # from PyQt5 import  QtGui
-# from PyQt5.QtWidgets import (QWidget, QFrame, QGridLayout, QVBoxLayout,
-from qtpy.QtWidgets import (QWidget, QFrame, QGridLayout, QVBoxLayout,
-                            QHBoxLayout, QLabel, QLineEdit, QPushButton,
-                            QSpinBox, QDoubleSpinBox, QComboBox, QCheckBox)
+from PyQt5.QtWidgets import (QWidget, QFrame, QGridLayout, QVBoxLayout,
+                             QHBoxLayout, QLabel, QLineEdit, QPushButton,
+                             QSpinBox, QDoubleSpinBox, QComboBox, QCheckBox)
 import pyqtgraph as pg
 import sys
 from typing import Tuple
@@ -205,8 +203,6 @@ class Ui_KeithWindow(Ui_MainWindow):
         closeEvent(event)
     """
 
-    mu = u'\xB5'
-
     def __init__(self):
         super().__init__()
 
@@ -291,9 +287,9 @@ class Ui_KeithWindow(Ui_MainWindow):
         self.sourceRangeCombobox.addItem('2 nA')
         self.sourceRangeCombobox.addItem('20 nA')
         self.sourceRangeCombobox.addItem('200 nA')
-        self.sourceRangeCombobox.addItem(f'2 {self.mu}A')
-        self.sourceRangeCombobox.addItem(f'20 {self.mu}A')
-        self.sourceRangeCombobox.addItem(f'200 {self.mu}A')
+        self.sourceRangeCombobox.addItem('2 \u03BCA')
+        self.sourceRangeCombobox.addItem('20 \u03BCA')
+        self.sourceRangeCombobox.addItem('200 \u03BCA')
         self.sourceRangeCombobox.addItem('2 mA')
         self.sourceRangeCombobox.addItem('20 mA')
         self.sourceRangeCombobox.addItem('100 mA')
@@ -952,15 +948,15 @@ class Ui_SelectWindow(Ui_MainWindow):
 
 
 # if __name__ == "__main__":
-    # app = QtWidgets.QApplication(sys.argv)
-    # PlotWindow = QtWidgets.QMainWindow()
-    # Ui_PlotWindow().setupUi(PlotWindow)
-    # PlotWindow.show()
+#     app = QtWidgets.QApplication(sys.argv)
+#     PlotWindow = QtWidgets.QMainWindow()
+#     Ui_PlotWindow().setupUi(PlotWindow)
+#     PlotWindow.show()
 
     # KeithWindow = QtWidgets.QMainWindow()
     # Ui_KeithWindow().setupUi(KeithWindow)
     # KeithWindow.show()
-
+#
     # MagWindow = QtWidgets.QMainWindow()
     # Ui_MagnetWindow().setupUi(MagWindow)
     # MagWindow.show()
