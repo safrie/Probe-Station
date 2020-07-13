@@ -470,7 +470,7 @@ devices:
                     max: 5
                     type: float
             curr_lim:
-                default: 30
+                default: 26.3
                 getter:
                     q: "CURR:LIM?"
                     r: "{:.3f}"
@@ -478,7 +478,7 @@ devices:
                     q: "CONF:CURR:LIM {:.3f}"
                     r: "Magnet current limit set to {:.3f} (sim)"
                 specs:
-                    min: 0
+                    min: 0.0
                     max: 26.3
                     type: float
             targ_curr:
@@ -678,9 +678,7 @@ devices:
                                 Out {ch_id} set to mode, input, powerup enable
                                 {:s} (sim)
                         specs:
-                            min: {mode: 0, inpt: 0, powup: 0}
-                            max: {mode: 5, inpt: 8, powup: 1}
-                            type: {mode: int, inpt: int, powup: int}
+                            type: str
 resources:
     GPIB::12::INSTR:
         device: Keithley
