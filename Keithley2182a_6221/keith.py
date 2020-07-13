@@ -303,12 +303,12 @@ class Keith(Instrument):
         Returns source_range_type_idx in case it was fed a string and the
         caller wants the index.
         """
-        # TODO: Test source_range_type
+        # TODO: Test set_source_range_type str input
         self.source_range_type_idx = (value if isinstance(value, int)
                                       else self.source_range_type_switch[value]
                                       )
         self.visa.set_source_range(meas_idx=self.meas_type_idx,
-                                   auto=self.source_range_type_idx,
+                                   auto=(not self.source_range_type_idx),
                                    rang=self.source_range(float))
         return self.source_range_type_idx
 
@@ -321,11 +321,11 @@ class Keith(Instrument):
 
         Returns source_range_idx in case input was a float or str.
         """
-        # TODO: Test set_source_range
+        # TODO: Test set_source_range str input
         self.source_range_idx = (value if isinstance(value, int)
                                  else self.source_range_switch[float(value)])
         self.visa.set_source_range(meas_idx=self.meas_type_idx,
-                                   auto=self.source_range_type_idx,
+                                   auto=(not self.source_range_type_idx),
                                    rang=self.source_range(float))
         return self.source_range_idx
 

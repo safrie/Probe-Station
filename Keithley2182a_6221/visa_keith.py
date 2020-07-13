@@ -173,9 +173,7 @@ class vKeith(Visa):
         cmd_1 = (self.source_range_type_cmd_switch[meas_idx]
                  + self.source_range_type_bool_switch[int(auto)][meas_idx])
         cmd_2 = '\n' + f'CURR:RANG {rang}'
-        # BUG: Verify the conditional below will set source range appropriately
         cmd = cmd_1 + ('' if auto else cmd_2)
-        print(cmd)
         self.write(cmd)
 
     def set_meas_rate(self, rate: int) -> None:
