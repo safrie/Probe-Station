@@ -118,7 +118,7 @@ class Keith(Instrument):
         field4_text(optional int)
         source_range_minmax(optional int)
     """
-
+    mu = u'\xb5'
     source_range_type_switch = {
             0: 'Best',
             1: 'Fixed',
@@ -162,9 +162,9 @@ class Keith(Instrument):
             0: '(nA)',
             1: '(nA)',
             2: '(nA)',
-            3: '(uA)',
-            4: '(uA)',
-            5: '(uA)',
+            3: f'({mu}A)',
+            4: f'({mu}A)',
+            5: f'({mu}A)',
             6: '(mA)',
             7: '(mA)',
             8: '(mA)'}
