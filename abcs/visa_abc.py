@@ -45,9 +45,10 @@ class Visa():
         """Open pyvisa resource manager and list connected instruments."""
         # self.rm = visa.ResourceManager()
         self.rm = visa.ResourceManager(f'{simulator}@sim')
+        # self.rm = visa.ResourceManager('@sim')
         self.instruments = self.rm.list_resources()
-        print(self.instruments)
-        return self.instruments
+        # print(self.instruments)
+        # return self.instruments
 
     @abstractmethod
     def check_connected(self) -> None:
@@ -63,14 +64,17 @@ class Visa():
 
     def query(self, instr: visa.Resource, cmd: str) -> Union[str, None]:
         """If instr connected, query cmd and return result."""
-        out = None
-        try:
-            out = instr.query(cmd)
-        except AttributeError:
-            print('Instrument is not connected')
-        finally:
-            print(out)
-            return out
+        out = instr.query(cmd)
+        print(out)
+        # out = None
+        # try:
+        #     out = instr.query(cmd)
+        # except AttributeError:
+        #     print('Instrument is not connected')
+        #     out = None
+        # finally:
+        #     print(out)
+        #     return out
 
     def get_idn(self, instr: visa.Resource) -> None:
         """If instr connected, query its ID and print result."""

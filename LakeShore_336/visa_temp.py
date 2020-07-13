@@ -82,7 +82,7 @@ class vTemp(Visa):
 
     def check_connected(self, gpib: int) -> None:
         """See if instrument in pyvisa instrument list. If so, open it."""
-        thermo_list = [x for x in super().__init__()
+        thermo_list = [x for x in self.instruments
                        if (str(gpib) and 'GPIB') in x]
         if not thermo_list:
             self.thermo = None

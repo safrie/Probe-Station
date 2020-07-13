@@ -133,7 +133,7 @@ class vMag(Visa):
 
     def check_connected(self, com: int) -> None:
         """See if instrument at COM in instrument list. If so, open it."""
-        magnet_list = [x for x in super().__init__()
+        magnet_list = [x for x in self.instruments
                        if (str(com) and 'ASRL') in x]
         if not magnet_list:
             self.mag = None

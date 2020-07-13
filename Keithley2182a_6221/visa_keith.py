@@ -146,6 +146,7 @@ class vKeith(Visa):
 
     def query(self, cmd: str) -> str:
         """Return Keithleys' answer to the query cmd."""
+        print(f'query source = {self.source}')
         if self.source is not None:
             return super().query(self.source, cmd)
         else:
@@ -157,14 +158,17 @@ class vKeith(Visa):
         Also, check to see if 2182a is connected to the 6221 if 6221 found.
         """
         # TODO: Test check_connected
-        source_list = [x for x in super().__init__() if
+        print('Checking K connection')
+        source_list = [x for x in self.instruments if
                        str(addr) in x and 'GPIB' in x]
         if not source_list:
             self.source = False
             print('Keithleys not connected.')
         else:
             self.source = self.rm.open_resource(source_list[0])
-            self.meter_connected = self.query('SOUR:DCON:NVPR?')
+            print(self.source)
+            # self.meter_connected = self.query('SOUR:DCON:NVPR?')
+            # print(f'meter connected = {self.meter_connected}')
 
     def set_source_range(self, meas_idx: int, auto: bool, rang: float) -> None:
         """Set the Keithley source type and range."""
