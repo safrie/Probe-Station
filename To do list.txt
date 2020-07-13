@@ -1,14 +1,16 @@
 To do with program:
 1. Fix Keithley errors
-    a) 'Keith' object has no attribute 'get_source_range_minmax'
-    b) 'Delta' object has no attribute 'field4_text'
-    c) 'PDelta' object has no attribute 'field4_text'
+    a) Unsure if 'Best' source range actually applies it.
     d) on diffcon modify stop current: keith_ui_internal.update(d1) TypeError
         cannot convert dictionary update sequence element #0 to a sequence
-6. Alter/implement config file stuff for changes
-    a) What changes?
+            i) Not replicating?
+    e) "Load" button for config file does nothing
+    f) Some sort of weird print-stuff @ "Pulse Delta Staircase Sweep"
+    g) Also weird print-stuff @ "Pulse Delta Logarithmic Sweep"
+    h) Source range setting generally fucked
+    i) For set_keith_curr1 -> self.keith_ui_internal.update(d1):
+        cannot convert dictionary update sequence element #0 to a sequence
 7. Implement/fix VISA for everything
-    c) Make sure no writes to nonexistent instruments.
 8. Implement input validation
     a) Ranges for all fields in design.py
     b) For setters in keith.py, magnet.py, and temperature.py
@@ -21,14 +23,10 @@ To do with program:
     a) This is loading a calibration file or saving one FOR THE MAGNET
 14. Get graphing up and running
 15. implement Path stuff and replace 'with-open'
-    XXX) w/o to Path('filename').write_text('text')
     b) Determine if self.base and self.ext are still useful.
     c) Determine if header and data methods can be collapsed into _write
 16. Test Keithley measurement
 17. Make sure closeEvents for windows deselect the selwindow buttons
 18. Make instrument testing environment so attribute errors stop
-    XXX) Environment for Keithley2182A
-    XXX) Environment for AMI430
-    XXX) Environment for LakeShore336
-    d) Implement multi-parameter properties? (depends on dev response)
+    a) Implement multi-parameter properties? (depends on dev response)
 19. FZF all TODO's and fix them.

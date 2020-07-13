@@ -88,7 +88,7 @@ class DiffCon(KeithMeasure):
             is the step height.
         curr_step_text: Text for what curr_step represents in labels/headers
         curr_delta: Differential above/below the current step in microamps
-        field4_text: Text for what field4 represents in labels/headers
+        field4_text: Labels Delta current in Diffcon
         meas_rate: Integration rate for the 2182a in PLC
         meas_rate_text: Text for what meas_rate represents in labels/headers
         meas_delay_text: Text for what meas_delay represents in labels/headers

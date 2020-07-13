@@ -116,7 +116,7 @@ class Keith(Instrument):
         curr2_text(optional int)
         field3_text(optional int)
         field4_text(optional int)
-        get_source_range_minmax(optional int)
+        source_range_minmax(optional int)
     """
 
     source_range_type_switch = {
@@ -652,9 +652,13 @@ class Keith(Instrument):
         """Label field4 in UI and headers.  field4 changes with meas_type."""
         if idx is None:
             idx = self.meas_type_idx
-        field4 = self.meas_type(idx).field4_text
-        if field4 is not None and idx == 0:
-            field4 += self.source_range_text()
+        try:
+            field4 = self.meas_type(idx).field4_text
+        except AttributeError:
+            field4 = None
+        else:
+            if idx == 0:
+                field4 += self.source_range_text()
         return field4
 
     def source_range_minmax(self, idx: Optional[int] = None) -> float:

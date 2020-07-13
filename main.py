@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# coding=utf-8
+
 """
 main.py contains the overarching logic for the probe station program.
 
@@ -447,7 +450,7 @@ class ProbeGui(QMainWindow):
         else:
             idx = keith.set_source_range_type(combobox.currentIndex())
         self.update_keith_source_minmax(
-            keith.get_source_range_minmax(keith.source_range_idx))
+            keith.source_range_minmax(keith.source_range_idx))
         d1 = {self.set_keith_source_range_type: idx}
         self.keith_ui_internal.update(d1)
         self.keith_ui_modify[keith.meas_type_idx]()
