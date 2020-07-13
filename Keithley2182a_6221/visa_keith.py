@@ -158,7 +158,6 @@ class vKeith(Visa):
         Also, check to see if 2182a is connected to the 6221 if 6221 found.
         """
         # TODO: Test check_connected
-        print('Checking K connection')
         source_list = [x for x in self.instruments if
                        str(addr) in x and 'GPIB' in x]
         if not source_list:
@@ -166,9 +165,7 @@ class vKeith(Visa):
             print('Keithleys not connected.')
         else:
             self.source = self.rm.open_resource(source_list[0])
-            print(self.source)
-            # self.meter_connected = self.query('SOUR:DCON:NVPR?')
-            # print(f'meter connected = {self.meter_connected}')
+            self.meter_connected = self.query('SOUR:DCON:NVPR?')
 
     def set_source_range(self, meas_idx: int, auto: bool, rang: float) -> None:
         """Set the Keithley source type and range."""
