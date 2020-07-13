@@ -1,15 +1,13 @@
 To do with program:
 1. Fix Keithley errors
-    a) Unsure if 'Best' source range actually applies it.
+    a) source range choices reverse command.
     d) on diffcon modify stop current: keith_ui_internal.update(d1) TypeError
         cannot convert dictionary update sequence element #0 to a sequence
-            i) Not replicating?
-    e) "Load" button for config file does nothing
-    f) Some sort of weird print-stuff @ "Pulse Delta Staircase Sweep"
-    g) Also weird print-stuff @ "Pulse Delta Logarithmic Sweep"
-    h) Source range setting generally fucked
+    e) "Load" and "Save" buttons for config file do nothing
+    f) Some sort of weird print-stuff @ meas type change
     i) For set_keith_curr1 -> self.keith_ui_internal.update(d1):
         cannot convert dictionary update sequence element #0 to a sequence
+    j) Unsure if changing filter type works
 7. Implement/fix VISA for everything
 8. Implement input validation
     a) Ranges for all fields in design.py
@@ -30,3 +28,7 @@ To do with program:
 18. Make instrument testing environment so attribute errors stop
     a) Implement multi-parameter properties? (depends on dev response)
 19. FZF all TODO's and fix them.
+
+
+Current Branch:
+- Implement source range fixes
