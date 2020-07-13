@@ -1,0 +1,34 @@
+name: Probe_station
+channels:
+    - defaults
+    - conda-forge
+dependencies:
+    - flake8
+    - jedi
+    - ipykernel
+    - msgpack-python
+    - mypy
+    - mypy_extensions
+    - neovim
+    - numpy
+    - pip
+    - pycodestyle
+    - pyflakes
+    - pynvim
+    - pyqtgraph
+    - pyside2
+    - python
+    - pyvisa
+    - pyvisa-py
+    - qtconsole
+    - qtpy
+    - ruamel_yaml
+    - scipy
+    - typing_extensions
+
+    - pip:
+        - ansicolor
+        - fbs
+        - neovim-remote
+        - pyvisa-sim
+        - pyyaml
