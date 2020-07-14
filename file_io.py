@@ -11,12 +11,8 @@ Classes:
 @author: sfrie
 """
 
-import os
 from pathlib import Path
 from ruamel_yaml import YAML
-
-
-# print('file_io imports allegedly complete.')
 
 
 class Save():
@@ -39,22 +35,19 @@ class Save():
 
     def __init__(self) -> None:
         """Create the empty attributes for making and saving a file."""
-        # self.name = None
         self.file = None
-        # self.base = None
-        # self.ext = None
         self.data = None
 
-    def new(self, name) -> None:
+    def new(self, name: str) -> None:
         """Specify or create text file in which to save data."""
         self.file = None
         if name:
             Path(name).touch()
             self.file = Path(name)
 
-    # TODO: Determine if _write() can replace both header() and data()
     def _write(self, text: str, mode: str) -> None:
         """Open the file and write information to it."""
+        # TODO: Input validate _write mode
         if self.file is not None:
             with self.file.open(mode) as f:
                 f.write(text)
@@ -96,26 +89,16 @@ class Config():
 
     def __init__(self) -> None:
         """Create empty attributes for loading/saving configuration data."""
-        self.name = None
         self.file = None
         self.params = None
-        # TODO: Determine if self.base and self.ext are necessary
-        self.base = None
-        self.ext = None
         self.new = None
 
-    def load(self, name) -> None:
+    def load(self, file: Path) -> None:
         """Load parameters from a config file.  Currently accepts only YAML."""
-        self.name = name
-        # TODO: Determine if self.params loads properly with the Path object.
-        self.file = Path(self.name)
-        self.params = self.yaml.load(self.file)
+        self.file = file
+        self.params = self.yaml.load(file)
 
-    def save(self, name) -> None:
+    def save(self, file: Path) -> None:
         """Save current parameters to new config file as YAML."""
-        if name[0]:
-            self.name = name
-            self.file = None
-            (self.base, self.ext) = os.path.splitext(name[0])
-            self.file = Path(name[0])
-            self.yaml.dump(self.new, self.file)
+        self.file = file
+        self.yaml.dump(self.new, file)
