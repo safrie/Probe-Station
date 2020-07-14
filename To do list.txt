@@ -8,6 +8,9 @@ To do with program:
         cannot convert dictionary update sequence element #0 to a sequence
     j) Unsure if changing filter type works
 2. Implement/fix VISA for everything
+    a) Keithley
+    b) LakeShore 336
+    c) AMI 430
 3. Implement input validation
     a) Ranges for all fields in design.py
     b) For setters in keith.py, magnet.py, and temperature.py
