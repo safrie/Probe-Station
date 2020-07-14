@@ -47,10 +47,12 @@ class Save():
 
     def _write(self, text: str, mode: str) -> None:
         """Open the file and write information to it."""
-        # TODO: Input validate _write mode
-        if self.file is not None:
+        modes = ('w+', 'w', 'a+', 'a')
+        if self.file is not None and mode in modes:
             with self.file.open(mode) as f:
                 f.write(text)
+        elif mode not in modes:
+            print(f"_write argument mode must be in {modes}")
 
     # def header(self, hdr: str) -> None:
     #     """Open the file and write the header information."""
