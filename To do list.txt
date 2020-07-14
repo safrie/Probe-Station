@@ -14,13 +14,21 @@ To do with program:
 4. Add tooltips to:
     a) set_setpoints button
     b) set_ramps button
-5. Verify all config file stuff
+5. Test config file stuff
+    a) Make sure loading works for:
+        - Keithley
+        - LakeShore 336
+        - AMI 430
+        - All at once
+    b) Make sure saving works for:
+        - Keithley
+        - LakeShore 336
+        - AMI 430
+        - All at once
 6. Update probe_station_params.yaml
 7. Mag calibration stuff
     a) This is loading a calibration file or saving one FOR THE MAGNET
 8. Get graphing up and running
-9. implement Path stuff and replace 'with-open'
-    c) Determine if header and data methods can be collapsed into _write
 10. Test Keithley measurement
 11. Make sure closeEvents for windows deselect the selwindow buttons
 12. Make instrument testing environment so attribute errors stop
