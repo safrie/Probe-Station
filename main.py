@@ -1630,7 +1630,7 @@ class ProbeGui(QMainWindow):
 # %% Configuration File Section
 
     def update_from_config(self, file: Optional[Path] = None,
-                           instr: Optional[str] = None):
+                           instr: Optional[str] = None) -> None:
         """Update internal variables of instr based on config file.
 
         instr can have values 'keith', 'temp', or 'mag'.  An empty value will
@@ -1741,7 +1741,7 @@ class ProbeGui(QMainWindow):
         self.keith.set_filter_count(pdelt_log['filterCount'], meas_idx=4)
         self.update_keith_ui(block=True)
 
-    def get_keith_config(self):
+    def get_keith_config(self) -> Dict:
         """Convert UI configuration from internal variables to YAML."""
         kconfig = self.config.params['Keithley']
         diffconfig = kconfig['diffcon']
@@ -1823,7 +1823,7 @@ class ProbeGui(QMainWindow):
         # self.config.new['Keithley'] = kconfig
         return kconfig
 
-    def load_temp_config(self, params: Dict):
+    def load_temp_config(self, params: Dict) -> None:
         """Load parameters from the 'Temperature' header of the config file."""
         # TODO: Test load_temp_config
         print('temp config allegedly loaded.\n')
@@ -1840,7 +1840,7 @@ class ProbeGui(QMainWindow):
 
         self.update_temp_ui(block=True)
 
-    def get_temp_config(self):
+    def get_temp_config(self) -> Dict:
         """Convert UI parameters to YAML."""
         # TODO: Test get_temp_config
         tconfig = self.config.params['Temperature']
@@ -1856,10 +1856,9 @@ class ProbeGui(QMainWindow):
         tconfig['stageSetpoint'] = temp.stage_setpoint
         tconfig['stageRamp'] = temp.stage_ramp
         tconfig['stagePower'] = temp.stage_power
-        # self.config.new['Temperature'] = tconfig
         return tconfig
 
-    def load_mag_config(self, params: Dict):
+    def load_mag_config(self, params: Dict) -> None:
         """Load parameters from the 'Magnet' header of the config file."""
         # TODO: Write load_mag_config
         self.set_mag_address(params['address'])
@@ -1873,7 +1872,7 @@ class ProbeGui(QMainWindow):
         self.set_mag_volt_limit(params['voltLimit'])
         self.set_mag_curr_limit(params['currLimit'])
 
-    def get_mag_config(self):
+    def get_mag_config(self) -> Dict:
         """Convert the UI to YAML data so it can be saved to a config file."""
         # TODO: Test get_mag_config
         mconfig = self.config.params['Magnet']
@@ -1889,7 +1888,6 @@ class ProbeGui(QMainWindow):
         mconfig['quenchDetect'] = mag.quench_detect
         mconfig['voltLimit'] = mag.volt_limit
         mconfig['currLimit'] = mag.curr_limit
-        # self.config.new['Magnet'] = mconfig
         return mconfig
 
 # %% Save Data Section
