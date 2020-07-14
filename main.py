@@ -1803,6 +1803,15 @@ class ProbeGui(QMainWindow):
     def get_keith_config(self) -> Dict:
         """Convert UI configuration from internal variables to YAML."""
         kconfig = self.config.params['Keithley']
+        kconfig['instrument'] = 'Keithley'
+        kconfig['address'] = self.keith.address
+        kconfig['sourceRangeType'] = self.keith.source_range_type()
+        kconfig['sourceRange'] = self.keith.source_range('float')
+        kconfig['complianceVolt'] = self.keith.compl_volt
+        kconfig['complianceAbort'] = self.keith.compl_abort
+        kconfig['meterRange'] = self.keith.volt_range('float')
+        kconfig['measType'] = self.keith.meas_type_txt()
+
         diffconfig = kconfig['diffcon']
         deltaconfig = kconfig['delta']
         pdconfig = kconfig['pulseDelta']
@@ -1814,15 +1823,7 @@ class ProbeGui(QMainWindow):
         stair = self.keith.meas_type(3)
         log = self.keith.meas_type(4)
 
-        kconfig['address'] = self.keith.address
-        kconfig['measType'] = self.keith.meas_type_txt()
-        kconfig['unit'] = self.keith.unit()
-        kconfig['sourceRangeType'] = self.keith.source_range_type()
-        kconfig['sourceRange'] = self.keith.source_range('float')
-        kconfig['complianceVolt'] = self.keith.compl_volt
-        kconfig['combplianceAbort'] = self.keith.compl_abort
-        kconfig['meterRange'] = self.keith.volt_range('float')
-
+        diffconfig['unit'] = self.keith.unit(0)
         diffconfig['startCurrent'] = diff.curr1
         diffconfig['stopCurrent'] = diff.curr2
         diffconfig['stepCurrent'] = diff.curr_step
@@ -1833,6 +1834,7 @@ class ProbeGui(QMainWindow):
         diffconfig['filterWindow'] = diff.filter_window
         diffconfig['filterCount'] = diff.filter_count
 
+        deltaconfig['unit'] = self.keith.unit(1)
         deltaconfig['highCurrent'] = delta.curr1
         deltaconfig['lowCurrent'] = delta.curr2
         deltaconfig['pulseCount'] = delta.num_points
@@ -1843,6 +1845,7 @@ class ProbeGui(QMainWindow):
         deltaconfig['filterWindow'] = delta.filter_window
         deltaconfig['filterCount'] = delta.filter_count
 
+        pdconfig['unit'] = self.keith.unit(2)
         pdconfig['highCurrent'] = pdelta.curr1
         pdconfig['lowCurrent'] = pdelta.curr2
         pdconfig['pulseCount'] = pdelta.num_points
@@ -1855,6 +1858,7 @@ class ProbeGui(QMainWindow):
         pdconfig['filterWindow'] = pdelta.filter_window
         pdconfig['filterCount'] = pdelta.filter_count
 
+        stairconfig['unit'] = self.keith.unit(3)
         stairconfig['startCurrent'] = stair.curr1
         stairconfig['stopCurrent'] = stair.curr2
         stairconfig['stepCurrent'] = stair.curr_step
@@ -1868,6 +1872,7 @@ class ProbeGui(QMainWindow):
         stairconfig['filterWindow'] = stair.filter_window
         stairconfig['filterCount'] = stair.filter_count
 
+        logconfig['unit'] = self.keith.unit(4)
         logconfig['startCurrent'] = log.curr1
         logconfig['stopCurrent'] = log.curr2
         logconfig['points'] = log.num_points
@@ -1879,7 +1884,6 @@ class ProbeGui(QMainWindow):
         logconfig['filterOn'] = log.filter_on
         logconfig['filterWindow'] = log.filter_window
         logconfig['filterCount'] = log.filter_count
-        # self.config.new['Keithley'] = kconfig
         return kconfig
 
     def load_temp_config(self, params: Dict) -> None:
