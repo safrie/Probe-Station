@@ -1664,7 +1664,39 @@ class ProbeGui(QMainWindow):
                 mparams = self.config.params['Magnet']
                 self.load_mag_config(mparams)
 
-    def load_keith_config(self, params: dict):
+    def save_config(self, file: Optional[str] = None,
+                    instr: Optional[str] = None) -> None:
+        # TODO: Test save_config
+        """Save the current GUI configuration to a config file.
+
+        instr can have values 'keith', 'temp', or 'mag'.  An empty value will
+        save the configuration of all three instruments to the file.
+        """
+        self.config.new = None
+        dispatch = {'keith': ('Keithley', self.kwind, self.get_keith_config),
+                    'temp': ('Temperature', self.twind, self.get_temp_config),
+                    'mag': ('Magnet', self.magwind, self.get_mag_config)}
+        if instr is not None and instr not in dispatch.keys():
+            print(f'save_config: instr must be in {dispatch.keys()}.  '
+                  + 'All params saved.')
+            instr = None
+        if file is None:
+            filename = QFileDialog.getSaveFileName(
+                None,
+                (f'Save {dispatch[instr][0] if instr is not None else ""} '
+                 + 'Configuration'), '', ('YAML (*.yaml *.yml)'))
+            file = Path(filename[0])
+        if file is not None:
+            window = dispatch[instr][1] if instr is not None else self.plwind
+            window.configFile.setText(file.name)
+            if instr is not None:
+                self.config.new[dispatch[instr][0]] = dispatch[instr][2]()
+            else:
+                for inst in dispatch.keys():
+                    self.config.new[dispatch[inst][0]] = dispatch[inst][2]()
+            self.config.save(file)
+
+    def load_keith_config(self, params: dict) -> None:
         """Load parameters from the 'Keithley' header of the config file."""
         print('IV config allegedly loaded.\n')
         self.set_keith_address(params['address'])
