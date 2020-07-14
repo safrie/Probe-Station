@@ -1889,17 +1889,32 @@ class ProbeGui(QMainWindow):
     def load_temp_config(self, params: Dict) -> None:
         """Load parameters from the 'Temperature' header of the config file."""
         # TODO: Test load_temp_config
+        if params['instrument'] != 'LakeShore 336':
+            print('Could not verify correct configuration file.  Please check '
+                  + 'that "instrument" is a field in your config file and that'
+                  + 'it says "LakeShore 336"')
+            return
         print('temp config allegedly loaded.\n')
-        self.set_temp_address(params['address'])
-        self.set_temp_to_measure(params['tempsToMeasure'])
-        self.set_temp_rad_control(params['controlRad'])
-        self.set_temp_rad_setpoint(params['radSetpoint'])
-        self.set_temp_rad_ramp(params['radRamp'])
-        self.set_temp_rad_power(params['radPower'])
-        self.set_temp_stage_control(params['controlStage'])
-        self.set_temp_stage_setpoint(params['stageSetpoint'])
-        self.set_temp_stage_ramp(params['stageRamp'])
-        self.set_temp_stage_power(params['stagePower'])
+        # self.set_temp_address(params['address'])
+        # self.set_temp_to_measure(params['tempsToMeasure'])
+        # self.set_temp_rad_control(params['controlRad'])
+        # self.set_temp_rad_setpoint(params['radSetpoint'])
+        # self.set_temp_rad_ramp(params['radRamp'])
+        # self.set_temp_rad_power(params['radPower'])
+        # self.set_temp_stage_control(params['controlStage'])
+        # self.set_temp_stage_setpoint(params['stageSetpoint'])
+        # self.set_temp_stage_ramp(params['stageRamp'])
+        # self.set_temp_stage_power(params['stagePower'])
+        self.temp.set_address(params.get('address', self.temp.address))
+        self.temp.set_to_measure(params.get('tempsToMeasure', 'all'))
+        self.temp.set_rad_control(params['controlRad'])
+        self.temp.set_setpoint(params['radSetpoint'], 'rad')
+        self.temp.set_ramp(params['radRamp'], 'rad')
+        self.temp.set_power(params['radPower'], 'rad')
+        self.temp.set_stage_control(params['controlStage'])
+        self.temp.set_setpoint(params['stageSetpoint'], 'stage')
+        self.temp.set_ramp(params['stageRamp'], 'stage')
+        self.temp.set_power(params['stagePower'], 'stage')
 
         self.update_temp_ui(block=True)
 

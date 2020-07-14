@@ -118,6 +118,7 @@ Keithley:
         filterCount: 10
 
 Temperature:
+    instrument: 'LakeShore 336'
     # Units are in K/TIME (find out time)
     address: 11
     # 'controlled' temperatures are the stage and rad shield. 'all' is all.
