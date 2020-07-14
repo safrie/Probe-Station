@@ -1924,6 +1924,7 @@ class ProbeGui(QMainWindow):
         tconfig = self.config.params['Temperature']
         temp = self.temp
 
+        tconfig['instrument'] = 'LakeShore 336'
         tconfig['address'] = temp.address
         tconfig['tempsToMeasure'] = temp.to_measure_str
         tconfig['controlRad'] = temp.rad_control
