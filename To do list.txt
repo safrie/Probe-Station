@@ -1,6 +1,5 @@
 To do with program:
 1. Fix Keithley errors
-    a) source range choices reverse command.
     d) on diffcon modify stop current: keith_ui_internal.update(d1) TypeError
         cannot convert dictionary update sequence element #0 to a sequence
     e) "Load" and "Save" buttons for config file do nothing
@@ -8,27 +7,28 @@ To do with program:
     i) For set_keith_curr1 -> self.keith_ui_internal.update(d1):
         cannot convert dictionary update sequence element #0 to a sequence
     j) Unsure if changing filter type works
-7. Implement/fix VISA for everything
-8. Implement input validation
+2. Implement/fix VISA for everything
+3. Implement input validation
     a) Ranges for all fields in design.py
     b) For setters in keith.py, magnet.py, and temperature.py
-9. Add tooltips to:
+4. Add tooltips to:
     a) set_setpoints button
     b) set_ramps button
-10. Verify all config file stuff
-11. Update probe_station_params.yaml
-12. Mag calibration stuff
+5. Verify all config file stuff
+6. Update probe_station_params.yaml
+7. Mag calibration stuff
     a) This is loading a calibration file or saving one FOR THE MAGNET
-14. Get graphing up and running
-15. implement Path stuff and replace 'with-open'
-    b) Determine if self.base and self.ext are still useful.
+8. Get graphing up and running
+9. implement Path stuff and replace 'with-open'
     c) Determine if header and data methods can be collapsed into _write
-16. Test Keithley measurement
-17. Make sure closeEvents for windows deselect the selwindow buttons
-18. Make instrument testing environment so attribute errors stop
+10. Test Keithley measurement
+11. Make sure closeEvents for windows deselect the selwindow buttons
+12. Make instrument testing environment so attribute errors stop
     a) Implement multi-parameter properties? (depends on dev response)
-19. FZF all TODO's and fix them.
+13. FZF all TODO's and fix them.
+14. Create get_data function in magnet.py
+15. Create run function in magnet.py
+16. Create get_header_string function in magnet.py and temperature.py
 
 
-Current Branch:
-- Implement source range fixes
+Current Branch: Path

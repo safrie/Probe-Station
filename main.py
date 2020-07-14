@@ -763,7 +763,7 @@ class ProbeGui(QMainWindow):
         self.toggle_keith_for_run(False)
         ui.startButton.setChecked(False)
         print(f'Keithley data length: {len(self.ksdata_rows)}')
-        self.save.data(self.kdata_str)
+        self.save._write(self.kdata_str, 'w')
 
     def stop_keith(self) -> None:
         # TODO: Test stop_keith
@@ -776,7 +776,7 @@ class ProbeGui(QMainWindow):
         print(f'Keithley data length: {len(self.ksdata_rows)}')
         self.krunning = False
         ui.startButton.setChecked(False)
-        self.save.data(self.kdata_str)
+        self.save._write(self.kdata_str, 'w')
 
     def update_keith_ui(self, block: bool = False) -> None:
         # TODO: Test update_keith_ui
@@ -1246,7 +1246,7 @@ class ProbeGui(QMainWindow):
         self.toggle_temp_for_run(False)
         ui.startButton.setChecked(False)
         print(f'Temperature data length: {len(self.tsdata_rows)}')
-        self.save.data(self.tdata_str)
+        self.save._write(self.tdata_str, 'w')
 
     def stop_temp(self) -> None:
         # TODO: Test stop_temp
@@ -1254,7 +1254,7 @@ class ProbeGui(QMainWindow):
         ui = self.twind.ui
         self.toggle_temp_for_run(False)
         ui.startButton.setChecked(False)
-        self.save.data(self.tdata_str)
+        self.save._write(self.tdata_str, 'w')
 
     def update_temp_ui(self) -> None:
         """Update the UI so temperature values correspond to internal vars."""
@@ -1895,7 +1895,7 @@ class ProbeGui(QMainWindow):
     def save_data_as(self):
         """Open dialog box to set/create text file in which to save data."""
         name = QFileDialog.getSaveFileName(None, 'Title', '', 'TXT (*.txt)')
-        self.save.new(name)
+        self.save.new(name[0])
         if name[0]:
             # TODO: Implement UI update.
             pass

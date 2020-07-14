@@ -39,40 +39,38 @@ class Save():
 
     def __init__(self) -> None:
         """Create the empty attributes for making and saving a file."""
-        self.name = None
+        # self.name = None
         self.file = None
-        self.base = None
-        self.ext = None
+        # self.base = None
+        # self.ext = None
         self.data = None
 
     def new(self, name) -> None:
         """Specify or create text file in which to save data."""
-        self.name = None
-        if name[0]:
-            self.name = name
-            # self.file = open(self.name[0], 'w+')
-            self.file = Path(self.name[0])
-            (self.base, self.ext) = os.path.splitext(name[0])
-            self.file.close()
+        self.file = None
+        if name:
+            Path(name).touch()
+            self.file = Path(name)
 
     # TODO: Determine if _write() can replace both header() and data()
-    def _write(self, text: str) -> None:
+    def _write(self, text: str, mode: str) -> None:
         """Open the file and write information to it."""
-        if self.name[0] is not None:
-            self.file.write_text(text)
+        if self.file is not None:
+            with self.file.open(mode) as f:
+                f.write(text)
 
-    def header(self, hdr: str) -> None:
-        """Open the file and write the header information."""
-        if self.name[0] is not None:
-            self.file.write_text(hdr)
-        # if self.name[0] is not None:
-        #     with open(self.name[0], 'a') as self.file:
-        #         self.file.write(hdr)
+    # def header(self, hdr: str) -> None:
+    #     """Open the file and write the header information."""
+    #     if self.name[0] is not None:
+    #         self.file.write_text(hdr)
+    #     # if self.name[0] is not None:
+    #     #     with open(self.name[0], 'a') as self.file:
+    #     #         self.file.write(hdr)
 
-    def data(self, data: str) -> None:
-        """Open the file and write the data to it."""
-        if self.name[0] is not None:
-            self.file.write_text(data)
+    # def data(self, data: str) -> None:
+    #     """Open the file and write the data to it."""
+    #     if self.name[0] is not None:
+    #         self.file.write_text(data)
             # with open(self.name[0], 'a') as self.file:
             #     self.file.write(data)
 
