@@ -1,4 +1,5 @@
 Keithley:
+    instrument: 'Keithley'
     address: 12
 
     # Measurement optios are:

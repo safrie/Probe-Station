@@ -423,16 +423,16 @@ class ProbeGui(QMainWindow):
         print(self.keith_ui_internal)  # Testing print
         self.keith_ui_modify[idx]()
 
-    def set_keith_unit(self, idx: Optional[int] = None,
+    def set_keith_unit(self, unit: Optional[Union[int, str]] = None,
                        meas_idx: Optional[int] = None) -> None:
         # TODO: Test set_keith_unit
         """Set the units for the current IV measurement type."""
         combobox = self.kwind.ui.unitsCombobox
         (keith, meas) = (self.keith, self.keith.meas_type(meas_idx))
-        if idx is not None:
-            keith.set_unit(idx, meas_idx)
+        if unit is not None:
+            keith.set_unit(unit, meas_idx)
             if (meas_idx is None or meas_idx == keith.meas_type_idx):
-                combobox.setCurrentIndex(idx)
+                combobox.setCurrentIndex(unit)
         else:
             keith.set_unit(combobox.currentIndex(), meas_idx)
         d1 = {self.set_keith_unit: meas.unit_idx}
@@ -1698,79 +1698,106 @@ class ProbeGui(QMainWindow):
 
     def load_keith_config(self, params: dict) -> None:
         """Load parameters from the 'Keithley' header of the config file."""
+        # Intended to be passed param['Keithley'] or a dict of just Keithley
+        if params['instrument'] != 'Keithley':
+            print('Could not verify correct configuration file. Please check '
+                  + 'that "instrument" is a field in your config file and that'
+                  + ' it says "Keithley"')
+            return
         print('IV config allegedly loaded.\n')
-        self.set_keith_address(params['address'])
-        self.set_keith_meas_type(params['measType'])
-        self.set_keith_unit(params['unit'])
-        self.set_keith_source_range_type(params['sourceRangeType'])
-        self.set_keith_source_range(params['sourceRange'])
-        self.set_keith_compliance(params['complianceVolt'])
-        self.set_keith_compliance_abort(params['complianceAbort'])
-        self.set_keith_volt_range(params['meterRange'])
+        # self.set_keith_address(params['address'])
+        # self.set_keith_source_range_type(params['sourceRangeType'])
+        # self.set_keith_source_range(params['sourceRange'])
+        # self.set_keith_compliance(params['complianceVolt'])
+        # self.set_keith_compliance_abort(params['complianceAbort'])
+        # self.set_keith_volt_range(params['meterRange'])
+        # self.set_keith_meas_type(params['measType'])
+        # self.set_keith_unit(params['unit'], self.keith.meas_type_idx)
+        self.keith.set_address(
+            params.get('address', self.keith.address))
+        self.keith.set_keith_source_range_type(
+            params.get('sourceRangeType', self.keith.source_range_type_idx))
+        self.keith.set_source_range(
+            params.get('sourceRange', self.keith.source_range_idx))
+        self.keith.set_keith_compliance(
+            params.get('complianceVolt', self.keith.compl_volt))
+        self.keith.set_keith_compliance_abort(
+            params.get('complianceAbort', self.keith.compl_abort))
+        self.keith.set_volt_range(
+            params.get('meterRange', self.keith.volt_range_idx))
+        self.keith.set_meas_type(
+            params.get('measType', self.keith.meas_type_text()))
 
-        diff = params['diffCon']
-        self.keith.set_curr1(diff['startCurrent'], meas_idx=0)
-        self.keith.set_curr2(diff['stopCurrent'], meas_idx=0)
-        self.keith.set_curr_step(diff['stepCurrent'], meas_idx=0)
-        self.keith.set_curr_delta(diff['deltaCurrent'], meas_idx=0)
-        self.keith.set_meas_rate(diff['measRate'], meas_idx=0)
-        self.keith.set_meas_delay(diff['measDelay'], meas_idx=0)
-        self.keith.set_filter(diff['filterOn'], meas_idx=0)
-        self.keith.set_filter_window(diff['filterWindow'], meas_idx=0)
-        self.keith.set_filter_count(diff['filterCount'], meas_idx=0)
+        diff = params.get('diffCon', None)
+        if diff is not None:
+            self.keith.set_unit(diff['unit'], meas_idx=0)
+            self.keith.set_curr1(diff['startCurrent'], meas_idx=0)
+            self.keith.set_curr2(diff['stopCurrent'], meas_idx=0)
+            self.keith.set_curr_step(diff['stepCurrent'], meas_idx=0)
+            self.keith.set_curr_delta(diff['deltaCurrent'], meas_idx=0)
+            self.keith.set_meas_rate(diff['measRate'], meas_idx=0)
+            self.keith.set_meas_delay(diff['measDelay'], meas_idx=0)
+            self.keith.set_filter(diff['filterOn'], meas_idx=0)
+            self.keith.set_filter_window(diff['filterWindow'], meas_idx=0)
+            self.keith.set_filter_count(diff['filterCount'], meas_idx=0)
 
-        delta = params['delta']
+        delta = params.get('delta', None)
+        if delta is not None:
+            self.keith.set_unit(delta['unit'], meas_idx=1)
+            self.keith.set_curr1(delta['highCurrent'], meas_idx=1)
+            self.keith.set_curr2(delta['lowCurrent'], meas_idx=1)
+            self.keith.set_num_points(delta['pulseCount'], meas_idx=1)
+            self.keith.set_meas_rate(delta['measRate'], meas_idx=1)
+            self.keith.set_meas_delay(delta['measDelay'], meas_idx=1)
+            self.keith.set_filter(delta['filterOn'], meas_idx=1)
+            self.keith.set_filter_idx(delta['filterType'], meas_idx=1)
+            self.keith.set_filter_window(delta['filterWindow'], meas_idx=1)
+            self.keith.set_filter_count(delta['filterCount'], meas_idx=1)
 
-        self.keith.set_curr1(delta['highCurrent'], meas_idx=1)
-        self.keith.set_curr2(delta['lowCurrent'], meas_idx=1)
-        self.keith.set_num_points(delta['pulseCount'], meas_idx=1)
-        self.keith.set_meas_rate(delta['measRate'], meas_idx=1)
-        self.keith.set_meas_delay(delta['measDelay'], meas_idx=1)
-        self.keith.set_filter(delta['filterOn'], meas_idx=1)
-        self.keith.set_filter_idx(delta['filterType'], meas_idx=1)
-        self.keith.set_filter_window(delta['filterWindow'], meas_idx=1)
-        self.keith.set_filter_count(delta['filterCount'], meas_idx=1)
+        pdelta = params.get('pulseDelta', None)
+        if pdelta is not None:
+            self.keith.set_unit(pdelta['unit'], meas_idx=2)
+            self.keith.set_curr1(pdelta['highCurrent'], meas_idx=2)
+            self.keith.set_curr2(pdelta['lowCurrent'], meas_idx=2)
+            self.keith.set_num_points(pdelta['pulseCount'], meas_idx=2)
+            self.keith.set_meas_rate(pdelta['cycleInt'], meas_idx=2)
+            self.keith.set_meas_delay(pdelta['measDelay'], meas_idx=2)
+            self.keith.set_low_meas(pdelta['lowMeas'], meas_idx=2)
+            self.keith.set_filter(pdelta['filterOn'], meas_idx=2)
+            self.keith.set_filter_idx(pdelta['filterType'], meas_idx=2)
+            self.keith.set_filter_window(pdelta['filterWindow'], meas_idx=2)
+            self.keith.set_filter_count(pdelta['filterCount'], meas_idx=2)
 
-        pdelta = params['pulseDelta']
+        pdelt_stair = params.get('pDeltStair', None)
+        if pdelt_stair is not None:
+            self.keith.set_unit(pdelt_stair['unit'], meas_idx=3)
+            self.keith.set_curr1(pdelt_stair['startCurrent'], meas_idx=3)
+            self.keith.set_curr2(pdelt_stair['stopCurrent'], meas_idx=3)
+            self.keith.set_curr_step(pdelt_stair['stepCurrent'], meas_idx=3)
+            self.keith.set_num_sweeps(pdelt_stair['sweeps'], meas_idx=3)
+            self.keith.set_pulse_width(pdelt_stair['pulseWidth'], meas_idx=3)
+            self.keith.set_meas_rate(pdelt_stair['cycleTime'], meas_idx=3)
+            self.keith.set_meas_delay(pdelt_stair['measDelay'], meas_idx=3)
+            self.keith.set_low_meas(pdelt_stair['lowMeas'], meas_idx=3)
+            self.keith.set_filter(pdelt_stair['filterOn'], meas_idx=3)
+            self.keith.set_filter_window(pdelt_stair['filterWindow'],
+                                         meas_idx=3)
+            self.keith.set_filter_count(pdelt_stair['filterCount'], meas_idx=3)
 
-        self.keith.set_curr1(pdelta['highCurrent'], meas_idx=2)
-        self.keith.set_curr2(pdelta['lowCurrent'], meas_idx=2)
-        self.keith.set_num_points(pdelta['pulseCount'], meas_idx=2)
-        self.keith.set_meas_rate(pdelta['cycleInt'], meas_idx=2)
-        self.keith.set_meas_delay(pdelta['measDelay'], meas_idx=2)
-        self.keith.set_low_meas(pdelta['lowMeas'], meas_idx=2)
-        self.keith.set_filter(pdelta['filterOn'], meas_idx=2)
-        self.keith.set_filter_idx(pdelta['filterType'], meas_idx=2)
-        self.keith.set_filter_window(pdelta['filterWindow'], meas_idx=2)
-        self.keith.set_filter_count(pdelta['filterCount'], meas_idx=2)
-
-        pdelt_stair = params['pDeltStair']
-
-        self.keith.set_curr1(pdelt_stair['startCurrent'], meas_idx=3)
-        self.keith.set_curr2(pdelt_stair['stopCurrent'], meas_idx=3)
-        self.keith.set_curr_step(pdelt_stair['stepCurrent'], meas_idx=3)
-        self.keith.set_num_sweeps(pdelt_stair['sweeps'], meas_idx=3)
-        self.keith.set_pulse_width(pdelt_stair['pulseWidth'], meas_idx=3)
-        self.keith.set_meas_rate(pdelt_stair['cycleTime'], meas_idx=3)
-        self.keith.set_meas_delay(pdelt_stair['measDelay'], meas_idx=3)
-        self.keith.set_low_meas(pdelt_stair['lowMeas'], meas_idx=3)
-        self.keith.set_filter(pdelt_stair['filterOn'], meas_idx=3)
-        self.keith.set_filter_window(pdelt_stair['filterWindow'], meas_idx=3)
-        self.keith.set_filter_count(pdelt_stair['filterCount'], meas_idx=3)
-
-        pdelt_log = params['pDeltLog']
-
-        self.keith.set_curr1(pdelt_log['startCurrent'], meas_idx=4)
-        self.keith.set_curr2(pdelt_log['stopCurrent'], meas_idx=4)
-        self.keith.set_num_points(pdelt_log['points'], meas_idx=4)
-        self.keith.set_num_sweeps(pdelt_log['sweeps'], meas_idx=4)
-        self.keith.set_pulse_width(pdelt_log['pulseWidth'], meas_idx=4)
-        self.keith.set_meas_rate(pdelt_log['cycleTime'], meas_idx=4)
-        self.keith.set_meas_delay(pdelt_log['measDelay'], meas_idx=4)
-        self.keith.set_low_meas(pdelt_log['lowMeas'], meas_idx=4)
-        self.keith.set_filter(pdelt_log['filterOn'], meas_idx=4)
-        self.keith.set_filter_window(pdelt_log['filterWindow'], meas_idx=4)
-        self.keith.set_filter_count(pdelt_log['filterCount'], meas_idx=4)
+        pdelt_log = params.get('pDeltLog', None)
+        if pdelt_log is not None:
+            self.keith.set_unit(pdelt_log['unit'], meas_idx=4)
+            self.keith.set_curr1(pdelt_log['startCurrent'], meas_idx=4)
+            self.keith.set_curr2(pdelt_log['stopCurrent'], meas_idx=4)
+            self.keith.set_num_points(pdelt_log['points'], meas_idx=4)
+            self.keith.set_num_sweeps(pdelt_log['sweeps'], meas_idx=4)
+            self.keith.set_pulse_width(pdelt_log['pulseWidth'], meas_idx=4)
+            self.keith.set_meas_rate(pdelt_log['cycleTime'], meas_idx=4)
+            self.keith.set_meas_delay(pdelt_log['measDelay'], meas_idx=4)
+            self.keith.set_low_meas(pdelt_log['lowMeas'], meas_idx=4)
+            self.keith.set_filter(pdelt_log['filterOn'], meas_idx=4)
+            self.keith.set_filter_window(pdelt_log['filterWindow'], meas_idx=4)
+            self.keith.set_filter_count(pdelt_log['filterCount'], meas_idx=4)
         self.update_keith_ui(block=True)
 
     def get_keith_config(self) -> Dict:
