@@ -1629,7 +1629,7 @@ class ProbeGui(QMainWindow):
 
 # %% Configuration File Section
 
-    def update_from_config(self, file: Optional[str] = None,
+    def update_from_config(self, file: Optional[Path] = None,
                            instr: Optional[str] = None):
         """Update internal variables of instr based on config file.
 
@@ -1637,33 +1637,31 @@ class ProbeGui(QMainWindow):
         update all internal variables.
         """
         # TODO: Test update_from_config
-        self.config.name = None
         dispatch = {'keith': ('Keithley', self.kwind, self.load_keith_config),
                     'temp': ('Temperature', self.twind, self.load_temp_config),
                     'mag': ('Magnet', self.magwind, self.load_mag_config)}
         if instr is not None and instr not in dispatch.keys():
-            raise ValueError('update_from_config: instr must be in'
-                             f'{dispatch.keys()}.  All params loaded.')
+            print('update_from_config: instr must be in '
+                  + f'{dispatch.keys()}.  All params loaded.')
             instr = None
         if file is None:
             filename = QFileDialog.getOpenFileName(
                     None,
                     (f'Load {dispatch[instr][0] if instr is not None else ""} '
-                     'Configuration'), '', ('YAML (*.yaml)'))
-            file = filename[0]
+                     'Configuration'), '', ('YAML (*.yaml *.yml)'))
+            file = Path(filename[0])
         if file is not None:
             self.config.load(file)
             window = dispatch[instr][1] if instr is not None else self.plwind
-            window.configFile.setText(file)
+            window.configFile.setText(file.name)
             if instr is not None:
-                params = self.config.params[dispatch[instr][0]]
-                dispatch[instr][2](params)
+                dispatch[instr][2](self.config.params[dispatch[instr][0]])
             else:
                 kparams = self.config.params['Keithley']
-                tparams = self.config.params['Temperature']
-                mparams = self.config.params['Magnet']
                 self.load_keith_config(kparams)
+                tparams = self.config.params['Temperature']
                 self.load_temp_config(tparams)
+                mparams = self.config.params['Magnet']
                 self.load_mag_config(mparams)
 
     def load_keith_config(self, params: dict):
@@ -1677,8 +1675,8 @@ class ProbeGui(QMainWindow):
         self.set_keith_compliance(params['complianceVolt'])
         self.set_keith_compliance_abort(params['complianceAbort'])
         self.set_keith_volt_range(params['meterRange'])
-        diff = params['diffCon']
 
+        diff = params['diffCon']
         self.keith.set_curr1(diff['startCurrent'], meas_idx=0)
         self.keith.set_curr2(diff['stopCurrent'], meas_idx=0)
         self.keith.set_curr_step(diff['stepCurrent'], meas_idx=0)
@@ -1822,8 +1820,8 @@ class ProbeGui(QMainWindow):
         logconfig['filterOn'] = log.filter_on
         logconfig['filterWindow'] = log.filter_window
         logconfig['filterCount'] = log.filter_count
-
-        self.config.new['Keithley'] = kconfig
+        # self.config.new['Keithley'] = kconfig
+        return kconfig
 
     def load_temp_config(self, params: Dict):
         """Load parameters from the 'Temperature' header of the config file."""
@@ -1858,6 +1856,8 @@ class ProbeGui(QMainWindow):
         tconfig['stageSetpoint'] = temp.stage_setpoint
         tconfig['stageRamp'] = temp.stage_ramp
         tconfig['stagePower'] = temp.stage_power
+        # self.config.new['Temperature'] = tconfig
+        return tconfig
 
     def load_mag_config(self, params: Dict):
         """Load parameters from the 'Magnet' header of the config file."""
@@ -1889,6 +1889,8 @@ class ProbeGui(QMainWindow):
         mconfig['quenchDetect'] = mag.quench_detect
         mconfig['voltLimit'] = mag.volt_limit
         mconfig['currLimit'] = mag.curr_limit
+        # self.config.new['Magnet'] = mconfig
+        return mconfig
 
 # %% Save Data Section
 
