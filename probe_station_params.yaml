@@ -2,19 +2,20 @@ Keithley:
     instrument: 'Keithley'
     address: 12
 
-    # Measurement optios are:
-    # 'diffCon', 'delta', 'pulseDelta', 'pDeltStair', and 'pDeltLog'
-    measType: 'diffCon'
     # Range options are 'Best' and 'Fixed'
     sourceRangeType: 'Best'
     # Source range options are:
-    # 2e-9, 20e-9, 200e-9, 2e-6, 20e-6, 200e-6, 2e-3, 20e-3, 100e-3 A
-    sourceRange: 20e-6
+    # 2.e-9, 20.e-9, 200.e-9, 2.0e-6, 20.e-6, 200.e-6, 2.e-3, 20.e-3, 100.e-3 A
+    sourceRange: 20.0e-6
     complianceVolt: 10.00
     complianceAbort: false
     # Voltmeter range options are 10e-3, 100e-3, 1.0, 10.0, 100.0 V
     meterRange: 10e-3
     
+    # Measurement options are:
+    # 'diffCon', 'delta', 'pulseDelta', 'pDeltStair', and 'pDeltLog'
+    measType: 'diffCon'
+
     diffCon:
         # Unit options are 'volts', 'siemens', 'ohms', 'avgW', and 'peakW'.
         unit: 'volts'
@@ -81,6 +82,7 @@ Keithley:
         stopCurrent: 10.00
         stepCurrent: 0.10
         # points is calculated in the program. DO NOT CHANGE
+        # TODO: Do I really need this?
         points: 0
         sweeps: 1
         # Pulse width in us
@@ -122,7 +124,8 @@ Temperature:
     # Units are in K/TIME (find out time)
     address: 11
     # 'controlled' temperatures are the stage and rad shield. 'all' is all.
-    tempsToMeasure: 'controlled'
+    # 'none' is none.
+    measure: 'controlled'
     controlRad: false
     radSetpoint: 300
     radRamp: 0
@@ -133,25 +136,28 @@ Temperature:
     stagePower: 0
 
 Magnet:
+    instrument: 'AMI 430'
+    address: 2
     # Boolean for whether or not to measure magnet while ramping
     measure: True
-    address: 2
-    # Number of discrete segments you want to define unique ramp rates along
-    # the magnet range
-    segs: 4
+
     # Options are 'Amps', 'Tesla', and 'Kilogauss'
     fieldUnit: 'Amps'
     # Options are 'Seconds' and 'Minutes'
     timeUnit: 'Minutes'
-    # Path to calibration curve file (optional, not recommended.)
-    calibrationFile: None
-    # Magnet target field or current in fieldUnit.
-    target: 1
+
+    # Number of segments for which you want to define unique ramp rates along
+    # magnet range
+    segs: 4
     # Magnet setpoints in fieldUnit for upper bounds on each ramp segment.
     rampSetpoints: [0.5, 1, 2, 3]
     # Ramp rates are in fieldUnit/timeUnit. These are the ramp rates for the
     # segments defined by rampSetpoints.
     rampRates: [0.5, 0.5, 0.5, 0.5]
+    
+    # Magnet target field or current in fieldUnit.
+    target: 1
+
     quenchDetect: true
     # Temperature in K at which magnet is in danger of quenching.
     # Factory value is 6.5K. Not currently implemented.
@@ -159,3 +165,6 @@ Magnet:
 
     voltLimit: 100
     currLimit: 60
+
+    # Path to calibration curve file (optional, not recommended.)
+    calibrationFile: None

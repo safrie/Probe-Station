@@ -1,23 +1,56 @@
 To do with program:
-1. Fix Keithley errors
-    d) on diffcon modify stop current: keith_ui_internal.update(d1) TypeError
+• Fix Keithley Errors/Issues
+    a) on diffcon modify stop current: keith_ui_internal.update(d1) TypeError
         cannot convert dictionary update sequence element #0 to a sequence
-    e) "Load" and "Save" buttons for config file do nothing
-    f) Some sort of weird print-stuff @ meas type change
-    i) For set_keith_curr1 -> self.keith_ui_internal.update(d1):
+    b) "Load" and "Save" buttons for config file do nothing
+    c) Some sort of weird print-stuff @ meas type change
+    d) For set_keith_curr1 -> self.keith_ui_internal.update(d1):
         cannot convert dictionary update sequence element #0 to a sequence
-    j) Unsure if changing filter type works
-2. Implement/fix VISA for everything
-    a) Keithley
-    b) LakeShore 336
-    c) AMI 430
-3. Implement input validation
-    a) Ranges for all fields in design.py
-    b) For setters in keith.py, magnet.py, and temperature.py
-4. Add tooltips to:
+    e) Unsure if changing filter type works
+    f) Test measurement with dummy resistor
+    g) Implement input validation
+        - design.py
+        - setters in keith.py
+    h) Fix any VISA issues
+• Fix AMI 430 Errors/Issues
+    a) On open of Magwindow, for spinbox.setValue(targ), targ is the bound
+       method Mag.set_target, not an actual numerical value
+    b) Implement logic for 'Record magnetic field' present in GUI but not
+       elsewhere in program
+        - Class variable in magnet.py
+        - Signal/slot in main.py
+        - Config file in main.py
+    c) Get mag calibration file stuff up and running (low priority)
+        - This is for loading/saving calibration curves FOR THE MAGNET
+    d) Create get_header_string method
+        - This is related to set_enable_trig and qenable_trig methods
+    e) Fix any VISA issues
+    f) Input validation
+        - design.py
+        - magnet.py
+• Fix LakeShore 336 Errors/Issues
+    a) Implement GUI and YAML control over wait time between measurements
+        - Class variable in temperature.py
+        - DoubleSpinBox and label in design.py
+        - Signal/Slot in main.py
+        - Config file in main.py
+        - Config file in probe_station_params
+    b) Implement logic for 'Record Temperature' present in GUI but not
+       elsewhere in program
+        - Class variable in temperature.py
+        - Signal/slot in main.py
+        - Setter in main.py
+        - Config file in main.py
+        - Config file in probe_station_params
+    c) Create get_header_string method
+    d) Fix any VISA issues
+    e) Input validation
+        - design.py
+        - setters in temperature.py
+• Add tooltips to:
     a) set_setpoints button
     b) set_ramps button
-5. Test config file stuff
+• Test config file stuff
     a) Make sure loading works for:
         - Keithley
         - LakeShore 336
@@ -28,18 +61,11 @@ To do with program:
         - LakeShore 336
         - AMI 430
         - All at once
-6. Update probe_station_params.yaml
-7. Mag calibration stuff
-    a) This is loading a calibration file or saving one FOR THE MAGNET
-8. Get graphing up and running
-10. Test Keithley measurement
-11. Make sure closeEvents for windows deselect the selwindow buttons
-12. Make instrument testing environment so attribute errors stop
+•* Update probe_station_params.yaml
+• Get graphing up and running
+• Make sure closeEvents for windows deselect the selwindow buttons
+• Make instrument testing environment so attribute errors stop
     a) Implement multi-parameter properties? (depends on dev response)
-13. FZF all TODO's and fix them.
-14. Create get_data function in magnet.py
-15. Create run function in magnet.py
-16. Create get_header_string function in magnet.py and temperature.py
+• FZF all TODO's and fix them.
 
-
-Current Branch: Path
+Current Branch: file-io

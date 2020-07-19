@@ -29,7 +29,7 @@ import sys
 
 # from pathlib import Path
 # import inspect
-from ruamel_yaml import YAML
+# from ruamel_yaml import YAML
 from qtpy import QtGui, QtWidgets, QtCore
 from qtpy.QtWidgets import QFileDialog, QMessageBox, QInputDialog, QMainWindow
 # from qtpy.QtGui import QFileDialog, QMessageBox, QInputDialog, QMainWindow
@@ -376,18 +376,18 @@ class ProbeGui(QMainWindow):
         self.keith_ui_internal.update(d1)
 
     def set_keith_meas_type(self,
-                            idx: Optional[Union[int, str]] = None) -> None:
+                            typ: Optional[Union[int, str]] = None) -> None:
         # TODO: Test set_keith_meas_type
         """Set the Keithley IV measurement type."""
         ui = self.kwind.ui
         keith = self.keith
-        if idx is not None:
-            if isinstance(idx, str):
-                idx = keith.meas_type_txt_switch[idx]
-            ui.measureTypeCombobox.setCurrentIndex(idx)
+        if typ is not None:
+            if isinstance(typ, str):
+                typ = keith.meas_type_txt_switch[typ]
+            ui.measureTypeCombobox.setCurrentIndex(typ)
         else:
-            idx = ui.measureTypeCombobox.currentIndex()
-        meas = keith.set_meas_type(idx)
+            typ = ui.measureTypeCombobox.currentIndex()
+        meas = keith.set_meas_type(typ)
         ui.unitsCombobox.setCurrentIndex(meas.unit_idx)
         rate = (meas.meas_rate if hasattr(meas, 'meas_rate') else
                 meas.cycle_int if hasattr(meas, 'cycle_int') else
@@ -421,7 +421,7 @@ class ProbeGui(QMainWindow):
             d1.update(d)
         self.keith_ui_internal.update(d1)
         print(self.keith_ui_internal)  # Testing print
-        self.keith_ui_modify[idx]()
+        self.keith_ui_modify[typ]()
 
     def set_keith_unit(self, unit: Optional[Union[int, str]] = None,
                        meas_idx: Optional[int] = None) -> None:
@@ -1416,7 +1416,7 @@ class ProbeGui(QMainWindow):
     def set_mag_time_unit(self, idx: Optional[Union[int, str]] = None) -> None:
         # TODO: Test set_mag_time_unit
         """Set the time unit of the magnet power supply to idx or UI value."""
-        mag, combobox = self.mag, self.mwind.ui.timeUnitComboBox
+        mag, combobox = self.mag, self.mwind.ui.timeUnitCombobox
         if idx is not None:
             mag.set_time_unit(idx)
             combobox.setCurrentIndex(mag.time_unit_idx)
@@ -1727,7 +1727,6 @@ class ProbeGui(QMainWindow):
             params.get('meterRange', self.keith.volt_range_idx))
         self.keith.set_meas_type(
             params.get('measType', self.keith.meas_type_text()))
-
         diff = params.get('diffCon', None)
         if diff is not None:
             self.keith.set_unit(diff['unit'], meas_idx=0)
@@ -1740,7 +1739,6 @@ class ProbeGui(QMainWindow):
             self.keith.set_filter(diff['filterOn'], meas_idx=0)
             self.keith.set_filter_window(diff['filterWindow'], meas_idx=0)
             self.keith.set_filter_count(diff['filterCount'], meas_idx=0)
-
         delta = params.get('delta', None)
         if delta is not None:
             self.keith.set_unit(delta['unit'], meas_idx=1)
@@ -1753,7 +1751,6 @@ class ProbeGui(QMainWindow):
             self.keith.set_filter_idx(delta['filterType'], meas_idx=1)
             self.keith.set_filter_window(delta['filterWindow'], meas_idx=1)
             self.keith.set_filter_count(delta['filterCount'], meas_idx=1)
-
         pdelta = params.get('pulseDelta', None)
         if pdelta is not None:
             self.keith.set_unit(pdelta['unit'], meas_idx=2)
@@ -1767,7 +1764,6 @@ class ProbeGui(QMainWindow):
             self.keith.set_filter_idx(pdelta['filterType'], meas_idx=2)
             self.keith.set_filter_window(pdelta['filterWindow'], meas_idx=2)
             self.keith.set_filter_count(pdelta['filterCount'], meas_idx=2)
-
         pdelt_stair = params.get('pDeltStair', None)
         if pdelt_stair is not None:
             self.keith.set_unit(pdelt_stair['unit'], meas_idx=3)
@@ -1783,7 +1779,6 @@ class ProbeGui(QMainWindow):
             self.keith.set_filter_window(pdelt_stair['filterWindow'],
                                          meas_idx=3)
             self.keith.set_filter_count(pdelt_stair['filterCount'], meas_idx=3)
-
         pdelt_log = params.get('pDeltLog', None)
         if pdelt_log is not None:
             self.keith.set_unit(pdelt_log['unit'], meas_idx=4)
@@ -1906,7 +1901,7 @@ class ProbeGui(QMainWindow):
         # self.set_temp_stage_ramp(params['stageRamp'])
         # self.set_temp_stage_power(params['stagePower'])
         self.temp.set_address(params.get('address', self.temp.address))
-        self.temp.set_to_measure(params.get('tempsToMeasure', 'all'))
+        self.temp.set_to_measure(params.get('measure', 'all'))
         self.temp.set_rad_control(params['controlRad'])
         self.temp.set_setpoint(params['radSetpoint'], 'rad')
         self.temp.set_ramp(params['radRamp'], 'rad')
@@ -1926,7 +1921,7 @@ class ProbeGui(QMainWindow):
 
         tconfig['instrument'] = 'LakeShore 336'
         tconfig['address'] = temp.address
-        tconfig['tempsToMeasure'] = temp.to_measure_str
+        tconfig['measure'] = temp.to_measure_str
         tconfig['controlRad'] = temp.rad_control
         tconfig['radSetpoint'] = temp.rad_setpoint
         tconfig['radRamp'] = temp.rad_ramp
@@ -1939,17 +1934,38 @@ class ProbeGui(QMainWindow):
 
     def load_mag_config(self, params: Dict) -> None:
         """Load parameters from the 'Magnet' header of the config file."""
-        # TODO: Write load_mag_config
-        self.set_mag_address(params['address'])
-        self.set_mag_target(params['target'])
-        self.set_mag_field_unit(params['fieldUnit'])
-        self.set_mag_time_unit(params['time_unit'])
-        self.set_mag_segments(params['segs'])
-        self.set_mag_ramp_setpoints(params['rampSetpoints'])
-        self.set_mag_ramp_rates(params['rampRates'])
-        self.set_mag_quench_detect(params['quenchDetect'])
-        self.set_mag_volt_limit(params['voltLimit'])
-        self.set_mag_curr_limit(params['currLimit'])
+        if params['instrument'] != 'AMI 430':
+            print('Could not verify correct configuration file.  Please check '
+                  + 'that "instrument" is a field in your config file and that'
+                  + 'it says "AMI 430"')
+            return
+        print('AMI 430 configuration allegedly loaded.\n')
+
+        self.mag.set_address(params['address'])
+        # TODO: Add 'measure' parameter
+        self.mag.set_field_unit(params['fieldUnit'])
+        self.mag.set_time_unit(params['timeUnit'])
+        self.mag.set_ramp_segments(params['segs'])
+        print(f"mag setpoints_list datatype = {type(params['rampSetpoints'])}")
+        self.mag.set_setpoints_list(params['rampSetpoints'])
+        self.mag.set_ramps_list(params['rampRates'])
+        self.mag.set_target(params['target'])
+        self.mag.set_quench_detect(params['quenchDetect'])
+        self.mag.set_quench_temp(params['quenchTemp'])
+        self.mag.set_volt_limit(params['voltLimit'])
+        self.mag.set_curr_limit(params['currLimit'])
+        self.mag.set_calibration_file(params['calibrationFile'])
+        # self.set_mag_address(params['address'])
+        # self.set_mag_target(params['target'])
+        # self.set_mag_field_unit(params['fieldUnit'])
+        # self.set_mag_time_unit(params['timeUnit'])
+        # self.set_mag_segments(params['segs'])
+        # self.set_mag_ramp_setpoints(params['rampSetpoints'])
+        # self.set_mag_ramp_rates(params['rampRates'])
+        # self.set_mag_quench_detect(params['quenchDetect'])
+        # self.set_mag_volt_limit(params['voltLimit'])
+        # self.set_mag_curr_limit(params['currLimit'])
+        self.update_mag_ui(block=True)
 
     def get_mag_config(self) -> Dict:
         """Convert the UI to YAML data so it can be saved to a config file."""
@@ -1957,16 +1973,21 @@ class ProbeGui(QMainWindow):
         mconfig = self.config.params['Magnet']
         mag = self.mag
 
+        mconfig['instrument'] = 'AMI 430'
         mconfig['address'] = mag.address
-        mconfig['target'] = mag.target
-        mconfig['fieldUnit'] = mag.fieldUnit('Full')
-        mconfig['timeUnit'] = mag.timeUnit('Full')
+        # TODO: Add "measure" parameter
+        mconfig['fieldUnit'] = mag.fieldUnit()
+        mconfig['timeUnit'] = mag.timeUnit()
         mconfig['segs'] = mag.ramp_segments
         mconfig['rampSetpoints'] = mag.setpoints_list
         mconfig['rampRates'] = mag.ramps_list
+        mconfig['target'] = mag.target
         mconfig['quenchDetect'] = mag.quench_detect
+        mconfig['quenchTemp'] = mag.quench_temp
         mconfig['voltLimit'] = mag.volt_limit
         mconfig['currLimit'] = mag.curr_limit
+        mconfig['calibrationFile'] = mag.calibration_file
+
         return mconfig
 
 # %% Save Data Section
