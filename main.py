@@ -1092,11 +1092,11 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_temp_address
         (temp, spinbox) = (self.temp, self.twind.ui.GPIBSpinbox)
         if addr is not None:
-            temp.set_address(addr)
+            addr = temp.set_address(addr)
             spinbox.setValue(addr)
         else:
-            temp.set_address(spinbox.value())
-        d1 = {self.set_temp_address: temp.address}
+            addr = temp.set_address(spinbox.value())
+        d1 = {self.set_temp_address: addr}
         self.temp_ui_internal.update(d1)
 
     def set_temp_measure(self, enable: Optional[bool] = None) -> None:
@@ -1132,11 +1132,11 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_temp_rad_setpoint
         (temp, spinbox) = (self.temp, self.twind.ui.radSetpointSpinbox)
         if setpt is not None:
-            temp.set_setpoint(setpt, 'rad')
+            setpt = temp.set_setpoint(setpt, 'rad')
             spinbox.setValue(setpt)
         else:
-            temp.set_setpoint(spinbox.value(), 'rad')
-        d1 = {self.set_temp_rad_setpoint: temp.rad_setpoint}
+            setpt = temp.set_setpoint(spinbox.value(), 'rad')
+        d1 = {self.set_temp_rad_setpoint: setpt}
         self.temp_ui_internal.update(d1)
 
     def set_temp_rad_ramp(self, rate: Optional[float] = None) -> None:
@@ -1144,11 +1144,11 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_rad_rap
         temp, spinbox = self.temp, self.twind.ui.radRampSpinbox
         if rate is not None:
-            temp.set_ramp(rate, 'rad')
+            rate = temp.set_ramp(rate, 'rad')
             spinbox.setValue(rate)
         else:
-            temp.set_ramp(spinbox.value(), 'rad')
-        d1 = {self.set_temp_rad_ramp: temp.rad_ramp}
+            rate = temp.set_ramp(spinbox.value(), 'rad')
+        d1 = {self.set_temp_rad_ramp: rate}
         self.temp_ui_internal.update(d1)
 
     def set_temp_rad_power(self, power: Optional[int] = None) -> None:
@@ -1156,11 +1156,11 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_temp_rad_power
         temp, spinbox = self.temp, self.twind.ui.radPowerSpinbox
         if power is not None:
-            temp.set_power(power, 'rad')
+            power = temp.set_power(power, 'rad')
             spinbox.setValue(power)
         else:
-            temp.set_power(spinbox.value(), 'rad')
-        d1 = {self.set_temp_rad_power: temp.rad_power}
+            power = temp.set_power(spinbox.value(), 'rad')
+        d1 = {self.set_temp_rad_power: power}
         self.temp_ui_internal.update(d1)
 
     def set_temp_stage_control(self, enable: Optional[bool] = None) -> None:
@@ -1180,23 +1180,11 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_temp_stage_setpoint
         temp, spinbox = self.temp, self.twind.ui.stageSetpointSpinbox
         if setpt is not None:
-            temp.set_setpoint(setpt, 'stage')
+            setpt = temp.set_setpoint(setpt, 'stage')
             spinbox.setValue(setpt)
         else:
-            temp.set_setpoint(spinbox.value(), 'stage')
-        d1 = {self.set_temp_stage_setpoint: temp.stage_setpoint}
-        self.temp_ui_internal.update(d1)
-
-    def set_temp_stage_ramp(self, rate: Optional[float] = None) -> None:
-        """Set the stage temperature ramp rate to rate or UI value."""
-        # TODO: Test set_temp_stage_ramp
-        temp, spinbox = self.temp, self.twind.ui.stageRampSpinbox
-        if rate is not None:
-            temp.set_ramp(rate, 'stage')
-            spinbox.setValue(rate)
-        else:
-            temp.set_ramp(spinbox.value(), 'stage')
-        d1 = {self.set_temp_stage_ramp: temp.stage_ramp}
+            setpt = temp.set_setpoint(spinbox.value(), 'stage')
+        d1 = {self.set_temp_stage_setpoint: setpt}
         self.temp_ui_internal.update(d1)
 
     def set_temp_stage_power(self, power: Optional[int] = None) -> None:
@@ -1204,11 +1192,11 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_temp_stage_power
         temp, spinbox = self.temp, self.twind.ui.stagePowerSpinbox
         if power is not None:
-            temp.set_power(power, 'stage')
+            power = temp.set_power(power, 'stage')
             spinbox.setValue(power)
         else:
-            temp.set_power(spinbox.value(), 'stage')
-        d1 = {self.set_temp_stage_power: temp.stage_power}
+            power = temp.set_power(spinbox.value(), 'stage')
+        d1 = {self.set_temp_stage_power: power}
         self.temp_ui_internal.update(d1)
 
     def set_temp_to_measure(self,
@@ -1217,13 +1205,14 @@ class ProbeGui(QMainWindow):
         """Set which temperatures to measure to measured or to UI value."""
         # TODO: Test set_temp_to_measure
         temp, combobox = self.temp, self.twind.ui.measuredTempCombobox
-        if measured is not None:
-            temp.set_to_measure(measured)
-            combobox.setCurrentIndex(temp.to_measure_idx)
-        else:
-            temp.set_to_measure(combobox.currentIndex())
-        d1 = {self.set_temp_to_measure: temp.to_measure_idx}
-        self.temp_ui_internal.update(d1)
+        set = measured if measured is not None else combobox.currentIndex()
+        idx = temp.set_to_measure(set)
+
+        if idx is not None:
+            if measured is not None:
+                combobox.setCurrentIndex(idx)
+            d1 = {self.set_temp_to_measure: idx}
+            self.temp_ui_internal.update(d1)
 
     def set_temp_pars(self) -> None:
         """Send temperature parameters to the 336 Controller.
