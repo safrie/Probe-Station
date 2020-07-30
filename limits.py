@@ -31,6 +31,10 @@ class TempLims():
 
 class MagLims():
     """Contains instrument parameter limits for the AMI 430."""
+    # TODO: Get COM address limits
+    # HACK: addr limits are currently (1, 10) just to have something.
+    addr = range(1, 11)
+    addr_default = 2
     # 1 T = 10 kG
     # coil const in {field_unit}/A
     coil_const = array([30/26.3, 3/26.3, 1])
@@ -56,13 +60,11 @@ class MagLims():
             2: (1.0e-4, 600)}
             }
     rate_default = 0.1*coil_const
-    # TODO: Get COM address limits
-    # HACK: addr limits are currently (1, 10) just to have something.
-    addr = range(1, 11)
-    addr_default = 2
+    seg = (1, 10)
+    seg_default = 1
+    field_unit_default = (1, 'Tesla', 'T')
+    time_unit_default = (0, 'Seconds', 's')
     volt = (0.001, 6)
     volt_default = 2
     curr = (0, 26.3)
     curr_default = 26.3
-    seg = (1, 10)
-    seg_default = 1
