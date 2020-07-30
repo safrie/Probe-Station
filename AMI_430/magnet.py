@@ -159,9 +159,9 @@ class Mag(Instrument):
     def set_ramp_segments(self, segs: int) -> None:
         """Set number of ramp segments for magnet range."""
         # TODO: Test set_ramp_segments
-        if segs not in range(lims.seg, 0, -1):
+        if segs not in range(lims.seg[1], 0, -1):
             segs = lims.seg_default
-            print(f"Number of segments must be between 1 and {lims.seg}.  "
+            print(f"Number of segments must be between 1 and {lims.seg[1]}.  "
                   + f"Segments set to {lims.seg_default}.")
             return
         self.ramp_segments = segs
@@ -175,9 +175,9 @@ class Mag(Instrument):
         # TODO: Test set_setpoints_list
         bound = lims.field[self.field_unit_idx]
         setpts.sort()
-        if len(setpts) not in range(lims.seg, 0, -1):
+        if len(setpts) not in range(lims.seg[1], 0, -1):
             print("Number of ramp segments must be between 1 and "
-                  + f"{lims.seg}.  Please try again.")
+                  + f"{lims.seg[1]}.  Please try again.")
             return False
         if abs(setpts[0]) > bound or abs(setpts[-1]) > bound:
             print(f"Magnet ramp setpoints must be within [{-bound}, {bound}]."
@@ -195,9 +195,9 @@ class Mag(Instrument):
         # ???: Do we need a validation flag?
         bound = lims.field[self.field_unit_idx]
         setpts.sort()
-        if len(setpts) not in range(lims.seg, 0, -1):
+        if len(setpts) not in range(lims.seg[1], 0, -1):
             print("Number of ramp segments must be between 1 and"
-                  + f"{lims.seg}.  Please try again.")
+                  + f"{lims.seg[1]}.  Please try again.")
             return
         if abs(float(setpts[0])) > bound or abs(float(setpts[-1])) > bound:
             print(f"Magnet ramp setpoints must be within [{-bound}, {bound}]."
@@ -212,9 +212,9 @@ class Mag(Instrument):
         tunit, tabbv = self.time_unit['Full'], self.time_unit['Abbv']
         bounds = lims.rate[tunit][fidx]
         ramps.sort()
-        if len(ramps) not in range(lims.seg, 0, -1):
+        if len(ramps) not in range(lims.seg[1], 0, -1):
             print("Number of ramp segments must be between 1 and "
-                  + f"{lims.seg}.  Please try again.")
+                  + f"{lims.seg[1]}.  Please try again.")
             return False
         if ramps[0] < bounds[0] or ramps[-1] > bounds[1]:
             print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
@@ -231,9 +231,9 @@ class Mag(Instrument):
         tunit, tabbv = self.time_unit['Full'], self.time_unit['Abbv']
         bounds = lims.rate[tunit][fidx]
         ramps.sort()
-        if len(ramps) not in range(lims.seg, 0, -1):
+        if len(ramps) not in range(lims.seg[1], 0, -1):
             print("Number of ramp segments must be between 1 and "
-                  + f"{lims.seg}.  Please try again")
+                  + f"{lims.seg[1]}.  Please try again")
             return
         if float(ramps[0]) < bounds[0] or float(ramps[-1]) > bounds[1]:
             print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
