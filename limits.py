@@ -4,19 +4,33 @@
 
 from numpy import array
 
+
 class KeithLims:
     # DOCUMENT
     pass
 
 
-class TempLims:
-    # DOCUMENT
-    pass
+class TempLims():
+    """Contains instrument parameter limits and defaults for LakeShore 336."""
+    addr = range(1, 32)
+    addr_default = 11
+    out = (1, 2)
+    inpt = range(0, 9)
+    # Output modes are 0=Off, 1=Closed loop PID, 2=Zone, 3=Open loop
+    outmode = range(0, 4)
+    outmode_default = 0
+    # Heater modes are 0=Off, 1=Low, 2=Med, 3=High
+    heatmode = range(0, 4)
+    heatmode_default = 0
+    # Rate is in K/min. 0 means "ramp as fast as possible."
+    rate = (0.1, 100, 0)
+    rate_default = 1
+    setpt = (3, 350)
+    setpt_default = 4.0
 
 
 class MagLims():
-    """Contains instrument parameter limits for the AMI 430"""
-    # TODO: Fix coil_const and its implications.
+    """Contains instrument parameter limits for the AMI 430."""
     # 1 T = 10 kG
     # coil const in {field_unit}/A
     coil_const = array([30/26.3, 3/26.3, 1])
@@ -44,11 +58,11 @@ class MagLims():
     rate_default = 0.1*coil_const
     # TODO: Get COM address limits
     # HACK: addr limits are currently (1, 10) just to have something.
-    addr = range(10, 0, -1)
+    addr = range(1, 11)
     addr_default = 2
     volt = (0.001, 6)
     volt_default = 2
     curr = (0, 26.3)
     curr_default = 26.3
-    seg = 10
+    seg = (1, 10)
     seg_default = 1
