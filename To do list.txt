@@ -9,6 +9,7 @@ To do with program:
     e) Unsure if changing filter type works
     f) Test measurement with dummy resistor
     g) Implement input validation
+        - Put bounds in limits.py
         - setters in keith.py
         - UI updaters in main.py
     h) Fix any VISA issues
@@ -26,8 +27,9 @@ To do with program:
         - This is related to set_enable_trig and qenable_trig methods
     e) Fix any VISA issues
     f) Input validation
-        - design.py
         - magnet.py
+        - main.py for unit changes
+    g) Update UI from main.py in case invalid parameters set to defaults in mag
 • Fix LakeShore 336 Errors/Issues
     a) Implement GUI and YAML control over wait time between measurements
         - Class variable in temperature.py
@@ -45,6 +47,7 @@ To do with program:
     c) Create get_header_string method
     d) Fix any VISA issues
     e) Input validation
+        - Put bounds in limits.py
         - design.py
         - setters in temperature.py
 • Add tooltips to:

@@ -10,6 +10,7 @@ Part of the V3 probe station collection.
 """
 from abcs.instrument_abc import Instrument
 from AMI_430.visa_mag import vMag as visa
+from limits import MagLims as lims
 from typing import Optional, Union
 from pathlib import Path
 
@@ -24,8 +25,8 @@ class Mag(Instrument):
     attributes_
         field_unit_switch: Dict for converting between unit indices and units.
         time_unit_switch: Dict for converting between unit indices and units.
-        field_upper_limit: Dict for field limit in different units.
-        ramp_upper_limit: Dict for ramp rate limit in different units
+        field_limit: Dict for field limit in different units.
+        rate_limits: Dict for maximum and minimum ramp rates in different units
         setpoints_title: Label for setpoints dialog box
         ramp_title: Label for ramp rates dialog box
         address: Integer COM addres of the magnet power supply programmer
@@ -105,28 +106,6 @@ class Mag(Instrument):
                      'Minutes': 'min'}
             }
 
-    coil_constant = {0: 0.886,
-                     1: 8.86,
-                     2: 1}
-
-    field_upper_limit = {0: 30,
-                         1: 3,
-                         2: 26.3}
-
-    ramp_upper_limit = {'seconds': {0: 11.3,
-                                    1: 1.13,
-                                    2: 10},
-                        'minutes': {0: 678,
-                                    1: 67.8,
-                                    2: 600}
-                        }
-    ramp_lower_limit = {'seconds': {0: 1.88e-6,
-                                    1: 1.88e-7,
-                                    2: 1.67e-6},
-                        'minutes': {0: 1.13e-4,
-                                    1: 1.13e-5,
-                                    2: 1.0e-4}}
-
     setpoints_title = 'Magnetic Field Setpoints'
     ramp_title = 'Magnetic Field Ramp Rates'
     target_label = 'Target Magnet'
@@ -158,44 +137,108 @@ class Mag(Instrument):
 
     def set_address(self, addr: int) -> None:
         """Set COM address of magnet and check connection."""
+        # TODO: Test set_address
+        if addr not in lims.addr:
+            addr = lims.addr_default
+            print(f"COM address must be in {addr}.  "
+                  + f"Address set to {lims.addr_default}.")
         super().set_address(addr)
         self.visa.check_connected(addr)
 
     def set_target(self, targ: float) -> None:
         """Set the target magnetic field or current."""
+        # TODO: Test set_target()
+        fidx, unit = self.field_unit_idx, self.field_unit('Abbv')
+        bound = lims.field[fidx]
+        if abs(targ) > bound:
+            targ = lims.field_default[fidx]
+            print(f"Target out of bounds. |targ| must be < {bound}{unit}."
+                  + f"Target set to {lims.field_default} {unit}")
         self.target = targ
 
     def set_ramp_segments(self, segs: int) -> None:
         """Set number of ramp segments for magnet range."""
         # TODO: Test set_ramp_segments
-        if int not in range(1, 11):
-            raise ValueError('set_ramp_segments: segs must be in [1, 10].')
-        else:
-            self.ramp_segments = segs
-            self.visa.set_ramp_segs(segs)
+        if segs not in range(lims.seg, 0, -1):
+            segs = lims.seg_default
+            print(f"Number of segments must be between 1 and {lims.seg}.  "
+                  + f"Segments set to {lims.seg_default}.")
+            return
+        self.ramp_segments = segs
+        self.visa.set_ramp_segs(segs)
 
-    def set_setpoints_list(self, setpts: list) -> None:
-        """Set the list of magnet setpoints to setpts.
+    def set_setpoints_list(self, setpts: list) -> bool:
+        """Set the list of magnet setpoints to setpts, return validation flag.
 
         These are the ramp interval upper bounds.
         """
+        # TODO: Test set_setpoints_list
+        bound = lims.field[self.field_unit_idx]
+        setpts.sort()
+        if len(setpts) not in range(lims.seg, 0, -1):
+            print("Number of ramp segments must be between 1 and "
+                  + f"{lims.seg}.  Please try again.")
+            return False
+        if abs(setpts[0]) > bound or abs(setpts[-1]) > bound:
+            print(f"Magnet ramp setpoints must be within [{-bound}, {bound}]."
+                  + "  Please try again.")
+            return False
         self.setpoints_list = setpts
+        return True
 
     def set_setpoints_text(self, setpts: str) -> None:
         """Set the setpoints string listing to setpts.
 
         These are the ramp interval upper bounds.
         """
+        # TODO: Test set_setpoints_text
+        # ???: Do we need a validation flag?
+        bound = lims.field[self.field_unit_idx]
+        setpts.sort()
+        if len(setpts) not in range(lims.seg, 0, -1):
+            print("Number of ramp segments must be between 1 and"
+                  + f"{lims.seg}.  Please try again.")
+            return
+        if abs(float(setpts[0])) > bound or abs(float(setpts[-1])) > bound:
+            print(f"Magnet ramp setpoints must be within [{-bound}, {bound}]."
+                  + "  Please try again.")
+            return
         self.setpoints_text = setpts
 
-    def set_ramps_list(self, ramps: list) -> None:
-        """Set the list of magnet ramp rates to ramps."""
-        # TODO: Verify the length requirement for set_ramps_list
+    def set_ramps_list(self, ramps: list) -> bool:
+        """Set list of magnet ramp rates to ramps, return validation flag."""
+        # TODO: Test set_ramps_list
+        fidx, fabbv = self.field_unit_idx, self.field_unit['Abbv']
+        tunit, tabbv = self.time_unit['Full'], self.time_unit['Abbv']
+        bounds = lims.rate[tunit][fidx]
+        ramps.sort()
+        if len(ramps) not in range(lims.seg, 0, -1):
+            print("Number of ramp segments must be between 1 and "
+                  + f"{lims.seg}.  Please try again.")
+            return False
+        if ramps[0] < bounds[0] or ramps[-1] > bounds[1]:
+            print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
+                  + f"and {bounds[1]} {fabbv}/{tabbv}.  Please try again.")
+            return False
         self.ramps_list = ramps
+        return True
 
     def set_ramps_text(self, ramps: str) -> None:
         """Set the ramps string listing to ramps."""
-        # TODO: Verify the length requirement for set_ramps_text
+        # TODO: Test set_ramps_text
+        # ???: Do we need a validation flag?
+        fidx, fabbv = self.field_unit_idx, self.field_unit['Abbv']
+        tunit, tabbv = self.time_unit['Full'], self.time_unit['Abbv']
+        bounds = lims.rate[tunit][fidx]
+        ramps.sort()
+        if len(ramps) not in range(lims.seg, 0, -1):
+            print("Number of ramp segments must be between 1 and "
+                  + f"{lims.seg}.  Please try again")
+            return
+        if float(ramps[0]) < bounds[0] or float(ramps[-1]) > bounds[1]:
+            print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
+                  + f"and {bounds[1]} {fabbv}/{tabbv}.  Please try again.")
+            return
         self.ramps_text = ramps
 
     def set_quench_detect(self, enable: bool) -> None:
@@ -219,12 +262,22 @@ class Mag(Instrument):
     def set_volt_limit(self, limit: float) -> None:
         """Set the voltage output limit in V for the magnet."""
         # TODO: Test set_volt_limit
+        if not lims.volt[0] <= limit <= lims.volt[1]:
+            limit = lims.volt_default
+            print("Magnet voltage limit must be between "
+                  + f"{lims.volt[0]} and {lims.volt[1]}.  Value set to "
+                  + f"{lims.volt_default} V.")
         self.volt_limit = limit
         self.visa.set_volt_lim(limit)
 
     def set_curr_limit(self, limit: float) -> None:
         """Set the current output limit in A for the magnet."""
         # TODO: Test set_curr_limit
+        if not lims.curr[0] <= limit <= lims.curr[1]:
+            limit = lims.curr_default
+            print("Magnet current must be between "
+                  + f"{lims.curr[0]} and {lims.curr[1]}.  Value set to "
+                  + f"{lims.curr_default} A.")
         self.curr_limit = limit
         self.visa.set_curr_lim(limit)
 
