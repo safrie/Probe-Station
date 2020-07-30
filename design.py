@@ -313,7 +313,7 @@ class Ui_KeithWindow(Ui_MainWindow):
         self.CABCheckbox = QCheckBox(paramWidget, text='Compliance Abort',
                                      objectName='CABCheckBox')
         paramLayout.addWidget(
-            self.CABCheckbox, 5, 1, 1, 1, QtCore.Qt.AlignHCenter)
+           self.CABCheckbox, 5, 1, 1, 1, QtCore.Qt.AlignHCenter)
 
         # TODO: Determine if I want autorange option
 
@@ -344,6 +344,7 @@ class Ui_KeithWindow(Ui_MainWindow):
 
         self.current1Spinbox = QDoubleSpinBox(measureWidget,
                                               objectName='Curr1SpinBox')
+        self.current1Spinbox.setRange(-1.05e8, 1.05e8)
         current1Layout.addWidget(self.current1Spinbox)
 
         current2Layout = QHBoxLayout(objectName='Curr2Layout')
@@ -355,6 +356,7 @@ class Ui_KeithWindow(Ui_MainWindow):
 
         self.current2Spinbox = QDoubleSpinBox(measureWidget,
                                               objectName='Curr2SpinBox')
+        self.current2Spinbox.setRange(-1.05e8, 1.05e8)
         current2Layout.addWidget(self.current2Spinbox)
 
         field3Layout = QHBoxLayout(objectName='Field3Layout')
@@ -367,6 +369,7 @@ class Ui_KeithWindow(Ui_MainWindow):
         self.field3Spinbox = QDoubleSpinBox(measureWidget,
                                             objectName='Field3SpinBox')
         self.field3Spinbox.setValue(10)
+        self.field3Spinbox.setRange(0, 105e8)
         field3Layout.addWidget(self.field3Spinbox)
 
         field4Layout = QHBoxLayout(objectName='Field4Layout')
@@ -378,6 +381,7 @@ class Ui_KeithWindow(Ui_MainWindow):
 
         self.field4Spinbox = QDoubleSpinBox(measureWidget,
                                             objectName='Field4SpinBox')
+        self.field4Spinbox.setRange(0, 1.05e8)
         self.field4Spinbox.setDecimals(5)
         field4Layout.addWidget(self.field4Spinbox)
 
@@ -409,7 +413,7 @@ class Ui_KeithWindow(Ui_MainWindow):
         measureLayout.addLayout(pulseWidthLayout, 6, 0, 1, 1)
 
         self.pulseWidthLabel = QLabel(
-            measureWidget, text='Pulse width (\N{GREEK SMALL LETTER MU}s):',
+            measureWidget, text='Pulse width (\u03BCs):',
             objectName='PulseWidthLabel')
         pulseWidthLayout.addWidget(self.pulseWidthLabel)
 

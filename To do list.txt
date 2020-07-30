@@ -9,8 +9,8 @@ To do with program:
     e) Unsure if changing filter type works
     f) Test measurement with dummy resistor
     g) Implement input validation
-        - design.py
         - setters in keith.py
+        - UI updaters in main.py
     h) Fix any VISA issues
 • Fix AMI 430 Errors/Issues
     a) On open of Magwindow, for spinbox.setValue(targ), targ is the bound
@@ -64,7 +64,7 @@ To do with program:
 •* Update probe_station_params.yaml
 • Get graphing up and running
 • Make sure closeEvents for windows deselect the selwindow buttons
-• Make instrument testing environment so attribute errors stop
+✗ Make instrument testing environment so attribute errors stop
     a) Implement multi-parameter properties? (depends on dev response)
 • FZF all TODO's and fix them.
 
