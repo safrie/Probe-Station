@@ -27,7 +27,6 @@ To do with program:
         - This is related to set_enable_trig and qenable_trig methods
     e) Fix any VISA issues
     f) Input validation
-        - magnet.py
         - main.py for unit changes
     g) Update UI from main.py in case invalid parameters set to defaults in mag
 • Fix LakeShore 336 Errors/Issues
@@ -47,9 +46,10 @@ To do with program:
     c) Create get_header_string method
     d) Fix any VISA issues
     e) Input validation
-        - Put bounds in limits.py
         - design.py
         - setters in temperature.py
+        - remove input validation from visa_temp.py
+    f) Add "warm" button to GUI
 • Add tooltips to:
     a) set_setpoints button
     b) set_ramps button
