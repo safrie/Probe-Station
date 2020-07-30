@@ -115,20 +115,20 @@ class Mag(Instrument):
     def __init__(self) -> None:
         """Instantiate magnet power supply control."""
         super().__init__()
-        self.address = 2
+        self.address = lims.addr_default
         self.visa = visa(self.address)
-        self.target = 0
-        self.ramp_segments = None
+        self.ramp_segments = lims.seg_default
         self.setpoints_list = []
         self.setpoints_text = None
         self.ramps_list = []
         self.ramps_text = None
         self.quench_detect = None
-        self.volt_limit = None
-        self.curr_limit = None
+        self.volt_limit = lims.volt_default
+        self.curr_limit = lims.curr_default
         self.zero = None
-        self.field_unit_idx = 1
-        self.time_unit_idx = 0
+        self.field_unit_idx = lims.field_unit_default[0]
+        self.time_unit_idx = lims.time_unit_default[0]
+        self.target = lims.field_default[self.field_unit_idx]
         self.calibration_file = None
 
     def get_instr_type_str(self) -> str:
@@ -144,6 +144,7 @@ class Mag(Instrument):
                   + f"Address set to {lims.addr_default}.")
         super().set_address(addr)
         self.visa.check_connected(addr)
+        return addr
 
     def set_target(self, targ: float) -> None:
         """Set the target magnetic field or current."""
@@ -155,6 +156,7 @@ class Mag(Instrument):
             print(f"Target out of bounds. |targ| must be < {bound}{unit}."
                   + f"Target set to {lims.field_default} {unit}")
         self.target = targ
+        return targ
 
     def set_ramp_segments(self, segs: int) -> None:
         """Set number of ramp segments for magnet range."""
@@ -163,9 +165,9 @@ class Mag(Instrument):
             segs = lims.seg_default
             print(f"Number of segments must be between 1 and {lims.seg[1]}.  "
                   + f"Segments set to {lims.seg_default}.")
-            return
         self.ramp_segments = segs
         self.visa.set_ramp_segs(segs)
+        return segs
 
     def set_setpoints_list(self, setpts: list) -> bool:
         """Set the list of magnet setpoints to setpts, return validation flag.
@@ -178,13 +180,13 @@ class Mag(Instrument):
         if len(setpts) not in range(lims.seg[1], 0, -1):
             print("Number of ramp segments must be between 1 and "
                   + f"{lims.seg[1]}.  Please try again.")
-            return False
+            setpts = []
         if abs(setpts[0]) > bound or abs(setpts[-1]) > bound:
             print(f"Magnet ramp setpoints must be within [{-bound}, {bound}]."
                   + "  Please try again.")
-            return False
+            setpts = []
         self.setpoints_list = setpts
-        return True
+        return setpts
 
     def set_setpoints_text(self, setpts: str) -> None:
         """Set the setpoints string listing to setpts.
@@ -192,18 +194,18 @@ class Mag(Instrument):
         These are the ramp interval upper bounds.
         """
         # TODO: Test set_setpoints_text
-        # ???: Do we need a validation flag?
         bound = lims.field[self.field_unit_idx]
         setpts.sort()
         if len(setpts) not in range(lims.seg[1], 0, -1):
             print("Number of ramp segments must be between 1 and"
                   + f"{lims.seg[1]}.  Please try again.")
-            return
+            setpts = ''
         if abs(float(setpts[0])) > bound or abs(float(setpts[-1])) > bound:
             print(f"Magnet ramp setpoints must be within [{-bound}, {bound}]."
                   + "  Please try again.")
-            return
+            setpts = ''
         self.setpoints_text = setpts
+        return setpts
 
     def set_ramps_list(self, ramps: list) -> bool:
         """Set list of magnet ramp rates to ramps, return validation flag."""
@@ -215,18 +217,17 @@ class Mag(Instrument):
         if len(ramps) not in range(lims.seg[1], 0, -1):
             print("Number of ramp segments must be between 1 and "
                   + f"{lims.seg[1]}.  Please try again.")
-            return False
+            ramps = []
         if ramps[0] < bounds[0] or ramps[-1] > bounds[1]:
             print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
                   + f"and {bounds[1]} {fabbv}/{tabbv}.  Please try again.")
-            return False
+            ramps = []
         self.ramps_list = ramps
-        return True
+        return ramps
 
     def set_ramps_text(self, ramps: str) -> None:
         """Set the ramps string listing to ramps."""
         # TODO: Test set_ramps_text
-        # ???: Do we need a validation flag?
         fidx, fabbv = self.field_unit_idx, self.field_unit['Abbv']
         tunit, tabbv = self.time_unit['Full'], self.time_unit['Abbv']
         bounds = lims.rate[tunit][fidx]
@@ -234,12 +235,13 @@ class Mag(Instrument):
         if len(ramps) not in range(lims.seg[1], 0, -1):
             print("Number of ramp segments must be between 1 and "
                   + f"{lims.seg[1]}.  Please try again")
-            return
+            ramps = ''
         if float(ramps[0]) < bounds[0] or float(ramps[-1]) > bounds[1]:
             print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
                   + f"and {bounds[1]} {fabbv}/{tabbv}.  Please try again.")
-            return
+            ramps = ''
         self.ramps_text = ramps
+        return ramps
 
     def set_quench_detect(self, enable: bool) -> None:
         """Enable/disable automatic quench detection.
@@ -269,6 +271,7 @@ class Mag(Instrument):
                   + f"{lims.volt_default} V.")
         self.volt_limit = limit
         self.visa.set_volt_lim(limit)
+        return limit
 
     def set_curr_limit(self, limit: float) -> None:
         """Set the current output limit in A for the magnet."""
@@ -280,6 +283,7 @@ class Mag(Instrument):
                   + f"{lims.curr_default} A.")
         self.curr_limit = limit
         self.visa.set_curr_lim(limit)
+        return limit
 
     def set_zero(self, enable: bool) -> None:
         """Start/stop magnet zeroing."""
@@ -296,13 +300,16 @@ class Mag(Instrument):
     def set_field_unit(self, unit_val: Union[int, str]) -> None:
         """Set unit for magnetic field and update magnet."""
         # TODO: Test set_field_unit
-        index = (unit_val if isinstance(unit_val, int)
-                 else self.field_unit_switch['Full'][unit_val]
-                 if len(unit_val) > 2
-                 else self.field_unit_switch['Abbv'][unit_val])
+        index = (unit_val if unit_val in (0, 1, 2)
+                 else self.field_unit_switch['Full'].get(
+                     unit_val, lims.field_unit_default[1]) if len(unit_val) > 2
+                 else self.field_unit_switch['Abbv'].get(
+                     unit_val, lims.field_unit_default[2])
+                 )
         if index < 2:
             self.visa.set_field_unit(index)
         self.field_unit_idx = index
+        return index
 
     def field_unit(self, form: Optional[str] = 'Full') -> str:
         """Look up the unit string for field unit.
@@ -312,7 +319,7 @@ class Mag(Instrument):
         # TODO: Test field_unit
         valid = ('full', 'abbv')
         if form.lower() not in valid:
-            raise ValueError(f'field_unit: form must be in {valid}.')
+            print(f'field_unit form must be in {valid}.')
         else:
             return self.field_unit_switch[form.capitalize()][
                     self.field_unit_idx]
@@ -320,12 +327,15 @@ class Mag(Instrument):
     def set_time_unit(self, unit_val: Union[int, str]) -> None:
         """Set unit for time and update magnet."""
         # TODO: Test set_time_unit
-        index = (unit_val if isinstance(unit_val, int)
-                 else self.time_unit_switch['Full'][unit_val]
-                 if len(unit_val) > 3
-                 else self.time_unit_switch['Abbv'][unit_val])
+        index = (unit_val if unit_val in (0, 1)
+                 else self.time_unit_switch['Full'].get(
+                     unit_val, lims.time_unit_default[1]) if len(unit_val) > 3
+                 else self.time_unit_switch['Abbv'].get(
+                     unit_val, lims.time_unit_default[2])
+                 )
         self.visa.set_time_unit(index)
         self.time_unit_idx = index
+        return index
 
     def time_unit(self, form: Optional[str] = 'full') -> str:
         """Look up the unit string for time unit.
