@@ -1463,46 +1463,51 @@ class ProbeGui(QMainWindow):
         else:
             title = f'{mag.setpoints_title} ({unit})'
             label = (f'Enter your list of magnet ramp setpoints in {unit}.\n'
-                     'Setpoints should be numbers separated by commas '
-                     '(e.g., 1, 2, 3).\n'
-                     f'Range is NUM1 {abbv} to NUM2 {abbv}.')
+                     + 'Setpoints should be numbers separated by commas '
+                     + '(e.g., 1, 2, 3).\n'
+                     + f'Range is NUM1 {abbv} to NUM2 {abbv}.')
             setpoints_text = self.list_box.getText(self, title, label)[0]
             setpoints_list = [float(x) for x in setpoints_text.split(', ')]
-        mag.set_setpoints_list(setpoints_list)
+        flag = mag.set_setpoints_list(setpoints_list)
+        if not flag:
+            return
         mag.set_setpoints_text(setpoints_text)
         d1 = {self.set_mag_ramp_setpoints: mag.setpoints_list}
         self.mag_ui_internal.update(d1)
         if len(setpoints_list) == len(mag.ramps_list) == mag.ramp_segments:
+            print("Setting ramp segments")
             for i in range(0, mag.ramp_segments):
                 mag.visa.set_rate(seg=i, rate=mag.ramps_list[i],
                                   upbound=setpoints_list[i], unit=unit_type)
 
     def set_mag_ramp_rates(self, ramps: Optional[List] = None) -> None:
         # TODO: Test set_mag_ramp_rates
-        # TODO: Input validation on ramp rates (maxes)
         """Open dialog box to set magnet ramp rates."""
         mag = self.mag
-        fabbv = mag.field_unit('Full'), mag.field_unit('Abbv')
-        tabbv = mag.time_unit('Full'), mag.time_unit('Abbv')
+        fabbv, fidx = mag.field_unit('Abbv'), mag.field_unit_idx
+        tabbv, tunit = mag.time_unit('Abbv'), mag.time_unit('Full')
         unit_type = 'curr' if fabbv == 'A' else 'field'
+        bounds = mag.rate_limits[tunit][fidx]
         if ramps is not None:
             ramps_list = [float(x) for x in ramps]
             ramps_text = ', '.join(ramps)
-            mag.set_ramps_list(ramps_list)
-            mag.set_ramps_text(ramps_text)
         else:
             title = f'{mag.ramp_title} ({fabbv}/{tabbv})'
             label = (f'Enter list of magnet ramp rates in {fabbv}/{tabbv}.\n'
-                     'Ramp rates should be numbers separated by commas '
-                     '(e.g., 1, 2, 3).\n'
-                     f'Range is NUM1 {fabbv}/{tabbv} to NUM2 {fabbv}/{tabbv}.')
+                     + 'Ramp rates should be numbers separated by commas '
+                     + '(e.g., 1, 2, 3).\n'
+                     + f'Range is {bounds[0]} {fabbv}/{tabbv} to '
+                     + f'{bounds[2]} {fabbv}/{tabbv}.')
             ramps_text = self.list_box.getText(self, title, label)[0]
             ramps_list = [float(x) for x in ramps_text.split(', ')]
-        mag.set_ramps_list(ramps_list)
+        flag = mag.set_ramps_list(ramps_list)
+        if not flag:
+            return
         mag.set_ramps_text(ramps_text)
         d1 = {self.set_mag_ramp_rates: mag.ramps_list}
         self.mag_ui_internal.update(d1)
         if len(ramps_list) == len(mag.setpoints_list) == mag.ramp_segments:
+            print("Setting ramp segments.")
             for i in range(0, mag.ramp_segments):
                 mag.visa.set_rate(seg=i, rate=ramps_list[i],
                                   upbound=mag.setpoints_list[i],
@@ -1612,9 +1617,7 @@ class ProbeGui(QMainWindow):
                  else mag.time_unit_switch['Abbv'][tidx])
         targ_text = (f'ic Field ({fabbv})' if (fidx is not None and fidx < 2)
                      else f'Current ({fabbv})')
-        # HACK: fidx=2 doesn't have a limit yet so put 0 in targ_range instead.
-        targ_range = mag.field_upper_limit[fidx] if (fidx is not None
-                                                     and fidx < 2) else 0
+        targ_range = mag.field_upper_limit[fidx] if (fidx is not None) else 0
         ui.targetLabel.setText(mag.target_label + targ_text)
         ui.targetSpinbox.setRange(-targ_range, targ_range)
         ui.setpointsLabel.setText(mag.setpoints_label + f'({fabbv})')
