@@ -10,6 +10,7 @@ Part of the V3 Probe Station Collection.
 """
 
 from abcs.instrument_abc import Instrument
+from limits import TempLims as lims
 import LakeShore_336.visa_temp as visa
 import time
 from typing import Union, Tuple
@@ -103,6 +104,10 @@ class Temp(Instrument):
     def set_address(self, addr: int) -> None:
         """Set GPIB address of 336, then check it's connected."""
         # TODO: Test set_address
+        if addr not in lims.addr:
+            addr = lims.addr_default
+            print("Given address not in valid range [1, 31].  GPIB address set"
+                  + f" to default ({lims.addr_default}).")
         super().set_address(addr)
         self.visa.check_connected(addr)
 
@@ -121,8 +126,13 @@ class Temp(Instrument):
         """Set temperature target for either stage or rad shield in Kelvin."""
         valid = ('rad', 'stage', 'out1', 'out2')
         if output not in valid:
-            raise ValueError(f'set_setpoint: output must be in {valid}.')
+            print(f'set_setpoint: output must be in {valid}.  '
+                  + 'Please try again')
             return
+        if not lims.setpt[0] <= temp <= lims.setpt[1]:
+            temp = lims.setpt_default
+            print("Temperature setpoint not in valid range.  Setting to "
+                  + f"default value instead ({lims.setpt_default})")
         if output in ('rad', 'out1'):
             self.rad_setpoint = temp
         else:
@@ -133,8 +143,13 @@ class Temp(Instrument):
         """Set the ramp rate for either stage or rad shield in Kelvin/sec."""
         valid = ('rad', 'stage', 'out1', 'out2')
         if output not in valid:
-            raise ValueError(f'set_ramp: output must be in {valid}.')
+            print(f'Output must be in {valid}.  Please try again.')
             return
+        if not (lims.rate[0] <= rate <= lims.rate[1] or rate == lims.rate[2]):
+            rate = lims.rate_default
+            print(f"Ramp rate must be within [{lims.rate[0]}, {lims.rate[1]}] "
+                  + f"or equal to {lims.rate[2]}.  Setting to default value "
+                  + f"({lims.rate_default}).")
         if output in ('rad', 'out1'):
             self.rad_ramp = rate
         else:
@@ -143,14 +158,14 @@ class Temp(Instrument):
     def set_power(self, power: int, output: str = 'stage') -> None:
         # TODO: Test set_power
         """Set internal heater power variable for stage or rad shield."""
-        pow_valid = range(0, 4)
         out_valid = ('rad', 'stage', 'out1', 'out2')
-        if power not in pow_valid:
-            raise ValueError(f'set_power: power must be in {pow_valid}')
+        if output not in out_valid:
+            print(f'Output must be in {out_valid}.  Please try again.')
             return
-        elif output not in out_valid:
-            raise ValueError(f'set_power: output must be in {out_valid}.')
-            return
+        if power not in lims.heatmode:
+            power = lims.heatmode_default
+            print(f'Heater power must be in {list(lims.heatmode)}.  Setting to'
+                  + f" default heater power ({lims.heatmode_default})")
         if output in ('rad', 'out1'):
             self.rad_power = power
         else:
@@ -158,14 +173,10 @@ class Temp(Instrument):
 
     def set_to_measure(self, measured: Union[int, str]) -> None:
         # TODO: Test set_to_measure
-        """Set whether to measure only rad shield and stage or all temps.
-
-        This method will accept either a binary integer or the strings
-        'controlled' and 'all'.
-        """
-        if type(measured) not in (int, str):
-            raise ValueError(f'Input was given as a {type(measured)} when it '
-                             'must be a str or int.')
+        """Set whether to measure only rad shield and stage or all temps."""
+        valid = (0, 1, 'controlled', 'all')
+        if measured not in valid:
+            print(f"Input must be in {valid}.  Please try again")
             return
         if type(measured) is int:
             self.to_measure_idx = measured
