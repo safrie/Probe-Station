@@ -110,6 +110,7 @@ class Temp(Instrument):
                   + f" to default ({lims.addr_default}).")
         super().set_address(addr)
         self.visa.check_connected(addr)
+        return addr
 
     def set_rad_control(self, enable: bool) -> None:
         # TODO: Test set_rad_control
@@ -137,6 +138,7 @@ class Temp(Instrument):
             self.rad_setpoint = temp
         else:
             self.stage_setpoint = temp
+        return temp
 
     def set_ramp(self, rate: float, output: str) -> None:
         # TODO: Test set_ramp
@@ -154,6 +156,7 @@ class Temp(Instrument):
             self.rad_ramp = rate
         else:
             self.stage_ramp = rate
+        return rate
 
     def set_power(self, power: int, output: str = 'stage') -> None:
         # TODO: Test set_power
@@ -170,6 +173,7 @@ class Temp(Instrument):
             self.rad_power = power
         else:
             self.stage_power = power
+        return power
 
     def set_to_measure(self, measured: Union[int, str]) -> None:
         # TODO: Test set_to_measure
@@ -177,13 +181,14 @@ class Temp(Instrument):
         valid = (0, 1, 'controlled', 'all')
         if measured not in valid:
             print(f"Input must be in {valid}.  Please try again")
-            return
+            return None
         if type(measured) is int:
             self.to_measure_idx = measured
             self.to_measure_str = self.to_measure_switch[measured]
         else:
             self.to_measure_idx = self.to_measure_switch[measured]
             self.to_measure_str = measured
+        return self.to_measure_idx
 
     def measure(self, t0: float) -> float:
         # TODO: Test measure
