@@ -26,8 +26,6 @@ To do with program:
     d) Create get_header_string method
         - This is related to set_enable_trig and qenable_trig methods
     e) Fix any VISA issues
-    f) Input validation
-        - main.py for unit changes
     g) Update UI from main.py in case invalid parameters set to defaults in mag
 • Fix LakeShore 336 Errors/Issues
     a) Implement GUI and YAML control over wait time between measurements

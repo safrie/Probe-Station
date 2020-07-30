@@ -1353,11 +1353,11 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_mag_address
         mag, spinbox = self.mag, self.mwind.ui.COMSpinbox
         if addr is not None:
-            mag.set_address(addr)
+            addr = mag.set_address(addr)
             spinbox.setValue(addr)
         else:
-            mag.set_address(spinbox.value())
-        d1 = {self.set_mag_address: mag.address}
+            addr = mag.set_address(spinbox.value())
+        d1 = {self.set_mag_address: addr}
         self.mag_ui_internal.update(d1)
 
     def set_mag_measure(self, enable: Optional[bool] = None) -> None:
@@ -1379,13 +1379,12 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_mag_target
         """Set the target magnetic field or current to targ or UI value."""
         mag, spinbox = self.mag, self.mwind.ui.targetSpinbox
-        # TODO: Input validation.
         if targ is not None:
-            mag.set_target(targ)
+            targ = mag.set_target(targ)
             spinbox.setValue(targ)
         else:
-            mag.set_target(spinbox.value())
-        d1 = {self.set_mag_target: mag.target}
+            targ = mag.set_target(spinbox.value())
+        d1 = {self.set_mag_target: targ}
         self.mag_ui_internal.update(d1)
 
     def set_mag_field_unit(self,
@@ -1394,11 +1393,11 @@ class ProbeGui(QMainWindow):
         """Set field/current unit of magnet power supply to idx or UI value."""
         mag, combobox = self.mag, self.mwind.ui.fieldUnitCombobox
         if idx is not None:
-            mag.set_field_unit(idx)
-            combobox.setCurrentIndex(mag.field_unit_idx)
+            idx = mag.set_field_unit(idx)
+            combobox.setCurrentIndex(idx)
         else:
-            mag.set_field_unit(combobox.currentIndex())
-        d1 = {self.set_mag_field_unit: mag.field_unit_idx}
+            idx = mag.set_field_unit(combobox.currentIndex())
+        d1 = {self.set_mag_field_unit: idx}
         self.mag_ui_internal.update(d1)
         self.update_mag_labels()
 
@@ -1407,11 +1406,11 @@ class ProbeGui(QMainWindow):
         """Set the time unit of the magnet power supply to idx or UI value."""
         mag, combobox = self.mag, self.mwind.ui.timeUnitComboBox
         if idx is not None:
-            mag.set_time_unit(idx)
-            combobox.setCurrentIndex(mag.time_unit_idx)
+            idx = mag.set_time_unit(idx)
+            combobox.setCurrentIndex(idx)
         else:
-            mag.set_time_unit(combobox.currentIndex())
-        d1 = {self.set_mag_time_unit: mag.time_unit_idx}
+            idx = mag.set_time_unit(combobox.currentIndex())
+        d1 = {self.set_mag_time_unit: idx}
         self.mag_ui_internal.update(d1)
         self.update_mag_labels()
 
@@ -1428,11 +1427,11 @@ class ProbeGui(QMainWindow):
         """
         mag, spinbox = self.mag, self.mwind.ui.segmentsSpinbox
         if segs is not None:
-            mag.set_ramp_segments(segs)
+            segs = mag.set_ramp_segments(segs)
             spinbox.setValue(segs)
         else:
-            mag.set_ramp_segments(spinbox.value())
-        d1 = {self.set_mag_ramp_segments: mag.ramp_segments}
+            segs = mag.set_ramp_segments(spinbox.value())
+        d1 = {self.set_mag_ramp_segments: segs}
         self.mag_ui_internal.update(d1)
 
     def set_mag_ramp_setpoints(self, setpts: Optional[List] = None) -> None:
@@ -1446,6 +1445,8 @@ class ProbeGui(QMainWindow):
         mag = self.mag
         unit, abbv = mag.field_unit('Full'), mag.field_unit('Abbv')
         unit_type = 'curr' if abbv == 'A' else 'field'
+        unit_idx = mag.field_unit_idx
+        bounds = (-mag.lims.field[unit_idx], mag.lims.field[unit_idx])
         if setpts is not None:
             setpoints_list = [float(x) for x in setpts]
             setpoints_text = ', '.join(setpts)
@@ -1454,14 +1455,12 @@ class ProbeGui(QMainWindow):
             label = (f'Enter your list of magnet ramp setpoints in {unit}.\n'
                      + 'Setpoints should be numbers separated by commas '
                      + '(e.g., 1, 2, 3).\n'
-                     + f'Range is NUM1 {abbv} to NUM2 {abbv}.')
+                     + f'Range is {bounds[0]} {abbv} to {bounds[1]} {abbv}.')
             setpoints_text = self.list_box.getText(self, title, label)[0]
             setpoints_list = [float(x) for x in setpoints_text.split(', ')]
-        flag = mag.set_setpoints_list(setpoints_list)
-        if not flag:
-            return
-        mag.set_setpoints_text(setpoints_text)
-        d1 = {self.set_mag_ramp_setpoints: mag.setpoints_list}
+        setpoints_list = mag.set_setpoints_list(setpoints_list)
+        setpoints_text = mag.set_setpoints_text(setpoints_text)
+        d1 = {self.set_mag_ramp_setpoints: setpoints_list}
         self.mag_ui_internal.update(d1)
         if len(setpoints_list) == len(mag.ramps_list) == mag.ramp_segments:
             print("Setting ramp segments")
@@ -1489,11 +1488,9 @@ class ProbeGui(QMainWindow):
                      + f'{bounds[2]} {fabbv}/{tabbv}.')
             ramps_text = self.list_box.getText(self, title, label)[0]
             ramps_list = [float(x) for x in ramps_text.split(', ')]
-        flag = mag.set_ramps_list(ramps_list)
-        if not flag:
-            return
-        mag.set_ramps_text(ramps_text)
-        d1 = {self.set_mag_ramp_rates: mag.ramps_list}
+        ramps_list = mag.set_ramps_list(ramps_list)
+        ramps_text = mag.set_ramps_text(ramps_text)
+        d1 = {self.set_mag_ramp_rates: ramps_list}
         self.mag_ui_internal.update(d1)
         if len(ramps_list) == len(mag.setpoints_list) == mag.ramp_segments:
             print("Setting ramp segments.")
@@ -1533,11 +1530,11 @@ class ProbeGui(QMainWindow):
         """Set the voltage output limit in V for the magnet."""
         mag, spinbox = self.mag, self.mwind.ui.voltLimitSpinbox
         if limit is not None:
-            mag.set_volt_limit(limit)
+            limit = mag.set_volt_limit(limit)
             spinbox.setValue(limit)
         else:
-            mag.set_volt_limit(spinbox.value())
-        d1 = {self.set_mag_volt_limit: mag.volt_limit}
+            limit = mag.set_volt_limit(spinbox.value())
+        d1 = {self.set_mag_volt_limit: limit}
         self.mag_ui_internal.update(d1)
 
     def set_mag_curr_limit(self, limit: Optional[float] = None) -> None:
@@ -1545,11 +1542,11 @@ class ProbeGui(QMainWindow):
         """Set the current output limit in A for the magnet."""
         mag, spinbox = self.mag, self.mwind.ui.currLimitSpinbox
         if limit is not None:
-            mag.set_curr_limit(limit)
+            limit = mag.set_curr_limit(limit)
             spinbox.setValue(limit)
         else:
-            mag.set_curr_limit(spinbox.value())
-        d1 = {self.set_mag_curr_limit: mag.curr_limit}
+            limit = mag.set_curr_limit(spinbox.value())
+        d1 = {self.set_mag_curr_limit: limit}
         self.mag_ui_internal.update(d1)
 
     def set_mag_zero(self, enable: Optional[bool] = None) -> None:
@@ -1600,15 +1597,17 @@ class ProbeGui(QMainWindow):
         """Update the ramp list labels to correspond to current units."""
         mag, ui = self.mag, self.mwind.ui
         print(fidx)
+        fidx = fidx if fidx is not None else mag.field_unit_idx
         fabbv = (mag.field_unit('Abbv') if fidx is None
                  else mag.field_unit_switch['Abbv'][fidx])
         tabbv = (mag.time_unit('Abbv') if tidx is None
                  else mag.time_unit_switch['Abbv'][tidx])
         targ_text = (f'ic Field ({fabbv})' if (fidx is not None and fidx < 2)
                      else f'Current ({fabbv})')
-        targ_range = mag.field_upper_limit[fidx] if (fidx is not None) else 0
+        # bound = mag.lims.field[fidx] if (fidx is not None) else 0
+        bound = mag.lims.field[fidx]
         ui.targetLabel.setText(mag.target_label + targ_text)
-        ui.targetSpinbox.setRange(-targ_range, targ_range)
+        ui.targetSpinbox.setRange(-bound, bound)
         ui.setpointsLabel.setText(mag.setpoints_label + f'({fabbv})')
         ui.ratesLabel.setText(mag.ramps_label + f'({fabbv}/{tabbv})')
         # ui.holdLabel.setText(mag.hold_times_label + f'({tabbv})')
