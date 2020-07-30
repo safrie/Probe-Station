@@ -5,13 +5,14 @@ design.py contains all the logic for creating the user interface.
 @author: Sarah Friedensen
 """
 
+from limits import KeithLims as klims, TempLims as tlims, MagLims as mlims
 from PyQt5 import QtCore, QtWidgets
 # from PyQt5 import  QtGui
 from PyQt5.QtWidgets import (QWidget, QFrame, QGridLayout, QVBoxLayout,
                              QHBoxLayout, QLabel, QLineEdit, QPushButton,
                              QSpinBox, QDoubleSpinBox, QComboBox, QCheckBox)
 import pyqtgraph as pg
-import sys
+# import sys
 from typing import Tuple
 
 from abc import ABCMeta, abstractmethod
@@ -572,8 +573,8 @@ class Ui_MagnetWindow(Ui_MainWindow):
         paramLayout.addWidget(COMLabel, 0, 0, 1, 1)
         self.COMSpinbox = QSpinBox(paramWidget, objectName='COMSpinBox')
         # TODO: Find COM address range
-        # self.COMSpinbox.setRange(0, _)
-        self.COMSpinbox.setValue(2)
+        self.COMSpinbox.setRange(mlims.addr[0], mlims.addr[-1])
+        self.COMSpinbox.setValue(mlims.addr_default)
         paramLayout.addWidget(self.COMSpinbox, 0, 1, 1, 1)
 
         self.targetLabel = QLabel(paramWidget, text='Target TEXT',
@@ -582,7 +583,8 @@ class Ui_MagnetWindow(Ui_MainWindow):
 
         self.targetSpinbox = QDoubleSpinBox(paramWidget,
                                             objectName='TargetSpinBox')
-        self.targetSpinbox.setRange(-30, 30)  # in kilogauss.
+        self.targetSpinbox.setRange(-mlims.field[0], mlims.field[0])  # in kG
+        self.targetSpinbox.setValue(mlims.field_default[0])
         paramLayout.addWidget(self.targetSpinbox, 1, 1, 1, 1)
 
         fieldUnitLabel = QLabel(paramWidget, text='Field Units',
@@ -612,9 +614,7 @@ class Ui_MagnetWindow(Ui_MainWindow):
 
         self.segmentsSpinbox = QSpinBox(paramWidget,
                                         objectName='SegmentsSpinBox')
-        self.segmentsSpinbox.setMinimum(1)
-        # TODO: Find max number of segments
-#        self.segmentsSpinbox.setRange()
+        self.segmentsSpinbox.setRange(mlims.seg[0], mlims.seg[1])
         paramLayout.addWidget(self.segmentsSpinbox, 4, 1, 1, 1)
 
         self.setpointsLabel = QLabel(paramWidget, text='Ramp Setpoints UNIT',
@@ -635,10 +635,10 @@ class Ui_MagnetWindow(Ui_MainWindow):
                                                  objectName='RatesButton')
         paramLayout.addWidget(self.ratesButton, 6, 1, 1, 1)
 
-        # TODO: Initialize holdLabel properly
+        # ???: Initialize holdLabel properly
 #        self.holdLabel = QLabel(paramWidget, text='Ramp hold times UNIT',
 #                                objectName='HoldLabel')
-        # TODO: Determine if hold times label text needs to update
+        # ???: Determine if hold times label text needs to update
 #        paramLayout.addWidget(self.holdLabel, 7, 0, 1, 1)
 
 #        self.holdButton = QPushButton(paramWidget, text='List',
@@ -675,8 +675,9 @@ class Ui_MagnetWindow(Ui_MainWindow):
 
         self.voltLimitSpinbox = QDoubleSpinBox(paramWidget,
                                                objectName='VoltLimitSpinBox')
-        # TODO: Figure out max and min values
-#        self.voltLimitSpinbox.setRange()
+        # TODO: determine if can change argument to mlims.volt
+        self.voltLimitSpinbox.setRange(mlims.volt[0], mlims.volt[1])
+        self.voltLimitSpinbox.setValue(mlims.volt_default)
         paramLayout.addWidget(self.voltLimitSpinbox, 8, 1, 1, 1)
 
         currLimitLabel = QLabel(paramWidget, text='Current limit (A)',
@@ -685,9 +686,9 @@ class Ui_MagnetWindow(Ui_MainWindow):
 
         self.currLimitSpinbox = QDoubleSpinBox(paramWidget,
                                                objectName='CurrLimitSpinBox')
-        # TODO: Figure out max and min values
-#        self.currLimitSpinbox.setRange()
-        # self.currLimitSpinbox.setValue()
+        # TODO: Figure out if can set argument to mlims.curr
+        self.currLimitSpinbox.setRange(mlims.curr[0], mlims.curr[1])
+        self.currLimitSpinbox.setValue(mlims.curr_default)
         paramLayout.addWidget(self.currLimitSpinbox, 9, 1, 1, 1)
 
         self.zeroButton = QPushButton(paramWidget, text='Zero Magnet',
@@ -695,21 +696,21 @@ class Ui_MagnetWindow(Ui_MainWindow):
         paramLayout.addWidget(self.zeroButton, 10, 0, 1, 1)
 
         # TODO: Determine if using rampdown at all
-        rampdownLayout = QHBoxLayout(objectName='RampdownLayout')
-        paramLayout.addLayout(rampdownLayout, 10, 1, 1, 1)
+        # rampdownLayout = QHBoxLayout(objectName='RampdownLayout')
+        # paramLayout.addLayout(rampdownLayout, 10, 1, 1, 1)
 
         # TODO: Determine if using rampdown at all (probably no?)
-        self.rampdownLabel = QLabel(paramWidget, text='Rampdown rate (A/s)',
-                                    objectName='RampdownLabel')
+        # self.rampdownLabel = QLabel(paramWidget, text='Rampdown rate (A/s)',
+        #                             objectName='RampdownLabel')
         # TODO: Figure out if units need to update
-        rampdownLayout.addWidget(self.rampdownLabel)
+        # rampdownLayout.addWidget(self.rampdownLabel)
 
-        self.rampdownSpinbox = QDoubleSpinBox(paramWidget,
-                                              objectName='RampdownSpinBox')
+        # self.rampdownSpinbox = QDoubleSpinBox(paramWidget,
+        #                                       objectName='RampdownSpinBox')
         # TODO: Figure out max and min values
 #        self.rampdownSpinbox.setRange
         # self.rampdownSpinbox.setValue()
-        rampdownLayout.addWidget(self.rampdownSpinbox)
+        # rampdownLayout.addWidget(self.rampdownSpinbox)
 
         mCalibrationFileLabel = QLabel(paramWidget,
                                        text='Magnet Calibration file:',
