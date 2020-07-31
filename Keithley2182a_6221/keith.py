@@ -118,7 +118,7 @@ class Keith(Instrument):
         field4_text(optional int)
         source_range_minmax(optional int)
     """
-
+    mu = u'\xb5'
     source_range_type_switch = {
             0: 'Best',
             1: 'Fixed',
@@ -154,17 +154,26 @@ class Keith(Instrument):
             6: 2.0,
             7: 20.0,
             8: 100.0}
+    # source_range_mult_switch = {
+    # This converts to/from uA
+    #         -1: 1e-3,
+    #         0: 1,
+    #         # 1: 1e-3
+    #         # FIXME: Verify this change is correct
+    #         1: 1e3}
     source_range_mult_switch = {
-            -1: 1e-3,
-            0: 1,
-            1: 1e-3}
+        # This converts to/from Amps from/to nA, uA, and mA
+        -1: 1e-9,
+        0: 1e-6,
+        1: 1e-3}
+
     source_range_txt_switch = {
             0: '(nA)',
             1: '(nA)',
             2: '(nA)',
-            3: '(uA)',
-            4: '(uA)',
-            5: '(uA)',
+            3: f'({mu}A)',
+            4: f'({mu}A)',
+            5: f'({mu}A)',
             6: '(mA)',
             7: '(mA)',
             8: '(mA)'}
@@ -397,38 +406,54 @@ class Keith(Instrument):
         """Return str of measurement type.  Convenience function."""
         return self.meas_type_txt_switch.get(self.meas_type_idx, 'ERR')
 
-    def curr_conv_div(self, num: float) -> float:
-        """Convert num to uA by division based on source range."""
-        val = numpy.log10(
-                self.source_range_switch[self.source_range_idx] / 2e-6)
-        mult_idx = val // 3
-        return num / self.source_range_mult_switch[mult_idx]
+    # def curr_conv_div(self, num: float) -> float:
+    #     """Convert num to uA by division based on source range."""
+    #     val = numpy.log10(
+    #             self.source_range_switch[self.source_range_idx] / 2e-6)
+    #     mult_idx = val // 3
+    #     return num / self.source_range_mult_switch[mult_idx]
+
+    # def curr_conv_mult(self, num: float) -> float:
+    #     """Convert num to uA by multiplication based on source range."""
+    #     val = numpy.log10(
+    #             self.source_range_switch[self.source_range_idx] / 2e-6)
+    #     mult_idx = val // 3
+    #     return num * self.source_range_mult_switch[mult_idx]
 
     def curr_conv_mult(self, num: float) -> float:
-        """Convert num to uA by multiplication based on source range."""
-        val = numpy.log10(
-                self.source_range_switch[self.source_range_idx] / 2e-6)
+        """Convert a number to Amps based on multiplication by source range."""
+        val = numpy.log10(self.source_range_switch[self.source_range_idx])
         mult_idx = val // 3
         return num * self.source_range_mult_switch[mult_idx]
+
+    def curr_conv_div(self, num: float) -> float:
+        """Convert a number to Amps based on division by the source range."""
+        val = numpy.log10(self.source_range_switch[self.source_range_idx])
+        mult_idx = val // 3
+        return num / self.source_range_mult_switch[mult_idx]
 
     # %% Measurement variables section
 
     def set_curr1(self, curr: float, meas_idx: Optional[int] = None) -> None:
-        """Set curr1 of desired meas type instance to curr in uA."""
+        # """Set curr1 of desired meas type instance to curr in uA."""
+        """Set curr1 of desired measurement type instance to curr in Amps."""
         self.meas_type(meas_idx).set_curr1(curr)
 
     def set_curr2(self, curr: float, meas_idx: Optional[int] = None) -> None:
-        """Set curr2 of desired meas type instance to curr in uA."""
+        # """Set curr2 of desired meas type instance to curr in uA."""
+        """Set curr2 of desired measurement type instance to curr in Amps."""
         self.meas_type(meas_idx).set_curr2(curr)
 
     def set_curr_step(self, curr: float,
                       meas_idx: Optional[int] = None) -> None:
-        """Set curr_step of desired meas type instance to curr in uA."""
+        # """Set curr_step of desired meas type instance to curr in uA."""
+        """Set curr_step of desired meas type instance to curr in Amps."""
         self.meas_type(meas_idx).set_curr_step(curr)
 
     def set_curr_delta(self, curr: float,
                        meas_idx: Optional[int] = None) -> None:
-        """Set curr_delta of desired meas type instance to curr in uA."""
+        # """Set curr_delta of desired meas type instance to curr in uA."""
+        """Set curr_delta of desired measurement type instance to curr in A."""
         self.meas_type(meas_idx).set_curr_delta(curr)
 
     def set_meas_rate(self, rate: Union[int, float],
@@ -626,7 +651,7 @@ class Keith(Instrument):
         data_cols = [data_list[j::cols] for j in range(0, cols)]
         return (data_str, sdata_rows, data_cols)
 
-    # %% UI UPdate Section
+    # %% UI Update Section
 
     def source_range_text(self) -> str:
         """Access the source range text conveniently."""
@@ -641,6 +666,7 @@ class Keith(Instrument):
         """Label curr2 in UI and headers."""
         return self.meas_type(idx).curr2_text + self.source_range_text()
 
+    # FIXME: Change to field3?
     def curr_step_text(self, idx: Optional[int]) -> str:
         """Label curr_step in UI and headers."""
         step = self.meas_type(idx).curr_step_text
