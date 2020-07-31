@@ -242,23 +242,23 @@ class vKeith(Visa):
         # TODO: Test arm_diffcon
         """Return the command to arm a differential conductance measurement.
 
-        start, stop, step, and delta are passed to the method in microamps;
+        start, stop, step, and delta are passed to the method in Amps;
         delay is passed to the method in milliseconds.
         """
         cmd = (f':TRAC:CLE; POIN {count}; '
-               + f':SOUR:DCON:STAR {round(start * 1e-6, 9)}; '
-               + f'STOP {round(stop * 1e-6, 9)}; '
-               + f'STEP {round(step * 1e-6, 9)}; '
-               + f'DELTA {round(delta * 1e-6, 9)}; '
+               + f':SOUR:DCON:STAR {round(start, 9)}; '
+               + f'STOP {round(stop, 9)}; '
+               + f'STEP {round(step, 9)}; '
+               + f'DELTA {round(delta, 9)}; '
                # TODO: Test delay in arm_diffcon for proper units.
                + f'DELAY {round(delay * 1e-3, 6)}; '
                + f'CAB {"ON" if compl_abort else "OFF"}; '
                + 'ARM')
         cmd_sim = (f"TRAC:CLE; TRAC:POIN {count}; "
-                   + f"SOUR:DCON:STAR {round(start * 1e-6, 9)}; "
-                   + f"SOUR:DCON:STOP {round(stop * 1e-6, 9)}; "
-                   + f"SOUR:DCON:STEP {round(step * 1e-6, 9)}; "
-                   + f"SOUR:DCON:DELTA {round(delta * 1e-6, 9)}; "
+                   + f"SOUR:DCON:STAR {round(start, 9)}; "
+                   + f"SOUR:DCON:STOP {round(stop, 9)}; "
+                   + f"SOUR:DCON:STEP {round(step, 9)}; "
+                   + f"SOUR:DCON:DELTA {round(delta, 9)}; "
                    + f"SOUR:DCON:DELAY {round(delay * 1e-3, 6)}; "
                    + f"SOUR:DCON:CAB {'ON' if compl_abort else 'OFF'}; "
                    + "SOUR:DCON ARM 1"
@@ -273,20 +273,20 @@ class vKeith(Visa):
         # TODO: Test arm_delta
         """Return the command to arm a current delta measurement.
 
-        high and low are passed to the method in microamps; delay is passed in
+        high and low are passed to the method in Amps; delay is passed in
         milliseconds.
         """
         cmd = (f':TRAC:CLE; POIN {count}; '
-               + f':SOUR:DELT:HIGH {round(high * 1e-6, 9)}; '
-               + f'LOW {round(low * 1e-6, 9)}; '
+               + f':SOUR:DELT:HIGH {round(high, 9)}; '
+               + f'LOW {round(low, 9)}; '
                # TODO: Test delay in arm_delta for proper units.
                + f'DELAY {round(delay * 1e-3, 9)}; '
                + f'COUN {count}; '
                + f'CAB {"ON" if compl_abort else "OFF"}; '
                + 'ARM')
         cmd_sim = (f"TRAC:CLE; TRAC:POIN {count}; "
-                   + f"SOUR:DELT:HIGH {round(high * 1e-6, 9)}; "
-                   + f"SOUR:DELT:LOW {round(low * 1e-6, 9)}; "
+                   + f"SOUR:DELT:HIGH {round(high, 9)}; "
+                   + f"SOUR:DELT:LOW {round(low, 9)}; "
                    + f"SOUR:DELT:DELAY {round(delay * 1e-3, 6)}; "
                    + f"SOUR:DELT:COUN {count}; "
                    + f"SOUR:DELT:CAB {'ON' if compl_abort else 'OFF'}; "
@@ -302,12 +302,12 @@ class vKeith(Visa):
         # TODO: Test arm_pdelt
         """Return the command to arm a pulse delta measurement.
 
-        high and low are passed to the method in microamps; width and source
+        high and low are passed to the method in Amps; width and source
         delay are passed in microseconds; and cycle_int is passed in PLC.
         """
         cmd = (f':TRAC:CLE; POIN {count}; '
-               + f':SOUR:PDEL:HIGH {round(high * 1e-6, 9)}; '
-               + f'LOW {round(low * 1e-6, 9)}; '
+               + f':SOUR:PDEL:HIGH {round(high, 9)}; '
+               + f'LOW {round(low, 9)}; '
                # TODO: Test width in arm_pdelt for proper units.
                + f'WIDT {round(width * 1e-6, 9)}; '
                # TODO: Test source delay in arm_pdelt for proper units.
@@ -317,8 +317,8 @@ class vKeith(Visa):
                + f'LME {2 if low_meas else 1}; '
                + 'SWE OFF; ARM')
         cmd_sim = (f"TRAC:CLE; TRAC:POIN {count}; "
-                   + f"SOUR:PDEL:HIGH {round(high * 1e-6, 9)}; "
-                   + f"SOUR:PDEL:LOW {round(low * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:HIGH {round(high, 9)}; "
+                   + f"SOUR:PDEL:LOW {round(low, 9)}; "
                    + f"SOUR:PDEL:WIDT {round(width * 1e-6, 9)}; "
                    + f"SOUR:PDEL:SDEL {round(delay * 1e-6, 9)}; "
                    + f"SOUR:PDEL:COUN {count}; "
@@ -338,7 +338,7 @@ class vKeith(Visa):
         # TODO: Verify the units on delay and width in arm_pdelt_stair.
         """Return the command to arm a pulse delta staircase sweep.
 
-        start, stop, and step are passed in microamps; delay and width are
+        start, stop, and step are passed in Amps; delay and width are
         passed in microseconds; and cycle_time is passed in seconds.
         """
         cmd = (f':TRAC:CLE; POIN {count * sweeps}; '
@@ -347,9 +347,9 @@ class vKeith(Visa):
                # TODO: Check to make sure don't need to back out of menu (pds)
                + f'DEL {round(cycle_time, 6)}; '  # Sweep delay/period
                # TODO: Check to make sure don't need to back out of menu (pds)
-               + f'CURR:STAR {round(start * 1e-6, 9)}; '
-               + f'STOP {round(stop * 1e-6, 9)}; '
-               + f'STEP {round(step * 1e-6, 9)}; '
+               + f'CURR:STAR {round(start, 9)}; '
+               + f'STOP {round(stop, 9)}; '
+               + f'STEP {round(step, 9)}; '
                # TODO: Check to make sure don't need to back out of menu (pds)
                + f'PDEL:WIDT {round(width * 1e-3, 9)}; '
                + f'SDEL {round(delay * 1e-6, 9)}; '  # Pulse delay
@@ -360,9 +360,9 @@ class vKeith(Visa):
         cmd_sim = (f"TRAC:CLE; TRAC:POIN {count * sweeps}; "
                    + f"SOUR:SWE:SPAC LIN; "
                    + f"SOUR:DEL {round(cycle_time, 6)}; "
-                   + f"SOUR:CURR:STAR {round(start * 1e-6, 9)}; "
-                   + f"SOUR:CURR:STOP {round(stop * 1e-6, 9)}; "
-                   + f"SOUR:CURR:STEP {round(step * 1e-6, 9)}; "
+                   + f"SOUR:CURR:STAR {round(start, 9)}; "
+                   + f"SOUR:CURR:STOP {round(stop, 9)}; "
+                   + f"SOUR:CURR:STEP {round(step, 9)}; "
                    + f"SOUR:PDEL:WIDT {round(width * 1e-3, 9)}; "
                    + f"SOUR:PDEL:SDEL {round(delay * 1e-6, 9)}; "
                    + f"SOUR:PDEL:COUN {count}; "
@@ -380,7 +380,7 @@ class vKeith(Visa):
         # TODO: Verify input units for delay and width in arm_pdelt_log.
         """Return command to arm a pulse delta logarithmic sweep.
 
-        start and stop are passed in microamps; delay and width are passed in
+        start and stop are passed in Amps; delay and width are passed in
         microseconds.
         """
         cmd = (f':TRAC:CLE; POIN {points * sweeps}; '
@@ -391,8 +391,8 @@ class vKeith(Visa):
                # TODO: Check to make sure don't need to back out of menu (pdl)
                + f'DEL {round(cycle_time, 6)}; '  # Sweep delay/period
                # TODO: Check to make sure don't need to back out of menu (pdl)
-               + f'CURR:STAR {round(start * 1e-6, 9)}; '
-               + f'STOP {round(stop * 1e-6, 9)}; '
+               + f'CURR:STAR {round(start, 9)}; '
+               + f'STOP {round(stop, 9)}; '
                # TODO: Check to make sure don't need to back out of menu (pdl)
                + f'PDEL:WIDT {round(width * 1e-6, 9)}; '
                + f'SDEL {round(delay * 1e-6, 9)}; '  # Pulse delay
@@ -404,8 +404,8 @@ class vKeith(Visa):
                    + f"SOUR:SWE:POIN {points}; "
                    + f"SOUR:SWE:COUN {sweeps}; "
                    + f"SOUR:DEL {round(cycle_time, 6)}; "
-                   + f"SOUR:CURR:STAR {round(start * 1e-6, 9)}; "
-                   + f"SOUR:CURR:STOP {round(stop * 1e-6, 9)}; "
+                   + f"SOUR:CURR:STAR {round(start, 9)}; "
+                   + f"SOUR:CURR:STOP {round(stop, 9)}; "
                    + f"SOUR:PDEL:WIDT {round(width * 1e-6, 9)}; "
                    + f"SOUR:PDEL:SDEL {round(delay * 1e-6, 9)}; "
                    + f"SOUR:PDEL:COUN {points}; "
