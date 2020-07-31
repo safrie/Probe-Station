@@ -27,39 +27,64 @@ class KeithLims:
     meter_range_default = 100.0
     compliance_volt = (0.1, 105.0)
     compliance_volt_default = 10
+    cab = ("ON", "OFF")
+    cab_default = "OFF"
 
     points = range(1, 65537)
     points_default = 10
 
-    filter_type = ("MOV", "REP")
-    filter_type_default = "MOV"
-    filter_window = (0.0, 10.0)
-    filter_window_default = 0.0
-    filter_count = range(2, 301)
-    filter_count_default = 10
+    # Currents are in Amps
+    curr1 = (-105.0e-3, 105.0e-3)
+    curr1_default = 1.0e-3
+    curr2 = (-105.0e-3, 105.0e-3)
+    curr2_default = 1.0e-3
+    curr_step = (1.0e-13, 105.0e-3)
+    curr_step_default = 1.0e-5
+    meas_rate = ()
+    meas_rate_default = 1
 
-    class DconLims:
-        # DOCUMENT
-        # Currents are in A
-        curr1 = (-105.0e-3, 105.0e-3)
-        curr1_default = 0.0
-        curr2 = (-105.0e-3, 105.0e-3)
-        curr2_default = 100.0e-3
-        curr_step = (1.0e-13, 105.0e-3)
+    filt = ((0, "MOV"), (1, "REP"))
+    filt_default = filt[0]
+    filt_window = (0.0, 10.0)
+    filt_window_default = 0.0
+    filt_count = range(2, 301)
+    filt_count_default = 10
 
-        pass
 
-    class DeltaLims:
-        pass
+class DconLims(KeithLims):
+    """DconLims contains limits specific to differential conductance.
 
-    class PDeltaLims:
-        pass
+    DconLims inherits from KeithLims"""
+    curr_delta = ()
+    curr_delta_default = 1.0e-6
 
-    class PDeltStairLims:
-        pass
+    def __init__(self):
+        super().__init__()
+        self.filt = super().filt[1]
 
-    class PDeltLogLims:
-        pass
+
+class DeltaLims(KeithLims):
+    # TODOC
+
+    def __init__(self):
+        super().__init__()
+        self.curr1 = (0, 105.0e-3)
+        self.curr1_default = 10.0e-3
+        self.curr2 = (-105.0e-3, 0)
+        self.curr2_default = 0
+
+    pass
+
+
+class PDeltaLims(KeithLims):
+    pass
+
+
+class PDeltStairLims(KeithLims):
+    pass
+
+
+class PDeltLogLims(KeithLims):
     pass
 
 
