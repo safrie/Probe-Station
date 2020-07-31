@@ -44,10 +44,12 @@ To do with program:
     c) Create get_header_string method
     d) Fix any VISA issues
     e) Input validation
-        - design.py
         - setters in temperature.py
-        - remove input validation from visa_temp.py
     f) Add "warm" button to GUI
+    g) Switch radPowerSpinbox to radPowerCombobox
+        - in main.py
+    h) Switch stagePowerSpinbox to stagePowerCombobox
+        - in main.py
 • Add tooltips to:
     a) set_setpoints button
     b) set_ramps button

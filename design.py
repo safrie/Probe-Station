@@ -800,10 +800,8 @@ class Ui_TempWindow(Ui_MainWindow):
 
         self.GPIBSpinbox = QSpinBox(paramWidget, objectName='GPIBSpinBox')
         self.GPIBSpinbox.setToolTip('GPIB address of LakeShore 336')
-        self.GPIBSpinbox.setMinimum(1)
-        # TODO: Find maximum
-#        self.GPIBSpinbox.setRange()
-        self.GPIBSpinbox.setValue(11)
+        self.GPIBSpinbox.setRange(tlims.addr[0], tlims.addr[-1])
+        self.GPIBSpinbox.setValue(tlims.addr_default)
         paramLayout.addWidget(self.GPIBSpinbox, 0, 1, 1, 1)
 
         measuredTempLabel = QLabel(paramWidget, text='Temperatures to measure',
@@ -829,7 +827,8 @@ class Ui_TempWindow(Ui_MainWindow):
 
         self.radSetpointSpinbox = QDoubleSpinBox(
             paramWidget, objectName='RadSetpointSpinBox')
-        self.radSetpointSpinbox.setRange(3.00, 325.00)
+        self.radSetpointSpinbox.setRange(tlims.setpt[0], tlims.setpt[1])
+        self.radSetpointSpinbox.setValue(tlims.setpt_default)
         paramLayout.addWidget(self.radSetpointSpinbox, 3, 2, 1, 1)
 
         radRampLabel = QLabel(paramWidget,
@@ -839,9 +838,9 @@ class Ui_TempWindow(Ui_MainWindow):
 
         self.radRampSpinbox = QDoubleSpinBox(paramWidget,
                                              objectName='RadRampSpinBox')
-        self.radRampSpinbox.setMinimum(0.00)
-        # TODO: Find ramp rate maximum
-#        self.magRampSpinbox.setRange()
+        self.radRampSpinbox.setRange(tlims.rate[2], tlims.rate[1])
+        self.radRampSpinbox.setSingleStep(tlims.rate[0])
+        self.radRampSpinbox.setValue(tlims.rate_default)
         self.radRampSpinbox.setToolTip(
             'Rad shield/magnet temperature ramp rate in K/min')
         paramLayout.addWidget(self.radRampSpinbox, 4, 2, 1, 1)
@@ -851,12 +850,21 @@ class Ui_TempWindow(Ui_MainWindow):
                                objectName='RadPowerLabel')
         paramLayout.addWidget(radPowerLabel, 5, 1, 1, 1)
 
-        self.radPowerSpinbox = QSpinBox(paramWidget,
-                                        objectName='RadPowerSpinBox')
-        self.radPowerSpinbox.setToolTip(
-                '0 = off, 1 = low, 2 = medium, 3 = high')
-        self.radPowerSpinbox.setRange(0, 3)
-        paramLayout.addWidget(self.radPowerSpinbox, 5, 2, 1, 1)
+        self.radPowerCombobox = QComboBox(paramWidget,
+                                          objectName='RadPowerComboBox')
+        self.radPowerCombobox.addItem('Off')
+        self.radPowerCombobox.addItem('Low')
+        self.radPowerCombobox.addItem('Medium')
+        self.radPowerCombobox.addItem('High')
+        paramLayout.addWidget(self.radPowerCombobox, 5, 2, 1, 1)
+
+        # self.radPowerSpinbox = QSpinBox(paramWidget,
+        #                                 objectName='RadPowerSpinBox')
+        # self.radPowerSpinbox.setToolTip(
+        #         '0 = off, 1 = low, 2 = medium, 3 = high')
+        # self.radPowerSpinbox.setRange(tlims.heatmode[0], tlims.heatmode[-1])
+
+        # paramLayout.addWidget(self.radPowerSpinbox, 5, 2, 1, 1)
 
         self.stageControlCheckbox = QCheckBox(paramWidget,
                                               text='Control stage temperature',
@@ -870,7 +878,8 @@ class Ui_TempWindow(Ui_MainWindow):
 
         self.stageSetpointSpinbox = QDoubleSpinBox(
             paramWidget, objectName='StageSetpointSpinBox')
-        self.stageSetpointSpinbox.setRange(3.00, 325.00)
+        self.stageSetpointSpinbox.setRange(tlims.setpt[0], tlims.setpt[1])
+        self.stageSetpointSpinbox.setValue(tlims.setpt_default)
         paramLayout.addWidget(self.stageSetpointSpinbox, 7, 2, 1, 1)
 
         stageRampLabel = QLabel(paramWidget, text='Stage ramp rate (K/min',
@@ -881,21 +890,29 @@ class Ui_TempWindow(Ui_MainWindow):
                                                objectName='stageRampSpinBox')
         self.stageRampSpinbox.setToolTip(
                 'Ramp rate for the sample stage temperature in K/min')
-        self.stageRampSpinbox.setMinimum(0.00)
-        # TODO: Find maximum for stage ramp temperature
-#        self.stageRampSpinbox.setRange(0.00, )
+        self.stageRampSpinbox.setRange(tlims.rate[2], tlims.rate[1])
+        self.stageRampSpinbox.setSingleStep(tlims.rate[0])
+        self.stageRampSpinbox.setValue(tlims.rate_default)
         paramLayout.addWidget(self.stageRampSpinbox, 8, 2, 1, 1)
 
         stagePowerLabel = QLabel(paramWidget, text='Heater power setting',
                                  objectName='StagePowerLabel')
         paramLayout.addWidget(stagePowerLabel, 9, 1, 1, 1)
 
-        self.stagePowerSpinbox = QSpinBox(paramWidget,
-                                          objectName='StagePowerSpinBox')
-        self.stagePowerSpinbox.setRange(0, 3)
-        self.stagePowerSpinbox.setToolTip(
-                '0 = off, 1 = low, 2 = medium, 3 = high')
-        paramLayout.addWidget(self.stagePowerSpinbox, 9, 2, 1, 1)
+        self.stagePowerCombobox = QComboBox(paramWidget,
+                                            objectName='StagePowerComboBox')
+        self.stagePowerCombobox.addItem('Off')
+        self.stagePowerCombobox.addItem('Low')
+        self.stagePowerCombobox.addItem('Medium')
+        self.stagePowerCombobox.addItem('High')
+        paramLayout.addWidget(self.stagePowerCombobox, 9, 2, 1, 1)
+
+        # self.stagePowerSpinbox = QSpinBox(paramWidget,
+        #                                   objectName='StagePowerSpinBox')
+        # self.stagePowerSpinbox.setRange(0, 3)
+        # self.stagePowerSpinbox.setToolTip(
+        #         '0 = off, 1 = low, 2 = medium, 3 = high')
+        # paramLayout.addWidget(self.stagePowerSpinbox, 9, 2, 1, 1)
 
         self.setButton = QPushButton(lowerFrame, text='Set',
                                      objectName='SetButton')

@@ -25,7 +25,7 @@ class TempLims():
     # Rate is in K/min. 0 means "ramp as fast as possible."
     rate = (0.1, 100, 0)
     rate_default = 1
-    setpt = (3, 350)
+    setpt = (3, 325)
     setpt_default = 4.0
 
 
