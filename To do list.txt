@@ -24,6 +24,27 @@ To do with program:
         - keith_meas_types.py
         - keith_meas_abc.py
         - design.py
+
+        - meas_rate:
+            -- Delta: PLC
+            -- Diffcon: PLC
+            -- PDelta: cycle_int: PLC
+            -- PDeltLog: cycle_time: s
+            -- PDeltStair: cycle_time: s
+        - meas_delay:
+            -- Delta: ms
+            -- Diffcon: ms
+            -- PDelta: μs
+            -- PDeltLog: μs
+            -- PDeltStair: μs
+        - pulse_width:
+            -- Delta: N/A
+            -- Diffcon: N/A
+            -- PDelta: μs
+            -- PDeltLog: μs
+            -- PDeltStair: μs
+
+
     k) Change field3 stuff to curr_step because that's all it's used for?
 • Fix AMI 430 Errors/Issues
     a) On open of Magwindow, for spinbox.setValue(targ), targ is the bound
