@@ -203,6 +203,8 @@ class Ui_KeithWindow(Ui_MainWindow):
         closeEvent(event)
     """
 
+    mu = u'\xb5'
+
     def __init__(self):
         super().__init__()
 
@@ -409,7 +411,7 @@ class Ui_KeithWindow(Ui_MainWindow):
         measureLayout.addLayout(pulseWidthLayout, 6, 0, 1, 1)
 
         self.pulseWidthLabel = QLabel(
-            measureWidget, text='Pulse width (\N{GREEK SMALL LETTER MU}s):',
+            measureWidget, text=f'Pulse width ({self.mu}s):',
             objectName='PulseWidthLabel')
         pulseWidthLayout.addWidget(self.pulseWidthLabel)
 
