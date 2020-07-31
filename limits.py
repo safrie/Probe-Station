@@ -6,7 +6,60 @@ from numpy import array
 
 
 class KeithLims:
-    # DOCUMENT
+    """Contains instrument limits and defaults for the Keithley stack."""
+
+    addr = range(1, 32)
+    addr_default = 0  # FIXME: Find default address
+
+    unit = ("V", "OHMS", "W", "SIEM")
+    unit_default = "V"
+    power = ("AVER", "PEAK")
+    power_default = "AVER"
+
+    source_range = (2.0e-9, 20.0e-9, 200.0e-9, 2.0e-6, 20.0e-6, 200.0e-6,
+                    2.0e-3, 20.0e-3, 100.0e-3)
+    source_range_default = 200.0e-6
+    source_range_type = ("ON", "OFF")
+    source_range_type_default = "OFF"
+    meter_rate = (0.01, 60.0)
+    meter_rate_default = 5.0
+    meter_range = (100.0e-3, 10.0e-3, 1.0, 10.0, 100.0)
+    meter_range_default = 100.0
+    compliance_volt = (0.1, 105.0)
+    compliance_volt_default = 10
+
+    points = range(1, 65537)
+    points_default = 10
+
+    filter_type = ("MOV", "REP")
+    filter_type_default = "MOV"
+    filter_window = (0.0, 10.0)
+    filter_window_default = 0.0
+    filter_count = range(2, 301)
+    filter_count_default = 10
+
+    class DconLims:
+        # DOCUMENT
+        # Currents are in A
+        curr1 = (-105.0e-3, 105.0e-3)
+        curr1_default = 0.0
+        curr2 = (-105.0e-3, 105.0e-3)
+        curr2_default = 100.0e-3
+        curr_step = (1.0e-13, 105.0e-3)
+
+        pass
+
+    class DeltaLims:
+        pass
+
+    class PDeltaLims:
+        pass
+
+    class PDeltStairLims:
+        pass
+
+    class PDeltLogLims:
+        pass
     pass
 
 

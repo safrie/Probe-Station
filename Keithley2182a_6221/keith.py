@@ -157,7 +157,10 @@ class Keith(Instrument):
     source_range_mult_switch = {
             -1: 1e-3,
             0: 1,
-            1: 1e-3}
+            # 1: 1e-3
+            # FIXME: Verify this change is correct
+            1: 1e3}
+
     source_range_txt_switch = {
             0: '(nA)',
             1: '(nA)',
@@ -626,7 +629,7 @@ class Keith(Instrument):
         data_cols = [data_list[j::cols] for j in range(0, cols)]
         return (data_str, sdata_rows, data_cols)
 
-    # %% UI UPdate Section
+    # %% UI Update Section
 
     def source_range_text(self) -> str:
         """Access the source range text conveniently."""
@@ -641,6 +644,7 @@ class Keith(Instrument):
         """Label curr2 in UI and headers."""
         return self.meas_type(idx).curr2_text + self.source_range_text()
 
+    # FIXME: Change to field3?
     def curr_step_text(self, idx: Optional[int]) -> str:
         """Label curr_step in UI and headers."""
         step = self.meas_type(idx).curr_step_text

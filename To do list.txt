@@ -13,6 +13,14 @@ To do with program:
         - setters in keith.py
         - UI updaters in main.py
     h) Fix any VISA issues
+    i) Change all internal variables to A for ease of switching scales
+        - main.py
+        - keith.py
+        - limits.py (include a way to look up the correct multiplier by index)
+        - Keith_meas_abc.py
+        - Keith_meas_types.py
+        - design.py
+        - test_environment.yaml
 • Fix AMI 430 Errors/Issues
     a) On open of Magwindow, for spinbox.setValue(targ), targ is the bound
        method Mag.set_target, not an actual numerical value
