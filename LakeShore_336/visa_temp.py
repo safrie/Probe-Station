@@ -98,7 +98,7 @@ class vTemp(Visa):
         output will try to get where it's going as fast as possible.
         """
         if out_idx not in (1, 2):
-            raise ValueError('set_ramp: out_idx must be 1 or 2.')
+            print('set_ramp: out_idx must be 1 or 2.')
             return
         cmd = f'RAMP {out_idx}, {int(enable)}, {rate}'
         if out_idx == 1:
@@ -120,7 +120,7 @@ class vTemp(Visa):
         """Change output out_idx setpoint to value (in Kelvin)."""
         cmd = f'SETP {out_idx}, {temp}'
         if out_idx not in (1, 2):
-            raise ValueError('set_setpt: out_idx must be 1 or 2.')
+            print('set_setpt: out_idx must be 1 or 2.')
             return
         if out_idx == 1:
             self.rad_setpt = cmd
@@ -157,10 +157,10 @@ class vTemp(Visa):
         hold steady at a temperature.
         """
         if out_idx not in (1, 2):
-            raise ValueError('enable_output: out_idx must be 1 or 2.')
+            print('enable_output: out_idx must be 1 or 2.')
             return
         if mode_idx not in range(0, 6):
-            raise ValueError('enable_output: mode_idx must be in range(0, 6).')
+            print('enable_output: mode_idx must be in range(0, 6).')
             return
         in_idx = out_idx + 5
         cmd = f'OUTMODE {out_idx}, {mode_idx}, {in_idx}, 1'
@@ -172,11 +172,10 @@ class vTemp(Visa):
         Heater modes: 0 = Off, 1 = Low, 2 = Medium, 3 = High.
         """
         if out_idx not in (1, 2):
-            raise ValueError('enable_heater: out_idx must be 1 or 2.')
+            print('enable_heater: out_idx must be 1 or 2.')
             return
         if htr_idx not in range(0, 4):
-            raise ValueError(
-                f'ENABLE_HEATER: htr_idx must be in {range(0, 4)}.')
+            print(f'ENABLE_HEATER: htr_idx must be in {range(0, 4)}.')
             return
         cmd = f'RANGE {out_idx}, {htr_idx}'
         self.write(cmd)
