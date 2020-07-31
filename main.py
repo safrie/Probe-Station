@@ -788,11 +788,11 @@ class ProbeGui(QMainWindow):
     def update_keith_values(self) -> None:
         # TODO: Test update_keith_values
         """Update Keithley UI elements to reflect internal values."""
-        ui = self.kwind.ui
-        (keith, meas) = (self.keith, self.keith.meas_type())
+        (ui, keith, meas) = (self.kwind.ui, self.keith, self.keith.meas_type())
         ui.current1Spinbox.setValue(keith.curr_conv_div(meas.curr1))
         ui.current2Spinbox.setValue(keith.curr_conv_div(meas.curr2))
         if ui.field3Spinbox.isVisible():
+            # FIXME: Does this fuck up with field3 is used for something else?
             ui.field3Spinbox.setValue(keith.curr_conv_div(meas.curr_step))
         if ui.field4Spinbox.isVisible():
             if 'Delta Current' in ui.field4Label.text():
@@ -949,33 +949,36 @@ class ProbeGui(QMainWindow):
         # TODO: Test update_keith_source_minmax
         """Update min and max allowed current values based on source range.
 
-        If "Best" ranging is selected, maximum is 100 mA (100e3 uA).
+        If "Best" ranging is selected, maximum is 100 mA.
         """
         ui = self.kwind.ui
         idx = self.keith.meas_type_idx
         (keith, meas) = (self.keith, self.keith.meas_type())
-        max_ua = (keith.curr_conv_mult(bound) if keith.source_range_type_idx
-                  else 100e3)
-        max_sb_curr = keith.curr_conv_div(max_ua)
+        # max_ua = (keith.curr_conv_mult(bound) if keith.source_range_type_idx
+        #           else 100e3)
+        # FIXME: Change this to limits.py stuff
+        max_A = (keith.curr_conv_mult(bound) if keith.source_range_type_idx
+                 else 100e-3)
+        max_sb_curr = keith.curr_conv_div(max_A)
         max_points = 10e3
         (curr1, curr2) = (meas.curr1, meas.curr2)
         step = meas.curr_step if hasattr(meas, 'curr_step') else None
         delta = meas.curr_delta if hasattr(meas, 'curr_delta') else None
         points = meas.num_points
 
-        if curr1 > max_ua:
-            self.set_keith_curr1(max_ua)
-        elif curr1 < -max_ua:
-            self.set_keith_curr1(-max_ua)
+        if curr1 > max_A:
+            self.set_keith_curr1(max_A)
+        elif curr1 < -max_A:
+            self.set_keith_curr1(-max_A)
 
-        if curr2 > max_ua:
-            self.set_keith_curr2(max_ua)
-        elif curr2 < -max_ua:
-            self.set_keith_curr2(-max_ua)
+        if curr2 > max_A:
+            self.set_keith_curr2(max_A)
+        elif curr2 < -max_A:
+            self.set_keith_curr2(-max_A)
 
         if step is not None:
-            if step > max_ua:
-                self.set_keith_curr_step(max_ua)
+            if step > max_A:
+                self.set_keith_curr_step(max_A)
             elif step < 0:
                 self.set_keith_curr_step(0)
 
@@ -985,8 +988,8 @@ class ProbeGui(QMainWindow):
             elif points < 1:
                 self.set_keith_points(1)
         else:
-            if delta > max_ua:
-                self.set_keith_curr_delta(max_ua)
+            if delta > max_A:
+                self.set_keith_curr_delta(max_A)
             elif delta < 0:
                 self.set_keith_curr_delta(0)
 

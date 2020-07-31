@@ -427,7 +427,7 @@ class Keith(Instrument):
         return num * self.source_range_mult_switch[mult_idx]
 
     def curr_conv_div(self, num: float) -> float:
-        """Convert a number to Amps based on division by the source range."""
+        """Convert a number from Amps based on division by the source range."""
         val = numpy.log10(self.source_range_switch[self.source_range_idx])
         mult_idx = val // 3
         return num / self.source_range_mult_switch[mult_idx]
