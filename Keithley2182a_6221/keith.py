@@ -158,8 +158,6 @@ class Keith(Instrument):
     # This converts to/from uA
     #         -1: 1e-3,
     #         0: 1,
-    #         # 1: 1e-3
-    #         # FIXME: Verify this change is correct
     #         1: 1e3}
     source_range_mult_switch = {
         # This converts to/from Amps from/to nA, uA, and mA

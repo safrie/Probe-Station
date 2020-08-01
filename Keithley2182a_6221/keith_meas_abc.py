@@ -146,8 +146,7 @@ class KeithMeasure():
 
         The delay time is a pause between when the 6221 applies a new current
         and when the 2182a measures a voltage, which gives the current time to
-        settle.  The units of num vary between milliseconds and microseconds
-        depending on the measurement type.
+        settle.  num is in units of seconds.
         """
         self.meas_delay = num
 

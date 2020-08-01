@@ -18,11 +18,8 @@ To do with program:
         - test_environment.yaml
     j) Change internal variables to s for ease of switching scales?
         - main.py
-        - keith.py
         - visa_keith.py
         - limits.py
-        - keith_meas_types.py
-        - keith_meas_abc.py
         - design.py
 
         - meas_rate:
