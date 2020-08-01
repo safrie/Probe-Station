@@ -155,11 +155,6 @@ class KeithMeasure():
         """Overridden in daughter classes that have pulse widths."""
         pass
 
-#    def set_pulse_count(self, count: int):
-#        """Overridden in daughter clases that have pulse counts."""
-#        # TODO: See if can do this with just set_num_points
-#        pass
-
     def set_low_meas(self, enable: bool) -> None:
         """Overridden in daughter classes that have a low measure option."""
         pass
