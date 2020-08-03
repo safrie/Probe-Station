@@ -80,11 +80,24 @@ class DeltaLims(KeithLims):
         self.curr2 = (-105.0e-3, 0)
         self.curr2_default = 0
 
-    pass
-
 
 class PDeltaLims(KeithLims):
-    pass
+    """PDeltaLims contains limits specific to pulse delta measurements.
+
+    PDeltaLims inherits from KeithLims."""
+
+    width = (50.0e-6, 12.0e-3)
+    width_default = 110.0e-6
+    low_meas = (1, 2)
+    low_meas_default = 2
+
+    def __init__(self):
+        super().__init__()
+        self.curr2_default = 0.0
+        self.delay = (16.0e-6, 11.966e-3)
+        self.delay_default = 16.0e-6
+        self.meas_rate = (5, 999999)  # This is in PLC
+        self.meas_rate_default = 5
 
 
 class PDeltStairLims(KeithLims):
