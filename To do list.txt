@@ -16,11 +16,6 @@ To do with program:
     i) Change all internal variables to A for ease of switching scales
         - limits.py (include a way to look up the correct multiplier by index)
         - test_environment.yaml
-    j) Change internal variables to s for ease of switching scales?
-        - main.py
-        - visa_keith.py
-        - limits.py
-        - design.py
 
         - meas_rate:
             -- Delta: PLC

@@ -549,7 +549,6 @@ class ProbeGui(QMainWindow):
         d1 = {self.set_keith_curr2: meas.curr2}
         self.keith_ui_internal.update(d1)
 
-    # FIXME: Change this to field3?
     def set_keith_curr_step(self, step: Optional[float] = None,
                             meas_idx: Optional[int] = None) -> None:
         # TODO: Test set_keith_curr_step
