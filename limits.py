@@ -43,7 +43,7 @@ class KeithLims:
     meas_rate = (0.1, 60)  # This is in PLC
     meas_rate_default = 1
     delay = (1.0e-3, 9999.999)  # This is in seconds
-    delay_default = 0.002
+    delay_default = 2.0e-3
 
     filt = ((0, "MOV"), (1, "REP"))
     filt_default = filt[0]
@@ -69,7 +69,9 @@ class DconLims(KeithLims):
 
 
 class DeltaLims(KeithLims):
-    # TODOC
+    """DeltaLims contains limits specific to delta measurements.
+
+    DeltaLims inherits from KeithLims."""
 
     def __init__(self):
         super().__init__()
