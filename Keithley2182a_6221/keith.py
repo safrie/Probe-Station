@@ -158,8 +158,6 @@ class Keith(Instrument):
     # This converts to/from uA
     #         -1: 1e-3,
     #         0: 1,
-    #         # 1: 1e-3
-    #         # FIXME: Verify this change is correct
     #         1: 1e3}
     source_range_mult_switch = {
         # This converts to/from Amps from/to nA, uA, and mA
@@ -214,12 +212,6 @@ class Keith(Instrument):
             'sweepPulseDeltaStair': 3,
             'sweepPulseDeltaLog': 4}
 
-#    filter_switch = {
-#            0: 'Moving',
-#            1: 'Repeating',
-#            'Moving': 0,
-#            'Repeating': 1}
-
     def __init__(self) -> None:
         """Initialize instance of general Keithley control."""
         print('Keith.__init__ called.')
@@ -263,6 +255,7 @@ class Keith(Instrument):
         # TODO: Verify KeithMeasure is correct output type.
         """Return inner class instance for measurement type."""
         index = self.meas_type_idx if idx is None else idx
+        print(type(self.meas_type_switch[index]))
         return self.meas_type_switch[index]
 
     def get_header_string(self, idx: Optional[int] = None) -> str:
@@ -405,20 +398,6 @@ class Keith(Instrument):
     def meas_type_txt(self) -> str:
         """Return str of measurement type.  Convenience function."""
         return self.meas_type_txt_switch.get(self.meas_type_idx, 'ERR')
-
-    # def curr_conv_div(self, num: float) -> float:
-    #     """Convert num to uA by division based on source range."""
-    #     val = numpy.log10(
-    #             self.source_range_switch[self.source_range_idx] / 2e-6)
-    #     mult_idx = val // 3
-    #     return num / self.source_range_mult_switch[mult_idx]
-
-    # def curr_conv_mult(self, num: float) -> float:
-    #     """Convert num to uA by multiplication based on source range."""
-    #     val = numpy.log10(
-    #             self.source_range_switch[self.source_range_idx] / 2e-6)
-    #     mult_idx = val // 3
-    #     return num * self.source_range_mult_switch[mult_idx]
 
     def curr_conv_mult(self, num: float) -> float:
         """Convert a number to Amps based on multiplication by source range."""

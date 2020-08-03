@@ -251,7 +251,7 @@ class vKeith(Visa):
                + f'STEP {round(step, 9)}; '
                + f'DELTA {round(delta, 9)}; '
                # TODO: Test delay in arm_diffcon for proper units.
-               + f'DELAY {round(delay * 1e-3, 6)}; '
+               + f'DELAY {round(delay, 6)}; '
                + f'CAB {"ON" if compl_abort else "OFF"}; '
                + 'ARM')
         cmd_sim = (f"TRAC:CLE; TRAC:POIN {count}; "
@@ -259,7 +259,7 @@ class vKeith(Visa):
                    + f"SOUR:DCON:STOP {round(stop, 9)}; "
                    + f"SOUR:DCON:STEP {round(step, 9)}; "
                    + f"SOUR:DCON:DELTA {round(delta, 9)}; "
-                   + f"SOUR:DCON:DELAY {round(delay * 1e-3, 6)}; "
+                   + f"SOUR:DCON:DELAY {round(delay, 6)}; "
                    + f"SOUR:DCON:CAB {'ON' if compl_abort else 'OFF'}; "
                    + "SOUR:DCON ARM 1"
                    )
@@ -280,14 +280,14 @@ class vKeith(Visa):
                + f':SOUR:DELT:HIGH {round(high, 9)}; '
                + f'LOW {round(low, 9)}; '
                # TODO: Test delay in arm_delta for proper units.
-               + f'DELAY {round(delay * 1e-3, 9)}; '
+               + f'DELAY {round(delay, 9)}; '
                + f'COUN {count}; '
                + f'CAB {"ON" if compl_abort else "OFF"}; '
                + 'ARM')
         cmd_sim = (f"TRAC:CLE; TRAC:POIN {count}; "
                    + f"SOUR:DELT:HIGH {round(high, 9)}; "
                    + f"SOUR:DELT:LOW {round(low, 9)}; "
-                   + f"SOUR:DELT:DELAY {round(delay * 1e-3, 6)}; "
+                   + f"SOUR:DELT:DELAY {round(delay, 6)}; "
                    + f"SOUR:DELT:COUN {count}; "
                    + f"SOUR:DELT:CAB {'ON' if compl_abort else 'OFF'}; "
                    + "SOUR:DELT:ARM 1"
@@ -309,9 +309,9 @@ class vKeith(Visa):
                + f':SOUR:PDEL:HIGH {round(high, 9)}; '
                + f'LOW {round(low, 9)}; '
                # TODO: Test width in arm_pdelt for proper units.
-               + f'WIDT {round(width * 1e-6, 9)}; '
+               + f'WIDT {round(width, 9)}; '
                # TODO: Test source delay in arm_pdelt for proper units.
-               + f'SDEL {round(delay * 1e-6, 9)}; '  # Pulse delay
+               + f'SDEL {round(delay, 9)}; '  # Pulse delay
                + f'COUN {count}; '
                + f'INT {cycle_int}; '  # Quasiperiod
                + f'LME {2 if low_meas else 1}; '
@@ -319,8 +319,8 @@ class vKeith(Visa):
         cmd_sim = (f"TRAC:CLE; TRAC:POIN {count}; "
                    + f"SOUR:PDEL:HIGH {round(high, 9)}; "
                    + f"SOUR:PDEL:LOW {round(low, 9)}; "
-                   + f"SOUR:PDEL:WIDT {round(width * 1e-6, 9)}; "
-                   + f"SOUR:PDEL:SDEL {round(delay * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:WIDT {round(width, 9)}; "
+                   + f"SOUR:PDEL:SDEL {round(delay, 9)}; "
                    + f"SOUR:PDEL:COUN {count}; "
                    + f"SOUR:PDEL:INT {cycle_int}; "
                    + f"SOUR:PDEL:LME {2 if low_meas else 1}; "
@@ -335,7 +335,6 @@ class vKeith(Visa):
                         delay: float, width: float, cycle_time: float,
                         count: int, sweeps: int, low_meas: bool) -> str:
         # TODO: Test arm_pdelt_stair.
-        # TODO: Verify the units on delay and width in arm_pdelt_stair.
         """Return the command to arm a pulse delta staircase sweep.
 
         start, stop, and step are passed in Amps; delay and width are
@@ -351,20 +350,20 @@ class vKeith(Visa):
                + f'STOP {round(stop, 9)}; '
                + f'STEP {round(step, 9)}; '
                # TODO: Check to make sure don't need to back out of menu (pds)
-               + f'PDEL:WIDT {round(width * 1e-3, 9)}; '
-               + f'SDEL {round(delay * 1e-6, 9)}; '  # Pulse delay
+               + f'PDEL:WIDT {round(width, 9)}; '
+               + f'SDEL {round(delay, 9)}; '  # Pulse delay
                + f'COUN {count}; '
                + f'LME {2 if low_meas else 1}; '
                + 'SWE ON; ARM')
 
         cmd_sim = (f"TRAC:CLE; TRAC:POIN {count * sweeps}; "
-                   + f"SOUR:SWE:SPAC LIN; "
+                   + "SOUR:SWE:SPAC LIN; "
                    + f"SOUR:DEL {round(cycle_time, 6)}; "
                    + f"SOUR:CURR:STAR {round(start, 9)}; "
                    + f"SOUR:CURR:STOP {round(stop, 9)}; "
                    + f"SOUR:CURR:STEP {round(step, 9)}; "
-                   + f"SOUR:PDEL:WIDT {round(width * 1e-3, 9)}; "
-                   + f"SOUR:PDEL:SDEL {round(delay * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:WIDT {round(width, 9)}; "
+                   + f"SOUR:PDEL:SDEL {round(delay, 9)}; "
                    + f"SOUR:PDEL:COUN {count}; "
                    + f"SOUR:PDEL:LME {2 if low_meas else 1}; "
                    + "SOUR:PDEL:SWE ON; SOUR:PDEL:ARM 1")
@@ -377,7 +376,6 @@ class vKeith(Visa):
                       delay: float, width: float, cycle_time: float,
                       sweeps: int, low_meas: bool) -> str:
         # TODO: Test arm_pdelt_log
-        # TODO: Verify input units for delay and width in arm_pdelt_log.
         """Return command to arm a pulse delta logarithmic sweep.
 
         start and stop are passed in Amps; delay and width are passed in
@@ -394,8 +392,8 @@ class vKeith(Visa):
                + f'CURR:STAR {round(start, 9)}; '
                + f'STOP {round(stop, 9)}; '
                # TODO: Check to make sure don't need to back out of menu (pdl)
-               + f'PDEL:WIDT {round(width * 1e-6, 9)}; '
-               + f'SDEL {round(delay * 1e-6, 9)}; '  # Pulse delay
+               + f'PDEL:WIDT {round(width, 9)}; '
+               + f'SDEL {round(delay, 9)}; '  # Pulse delay
                + f'COUN {points}; '
                + f'LME {2 if low_meas else 1}; '
                + 'SWE ON; ARM')
@@ -406,8 +404,8 @@ class vKeith(Visa):
                    + f"SOUR:DEL {round(cycle_time, 6)}; "
                    + f"SOUR:CURR:STAR {round(start, 9)}; "
                    + f"SOUR:CURR:STOP {round(stop, 9)}; "
-                   + f"SOUR:PDEL:WIDT {round(width * 1e-6, 9)}; "
-                   + f"SOUR:PDEL:SDEL {round(delay * 1e-6, 9)}; "
+                   + f"SOUR:PDEL:WIDT {round(width, 9)}; "
+                   + f"SOUR:PDEL:SDEL {round(delay, 9)}; "
                    + f"SOUR:PDEL:COUN {points}; "
                    + f"SOUR:PDEL:LME {2 if low_meas else 1}; "
                    + "SOUR:PDEL:SWE ON; SOUR:PDEL:ARM 1")

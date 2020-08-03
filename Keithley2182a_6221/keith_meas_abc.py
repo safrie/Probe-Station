@@ -146,19 +146,13 @@ class KeithMeasure():
 
         The delay time is a pause between when the 6221 applies a new current
         and when the 2182a measures a voltage, which gives the current time to
-        settle.  The units of num vary between milliseconds and microseconds
-        depending on the measurement type.
+        settle.  num is in units of seconds.
         """
         self.meas_delay = num
 
     def set_pulse_width(self, num: float) -> None:
         """Overridden in daughter classes that have pulse widths."""
         pass
-
-#    def set_pulse_count(self, count: int):
-#        """Overridden in daughter clases that have pulse counts."""
-#        # TODO: See if can do this with just set_num_points
-#        pass
 
     def set_low_meas(self, enable: bool) -> None:
         """Overridden in daughter classes that have a low measure option."""

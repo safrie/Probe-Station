@@ -16,6 +16,8 @@ Part of the V3 probe station collection.
 from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 from typing import Union
 
+mu = u'\xb5'
+
 filter_switch = {
         0: 'Moving',
         1: 'Repeating'}
@@ -186,8 +188,8 @@ class PDelta(KeithMeasure):
     curr1_text = 'High Current '
     curr2_text = 'Low Current '
     meas_rate_text = 'Cycle Interval (PLC)'
-    meas_delay_text = 'Source Delay (\N{GREEK SMALL LETTER MU}s)'
-    pulse_width_text = 'Pulse Width (\N{GREEK SMALL LETTER MU}s)'
+    meas_delay_text = f'Source Delay ({mu}s)'
+    pulse_width_text = f'Pulse Width ({mu}s)'
     pulse_count_text = 'Pulse Count'
 
     def __init__(self) -> None:
@@ -262,8 +264,8 @@ class PDeltaLog(KeithMeasure):
     curr2_text = 'Stop Current '
     field4_text = 'Number Points '
     meas_rate_text = 'Cycle Time (s)'
-    meas_delay_text = 'Source Delay (\N{GREEK SMALL LETTER MU}s)'
-    pulse_width_text = 'Pulse Width (\N{GREEK SMALL LETTER MU}s)'
+    meas_delay_text = 'Source Delay ({mu}s)'
+    pulse_width_text = 'Pulse Width ({mu}s)'
     pulse_count_text = 'Number Sweeps'
 
     def __init__(self) -> None:
@@ -349,8 +351,8 @@ class PDeltaStair(KeithMeasure):
     curr_step_text = 'Step Size '
     field4_text = 'Number Points '
     meas_rate_text = 'Cycle Time (s)'
-    meas_delay_text = 'Source Delay (\N{GREEK SMALL LETTER MU}s)'
-    pulse_width_text = 'Pulse Width (\N{GREEK SMALL LETTER MU}s)'
+    meas_delay_text = 'Source Delay ({mu}s)'
+    pulse_width_text = 'Pulse Width ({mu}s)'
     pulse_count_text = 'Number Sweeps'
 
     def __init__(self) -> None:
