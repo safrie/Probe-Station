@@ -38,10 +38,12 @@ class KeithLims:
     curr1_default = 1.0e-3
     curr2 = (-105.0e-3, 105.0e-3)
     curr2_default = 1.0e-3
-    curr_step = (1.0e-13, 105.0e-3)
+    curr_step = (0.0, 105.0e-3)
     curr_step_default = 1.0e-5
-    meas_rate = ()
+    meas_rate = (0.1, 60)  # This is in PLC
     meas_rate_default = 1
+    delay = (1.0e-3, 9999.999)  # This is in seconds
+    delay_default = 0.002
 
     filt = ((0, "MOV"), (1, "REP"))
     filt_default = filt[0]
@@ -55,12 +57,15 @@ class DconLims(KeithLims):
     """DconLims contains limits specific to differential conductance.
 
     DconLims inherits from KeithLims"""
-    curr_delta = ()
+    curr_delta = (0, 105.0e-3)
     curr_delta_default = 1.0e-6
 
     def __init__(self):
         super().__init__()
         self.filt = super().filt[1]
+        self.curr1_default = -10.0e-6
+        self.curr2_default = 10.0e-6
+        self.curr_step_default = 1.0e-6
 
 
 class DeltaLims(KeithLims):
