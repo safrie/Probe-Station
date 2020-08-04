@@ -341,6 +341,13 @@ class Keith(Instrument):
         """
         # TODO: Test set_source_range str input
         if isinstance(value, int) and value not in lims.source_range.keys():
+            value = lims.source_range_default[0]
+            print("Source range index out of bounds.  Index set to default "
+                  + f"({lims.source_range_default[0]}).")
+        elif float(value) not in lims.source_range.values():
+            value = lims.source_range_default[1]
+            print("Source range out of bounds.  Value set to default "
+                  + f"({lims.source_range_default[1]}).")
         self.source_range_idx = (value if isinstance(value, int)
                                  else self.source_range_switch[float(value)])
         self.visa.set_source_range(meas_idx=self.meas_type_idx,
