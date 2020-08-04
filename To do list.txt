@@ -9,7 +9,6 @@ To do with program:
     e) Unsure if changing filter type works
     f) Test measurement with dummy resistor
     g) Implement input validation
-        - Put bounds in limits.py
         - setters in keith.py
         - UI updaters in main.py
     h) Fix any VISA issues

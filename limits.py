@@ -1,6 +1,21 @@
 # -*- coding: utf-8 -*-
-# DOCUMENT
-"""DOCSTRING"""
+"""
+limits contains the bounds for parameter settings for all instruments.
+
+classes_
+    KeithLims: Bounds for the Keithley 2182a/6221 stack
+    DconLims: Bounds for Keithley differential conductance measurement
+    DeltaLims: Bounds for Keithley delta measurement
+    PDeltaLims: Bounds for Keithley pulse delta measurement
+    PDeltStairLims: Bounds for Keithley pulse delta staircase sweep
+    PDeltLogLims: Bounds for Keithley pulse delta logarithmic sweep
+
+    TempLims: Bounds for the LakeShore 336 temperature controller
+    MagLims: Bounds for the AMI 430 magnet power supply
+
+Part of the V3 Probe Station Collection.
+@author: Sarah Friedensen
+"""
 
 from numpy import array
 
@@ -18,17 +33,18 @@ class KeithLims:
 
     source_range = (2.0e-9, 20.0e-9, 200.0e-9, 2.0e-6, 20.0e-6, 200.0e-6,
                     2.0e-3, 20.0e-3, 100.0e-3)
-    source_range_default = 200.0e-6
-    source_range_type = ("ON", "OFF")
-    source_range_type_default = "OFF"
+    source_range_default = source_range[5]
+    source_range_type = {0: "Best",
+                         1: "Fixed"}
+    source_range_type_default = source_range_type.items()[0]
     meter_rate = (0.01, 60.0)
     meter_rate_default = 5.0
     meter_range = (100.0e-3, 10.0e-3, 1.0, 10.0, 100.0)
-    meter_range_default = 100.0
+    meter_range_default = meter_range[4]
     compliance_volt = (0.1, 105.0)
     compliance_volt_default = 10
-    cab = ("ON", "OFF")
-    cab_default = "OFF"
+    cab = ("OFF", "ON")
+    cab_default = cab[0]
 
     points = range(1, 65537)
     points_default = 11

@@ -106,8 +106,9 @@ class Temp(Instrument):
         # TODO: Test set_address
         if addr not in lims.addr:
             addr = lims.addr_default
-            print("Given address not in valid range [1, 31].  GPIB address set"
-                  + f" to default ({lims.addr_default}).")
+            print(f"Given address not in valid range [{lims.addr[0]}, "
+                  + f"{lims.addr[1]}].  GPIB address set to default "
+                  + f"({lims.addr_default}).")
         super().set_address(addr)
         self.visa.check_connected(addr)
         return addr
