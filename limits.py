@@ -113,13 +113,25 @@ class PDeltStairLims(PDeltaLims):
         super().__init__()
         # ???: Can you have a negative curr2?
         # self.curr2 = (0.0, 105.0e-3)
-        self.curr2_default = 0.0
+        self.curr2_default = -1.0
         self.meas_rate = (1.0e-3, 999999.999)
         self.meas_rate_default = 0.1
 
 
 class PDeltLogLims(KeithLims):
-    pass
+    """PDeltLogLims contains limits specific to pulse delta measurements.
+
+    PDeltLogLims inherits from PDeltaLims."""
+
+    sweeps = range(1, 10000)
+    sweeps_default = 1
+
+    def __init__(self):
+        super().__init__()
+        # ???: Do I need to set curr2 bounds for this to avoid negative?
+        self.curr2_default = 0
+        self.meas_rate = (1.03e-3, 999999.999)
+        self.meas_rate_default = 0.1
 
 
 class TempLims():
