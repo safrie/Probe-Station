@@ -26,8 +26,12 @@ class KeithLims:
     addr = range(1, 32)
     addr_default = 0  # FIXME: Find default address
 
-    unit = ("V", "OHMS", "W", "SIEM")
-    unit_default = "V"
+    unit = {0: 'volts',
+            1: 'siemens',
+            2: 'ohms',
+            3: 'avgw',
+            4: 'peakw'}
+    unit_default = unit.items()[0]
     power = ("AVER", "PEAK")
     power_default = "AVER"
 

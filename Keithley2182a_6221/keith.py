@@ -405,10 +405,14 @@ class Keith(Instrument):
                  meas_idx: Optional[int] = None) -> None:
         """Set the unit index for the measurement type and update Keithleys."""
         # TODO: Test set_unit
-        index = (unit_val if isinstance(unit_val, int)
-                 else self.unit_switch[unit_val])
-        self.meas_type(meas_idx).set_unit_idx(index)
-        self.visa.set_unit(index)
+        if unit_val in lims.unit.values():
+            unit_val = self.unit_switch[unit_val]
+        elif unit_val not in lims.unit.keys():
+            unit_val = lims.unit_default[0]
+            print("Unit index out of bounds.  Setting to default "
+                  + f"({lims.unit_default[1]}).")
+        self.meas_type(meas_idx).set_unit_idx(unit_val)
+        self.visa.set_unit(unit_val)
 
     def unit(self, meas_idx: Optional[int] = None) -> int:
         """Look up unit string for measurement index. Convenience function."""
