@@ -31,14 +31,14 @@ class KeithLims:
     cab_default = "OFF"
 
     points = range(1, 65537)
-    points_default = 10
+    points_default = 11
 
     # Currents are in Amps
     curr1 = (-105.0e-3, 105.0e-3)
     curr1_default = 1.0e-3
     curr2 = (-105.0e-3, 105.0e-3)
     curr2_default = 1.0e-3
-    curr_step = (0.0, 105.0e-3)
+    curr_step = (1.0e-13, 105.0e-3)
     curr_step_default = 1.0e-5
     meas_rate = (0.1, 60)  # This is in PLC
     meas_rate_default = 1
