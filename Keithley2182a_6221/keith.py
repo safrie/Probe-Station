@@ -314,6 +314,16 @@ class Keith(Instrument):
         caller wants the index.
         """
         # TODO: Test set_source_range_type str input
+        if isinstance(value, int) and (
+                value not in lims.source_range_type.keys()):
+            value = lims.source_range_type_default[0]
+            print("Source range type invalid.  Source range type set to "
+                  + f"default ({lims.source_range_type_default}).")
+        if isinstance(value, str) and (
+                value not in lims.source_range_type.values()):
+            value = lims.source_range_type_default[1]
+            print("Source range type invalid.  Source range type set to "
+                  + f"default ({lims.source_range_type_default})")
         self.source_range_type_idx = (value if isinstance(value, int)
                                       else self.source_range_type_switch[value]
                                       )
