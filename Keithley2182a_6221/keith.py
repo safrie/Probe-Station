@@ -178,8 +178,8 @@ class Keith(Instrument):
             8: '(mA)'}
 
     volt_range_switch = {
-            2: 100.0e-3,
-            3: 10.0e-3,
+            2: 10.0e-3,
+            3: 100.0e-3,
             4: 1.0,
             5: 10.0,
             6: 100.0,
@@ -373,12 +373,22 @@ class Keith(Instrument):
         """
         # TODO: Verify set_volt_range actually works
         print(f'volt range value = {value} and is int = {type(value) is int}')
-        self.volt_range_idx = (value + 2 if isinstance(value, int)
-                               else self.volt_range_switch[value])
-        print(f'keith volt range idx = {self.volt_range_idx}')
-        print(f'volt range = {self.volt_range_switch[self.volt_range_idx]}')
-        self.visa.set_meter_range(self.volt_range(float))
-        return self.volt_range_idx
+        if value in lims.volt_range.values():
+            out = value
+            value = self.volt_range_switch[value]
+        else:
+            if isinstance(value, int):
+                value += 2
+            if value not in lims.volt_range.keys():
+                value = lims.volt_range_default[0]
+                print("Voltmeter range index out of bounds.  Setting to "
+                      + f"default ({lims.volt_range_default[1]} V).")
+            out = self.volt_range_switch[value]
+        self.volt_range_idx = value
+        print(f'keith volt range idx = {value}')
+        print(f'volt range = {out}')
+        self.visa.set_meter_range(out)
+        return value
 
     def volt_range(self, typ: type = float) -> Union[float, str]:
         """Return Keithley voltmeter range as either float or str."""

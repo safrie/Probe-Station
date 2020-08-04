@@ -46,8 +46,12 @@ class KeithLims:
     source_range_type_default = source_range_type.items()[0]
     meter_rate = (0.01, 60.0)
     meter_rate_default = 5.0
-    meter_range = (100.0e-3, 10.0e-3, 1.0, 10.0, 100.0)
-    meter_range_default = meter_range[4]
+    volt_range = {2: 100.0e-3,
+                  3: 10.0e-3,
+                  4: 1.0,
+                  5: 10.0,
+                  6: 100.0}
+    volt_range_default = source_range.items()[6]
     compliance_volt = (0.1, 105.0)
     compliance_volt_default = 10
     cab = ("OFF", "ON")
