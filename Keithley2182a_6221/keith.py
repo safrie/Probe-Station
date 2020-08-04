@@ -16,6 +16,9 @@ from Keithley2182a_6221.keith_meas_types import (Delta, DiffCon, PDelta,
 from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 # import math
 from Keithley2182a_6221.visa_keith import vKeith
+from limits import (KeithLims as lims, DconLims as dclims, DeltaLims as
+                    deltlims, PDeltaLims as pdlims, PDeltStairLims as pdslims,
+                    PDeltLogLims as pdllims)
 import numpy
 # import time
 from typing import Union, Optional, Tuple
@@ -296,6 +299,11 @@ class Keith(Instrument):
 
     def set_address(self, addr: int) -> None:
         """Set GPIB address of the stack, then check if connected."""
+        if addr not in lims.addr:
+            addr = lims.addr_default
+            print(f"Given address not in valid range [{lims.addr[0]}, "
+                  + f"{lims.addr[1]}].  GPIB address set to default "
+                  + f"({lims.addr_default}).")
         super().set_address(addr)
         self.visa.check_connected(addr)
 
