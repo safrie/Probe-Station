@@ -340,6 +340,7 @@ class Keith(Instrument):
         Returns source_range_idx in case input was a float or str.
         """
         # TODO: Test set_source_range str input
+        if isinstance(value, int) and value not in lims.source_range.keys():
         self.source_range_idx = (value if isinstance(value, int)
                                  else self.source_range_switch[float(value)])
         self.visa.set_source_range(meas_idx=self.meas_type_idx,

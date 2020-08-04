@@ -10,6 +10,7 @@ To do with program:
     f) Test measurement with dummy resistor
     g) Implement input validation
         - setters in keith.py
+        - setters in keith_meas_types.py
         - UI updaters in main.py
     h) Fix any VISA issues
     i) Change all internal variables to A for ease of switching scales

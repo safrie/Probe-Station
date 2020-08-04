@@ -40,7 +40,7 @@ class KeithLims:
                     6: 2.0e-3,
                     7: 20.0e-3,
                     8: 100.0e-3}
-    source_range_default = source_range[5]
+    source_range_default = source_range.items()[5]
     source_range_type = {0: "Best",
                          1: "Fixed"}
     source_range_type_default = source_range_type.items()[0]
