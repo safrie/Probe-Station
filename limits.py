@@ -31,8 +31,15 @@ class KeithLims:
     power = ("AVER", "PEAK")
     power_default = "AVER"
 
-    source_range = (2.0e-9, 20.0e-9, 200.0e-9, 2.0e-6, 20.0e-6, 200.0e-6,
-                    2.0e-3, 20.0e-3, 100.0e-3)
+    source_range = {0: 2.0e-9,
+                    1: 20.0e-9,
+                    2: 200.0e-9,
+                    3: 2.0e-6,
+                    4: 20.0e-6,
+                    5: 200.0e-6,
+                    6: 2.0e-3,
+                    7: 20.0e-3,
+                    8: 100.0e-3}
     source_range_default = source_range[5]
     source_range_type = {0: "Best",
                          1: "Fixed"}

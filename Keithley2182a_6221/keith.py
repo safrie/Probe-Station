@@ -16,9 +16,7 @@ from Keithley2182a_6221.keith_meas_types import (Delta, DiffCon, PDelta,
 from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 # import math
 from Keithley2182a_6221.visa_keith import vKeith
-from limits import (KeithLims as lims, DconLims as dclims, DeltaLims as
-                    deltlims, PDeltaLims as pdlims, PDeltStairLims as pdslims,
-                    PDeltLogLims as pdllims)
+from limits import KeithLims as lims
 import numpy
 # import time
 from typing import Union, Optional, Tuple
