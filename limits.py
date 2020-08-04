@@ -93,6 +93,7 @@ class PDeltaLims(KeithLims):
 
     def __init__(self):
         super().__init__()
+        self.curr1_default = 1.0e-3
         self.curr2_default = 0.0
         self.delay = (16.0e-6, 11.966e-3)
         self.delay_default = 16.0e-6
@@ -100,8 +101,21 @@ class PDeltaLims(KeithLims):
         self.meas_rate_default = 5
 
 
-class PDeltStairLims(KeithLims):
-    pass
+class PDeltStairLims(PDeltaLims):
+    """PDeltStairLims contains limits specific to pulse delta measurements.
+
+    PDeltStairLims inherits from PDeltaLims."""
+
+    sweeps = range(1, 10000)
+    sweeps_default = 1
+
+    def __init__(self):
+        super().__init__()
+        # ???: Can you have a negative curr2?
+        # self.curr2 = (0.0, 105.0e-3)
+        self.curr2_default = 0.0
+        self.meas_rate = (1.0e-3, 999999.999)
+        self.meas_rate_default = 0.1
 
 
 class PDeltLogLims(KeithLims):
