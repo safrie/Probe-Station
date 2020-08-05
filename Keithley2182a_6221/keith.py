@@ -339,20 +339,18 @@ class Keith(Instrument):
         Returns source_range_idx in case input was a float or str.
         """
         # TODO: Test set_source_range str input
-        if isinstance(value, int) and value not in lims.source_range.keys():
-            value = lims.source_range_default[0]
-            print("Source range index out of bounds.  Index set to default "
-                  + f"({lims.source_range_default[0]}).")
-        elif float(value) not in lims.source_range.values():
-            value = lims.source_range_default[1]
-            print("Source range out of bounds.  Value set to default "
-                  + f"({lims.source_range_default[1]}).")
-        self.source_range_idx = (value if isinstance(value, int)
-                                 else self.source_range_switch[float(value)])
+        if (value in lims.source_range.values()
+                or float(value) in lims.source_range.values()):
+            value = self.source_range_switch[float(value)]
+        elif value not in lims.source_range.keys():
+            value = lims.source_range_def
+            print("Source range index out of bounds.  Source range set to "
+                  + f"default value ({lims.source_range[value]}).")
+        self.source_range_idx = value
         self.visa.set_source_range(meas_idx=self.meas_type_idx,
                                    auto=(not self.source_range_type_idx),
                                    rang=self.source_range(float))
-        return self.source_range_idx
+        return value
 
     def source_range(self, typ: type = float) -> Union[float, str]:
         """Return Keithley source range as either a float or a str."""
