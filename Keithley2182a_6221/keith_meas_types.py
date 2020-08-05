@@ -15,12 +15,21 @@ Part of the V3 probe station collection.
 
 from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 from typing import Union
+from limits import (DconLims as dclims, DeltaLims as deltlims, PDeltaLims as
+                    pulsedlims, PDeltStairLims as pdslims,
+                    PDeltLogLims as pdllims)
 
 mu = u'\xb5'
 
 filter_switch = {
         0: 'Moving',
         1: 'Repeating'}
+
+mlims = {0: dclims,
+         1: deltlims,
+         2: pulsedlims,
+         3: pdslims,
+         4: pdllims}
 
 
 class Delta(KeithMeasure):
