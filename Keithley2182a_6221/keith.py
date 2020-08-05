@@ -12,7 +12,7 @@ Part of the V3 Probe Station Collection.
 from abcs.instrument_abc import Instrument
 from Keithley2182a_6221.keith_meas_types import (Delta, DiffCon, PDelta,
                                                  PDeltaLog, PDeltaStair,
-                                                 filter_switch)
+                                                 filter_switch, mlims)
 from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 # import math
 from Keithley2182a_6221.visa_keith import vKeith
@@ -155,11 +155,6 @@ class Keith(Instrument):
             6: 2.0,
             7: 20.0,
             8: 100.0}
-    # source_range_mult_switch = {
-    # This converts to/from uA
-    #         -1: 1e-3,
-    #         0: 1,
-    #         1: 1e3}
     source_range_mult_switch = {
         # This converts to/from Amps from/to nA, uA, and mA
         -1: 1e-9,
