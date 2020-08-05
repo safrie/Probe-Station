@@ -377,13 +377,13 @@ class Keith(Instrument):
             if isinstance(value, int):
                 value += 2
             if value not in lims.volt_range.keys():
-                value = lims.volt_range_default[0]
+                value = lims.volt_range_def[0]
                 print("Voltmeter range index out of bounds.  Setting to "
-                      + f"default ({lims.volt_range_default[1]} V).")
+                      + f"default ({lims.volt_range[value]} V).")
             out = self.volt_range_switch[value]
         self.volt_range_idx = value
-        print(f'keith volt range idx = {value}')
-        print(f'volt range = {out}')
+        print(f"keith volt range idx = {value}")
+        print(f"volt range = {out} V")
         self.visa.set_meter_range(out)
         return value
 
