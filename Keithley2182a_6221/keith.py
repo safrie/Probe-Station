@@ -698,7 +698,6 @@ class Keith(Instrument):
         """Label curr2 in UI and headers."""
         return self.meas_type(idx).curr2_text + self.source_range_text()
 
-    # FIXME: Change to field3?
     def curr_step_text(self, idx: Optional[int]) -> str:
         """Label curr_step in UI and headers."""
         step = self.meas_type(idx).curr_step_text
