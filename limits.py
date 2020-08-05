@@ -58,8 +58,7 @@ class KeithLims:
     volt_range_default = source_range.items()[6]
     compl_volt = (0.1, 105.0)
     compl_volt_default = 10
-    cab = ("OFF", "ON")
-    cab_default = cab[0]
+    cab_default = False
 
     points = range(1, 65537)
     points_default = 11
