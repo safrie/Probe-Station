@@ -65,11 +65,11 @@ class KeithLims:
                   4: 1.0,
                   5: 10.0,
                   6: 100.0}
-    volt_range_def = 6
+    volt_range_def = 2
 
     compl_volt = (0.1, 105.0)
     compl_volt_def = 10
-    cab_default = False
+    cab_def = False
 
     points = range(1, 65537)
     points_def = 11
