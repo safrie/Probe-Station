@@ -62,10 +62,10 @@ class Delta(KeithMeasure):
     def __init__(self) -> None:
         """Instantiate delta measurement."""
         super().__init__()
-        self.curr1 = 10.00
-        self.num_points = 100
-        self.meas_rate = 1
-        self.set_filter_idx(0)
+        self.curr1 = self.lims.curr1_def
+        self.num_points = deltlims.points_def
+        self.meas_rate = deltlims.meas_rate_def
+        self.set_filter_idx(deltlims.filt_def)
 
     def get_meas_type_str(self) -> str:
         """Return type of measurement followed by a new line."""
