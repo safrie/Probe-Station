@@ -12,6 +12,8 @@ To do with program:
         - setters in keith.py
         - setters in keith_meas_types.py
         - UI updaters in main.py
+        - Move references to dicts over to limits rather than define in-class?
+            -- SPOT benefits, unsure if more readable, though?
     h) Fix any VISA issues
     i) Change all internal variables to A for ease of switching scales
         - limits.py (include a way to look up the correct multiplier by index)
