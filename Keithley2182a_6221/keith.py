@@ -436,9 +436,9 @@ class Keith(Instrument):
         if value in lims.meas_type.values():
             value = self.meas_type_txt_switch[value]
         elif value not in lims.meas_type.keys():
-            value = lims.meas_type_default[0]
+            value = lims.meas_type_def
             print("Measurement type index out of bounds.  Setting to default "
-                  + f"value ({lims.meas_type_default[1]}).")
+                  + f"value ({lims.meas_type[value]}).")
         self.meas_type_idx = value
         return self.meas_type(value)
 
