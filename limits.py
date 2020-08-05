@@ -24,7 +24,7 @@ class KeithLims:
     """Contains instrument limits and defaults for the Keithley stack."""
 
     addr = range(1, 32)
-    addr_default = 12
+    addr_def = 12
 
     meas_type = {0: "diffCond",
                  1: "delta",

@@ -230,16 +230,16 @@ class Keith(Instrument):
                 3: self.pdelt_stair,
                 4: self.pdelt_log}
 
-        self.address = 12
+        self.address = lims.addr_def
         self.visa = vKeith(self.address)
 
-        self.source_range_type_idx = 0
-        self.source_range_idx = 5
-        self.volt_range_idx = 0
+        self.source_range_type_idx = lims.source_range_type_def
+        self.source_range_idx = lims.source_range_def
+        self.volt_range_idx = lims.volt_range_def - 2
 
-        self.compl_volt = None
-        self.compl_abort = None
-        self.meas_type_idx = 0
+        self.compl_volt = lims.compl_volt_def
+        self.compl_abort = lims.cab_def
+        self.meas_type_idx = lims.meas_type_def
 
         self.arm_switch = {
                 0: self.get_diffcon_arm,
