@@ -255,9 +255,14 @@ class Keith(Instrument):
     def meas_type(self, idx: Optional[int] = None) -> KeithMeasure:
         # TODO: Verify KeithMeasure is correct output type.
         """Return inner class instance for measurement type."""
-        index = self.meas_type_idx if idx is None else idx
-        print(type(self.meas_type_switch[index]))
-        return self.meas_type_switch[index]
+        if idx is None:
+            idx = self.meas_type_idx
+        elif idx not in lims.meas_type.keys():
+            idx = lims.meas_type_def
+            print("Measurement type index out of bounds.  Setting to default "
+                  + f"measurement type ({lims.meas_type[idx]})."
+                  )
+        return self.meas_type_switch[idx]
 
     def get_header_string(self, idx: Optional[int] = None) -> str:
         """Return header string for a measurement type.
