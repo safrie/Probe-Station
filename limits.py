@@ -63,6 +63,13 @@ class KeithLims:
     points = range(1, 65537)
     points_default = 11
 
+    meas_type = {0: "diffCond",
+                 1: "delta",
+                 2: "pulseDelta",
+                 3: "sweepPulseDeltaStair",
+                 4: "sweepPulseDeltaLog"}
+    meas_type_default = (0, meas_type[0])
+
     # Currents are in Amps
     curr1 = (-105.0e-3, 105.0e-3)
     curr1_default = 1.0e-3

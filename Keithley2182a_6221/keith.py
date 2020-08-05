@@ -437,9 +437,14 @@ class Keith(Instrument):
 
     def set_meas_type(self, value: Union[int, str]) -> KeithMeasure:
         """Set meas_typ_idx to index represented by value."""
-        self.meas_type_idx = (value if isinstance(value, int)
-                              else self.meas_type_txt_switch.get(value, 'ERR'))
-        return self.meas_type(self.meas_type_idx)
+        if value in lims.meas_type.values():
+            value = self.meas_type_txt_switch[value]
+        elif value not in lims.meas_type.keys():
+            value = lims.meas_type_default[0]
+            print("Measurement type index out of bounds.  Setting to default "
+                  + f"value ({lims.meas_type_default[1]}).")
+        self.meas_type_idx = value
+        return self.meas_type(value)
 
     def meas_type_txt(self) -> str:
         """Return str of measurement type.  Convenience function."""
