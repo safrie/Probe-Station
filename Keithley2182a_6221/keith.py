@@ -461,24 +461,20 @@ class Keith(Instrument):
     # %% Measurement variables section
 
     def set_curr1(self, curr: float, meas_idx: Optional[int] = None) -> None:
-        # """Set curr1 of desired meas type instance to curr in uA."""
         """Set curr1 of desired measurement type instance to curr in Amps."""
         self.meas_type(meas_idx).set_curr1(curr)
 
     def set_curr2(self, curr: float, meas_idx: Optional[int] = None) -> None:
-        # """Set curr2 of desired meas type instance to curr in uA."""
         """Set curr2 of desired measurement type instance to curr in Amps."""
         self.meas_type(meas_idx).set_curr2(curr)
 
     def set_curr_step(self, curr: float,
                       meas_idx: Optional[int] = None) -> None:
-        # """Set curr_step of desired meas type instance to curr in uA."""
         """Set curr_step of desired meas type instance to curr in Amps."""
         self.meas_type(meas_idx).set_curr_step(curr)
 
     def set_curr_delta(self, curr: float,
                        meas_idx: Optional[int] = None) -> None:
-        # """Set curr_delta of desired meas type instance to curr in uA."""
         """Set curr_delta of desired measurement type instance to curr in A."""
         self.meas_type(meas_idx).set_curr_delta(curr)
 
