@@ -317,23 +317,17 @@ class Keith(Instrument):
         caller wants the index.
         """
         # TODO: Test set_source_range_type str input
-        if isinstance(value, int) and (
-                value not in lims.source_range_type.keys()):
-            value = lims.source_range_type_default[0]
+        if value in lims.source_range_type.values():
+            value = self.source_range_type_switch[value]
+        elif value not in lims.source_range_type.keys():
+            value = lims.source_range_type_def
             print("Source range type invalid.  Source range type set to "
-                  + f"default ({lims.source_range_type_default}).")
-        if isinstance(value, str) and (
-                value not in lims.source_range_type.values()):
-            value = lims.source_range_type_default[1]
-            print("Source range type invalid.  Source range type set to "
-                  + f"default ({lims.source_range_type_default})")
-        self.source_range_type_idx = (value if isinstance(value, int)
-                                      else self.source_range_type_switch[value]
-                                      )
+                  + f"default ({lims.source_range_type[value]})")
+        self.source_range_type_idx = value
         self.visa.set_source_range(meas_idx=self.meas_type_idx,
-                                   auto=(not self.source_range_type_idx),
+                                   auto=(not value),
                                    rang=self.source_range(float))
-        return self.source_range_type_idx
+        return value
 
     def source_range_type(self) -> str:
         """Look up string for source_range_type.  Convenience function."""
