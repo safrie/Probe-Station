@@ -56,8 +56,8 @@ class KeithLims:
                   5: 10.0,
                   6: 100.0}
     volt_range_default = source_range.items()[6]
-    compliance_volt = (0.1, 105.0)
-    compliance_volt_default = 10
+    compl_volt = (0.1, 105.0)
+    compl_volt_default = 10
     cab = ("OFF", "ON")
     cab_default = cab[0]
 

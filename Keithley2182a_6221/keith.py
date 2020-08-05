@@ -420,6 +420,10 @@ class Keith(Instrument):
 
     def set_compl_volt(self, volt: float) -> None:
         """Set compliance voltage and update Keithleys."""
+        if not lims.compl_volt[0] < volt < lims.compl_volt[1]:
+            volt = lims.compl_volt_default
+            print("Compliance voltage out of bounds.  Setting to default "
+                  f"value ({lims.compl_volt_default} V).")
         self.compl_volt = volt
         self.visa.set_compliance_v(volt)
 
