@@ -25,11 +25,11 @@ filter_switch = {
         0: 'Moving',
         1: 'Repeating'}
 
-mlims = {0: dclims,
-         1: deltlims,
-         2: pulsedlims,
-         3: pdslims,
-         4: pdllims}
+meas_lims = {0: dclims,
+             1: deltlims,
+             2: pulsedlims,
+             3: pdslims,
+             4: pdllims}
 
 
 class Delta(KeithMeasure):
