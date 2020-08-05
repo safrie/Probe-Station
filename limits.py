@@ -24,16 +24,24 @@ class KeithLims:
     """Contains instrument limits and defaults for the Keithley stack."""
 
     addr = range(1, 32)
-    addr_default = 0  # FIXME: Find default address
+    addr_default = 12
+
+    meas_type = {0: "diffCond",
+                 1: "delta",
+                 2: "pulseDelta",
+                 3: "sweepPulseDeltaStair",
+                 4: "sweepPulseDeltaLog"}
+    meas_type_def = 0
 
     unit = {0: 'volts',
             1: 'siemens',
             2: 'ohms',
             3: 'avgw',
             4: 'peakw'}
-    unit_default = unit.items()[0]
+    unit_def = 0
+
     power = ("AVER", "PEAK")
-    power_default = "AVER"
+    power_def = "AVER"
 
     source_range = {0: 2.0e-9,
                     1: 20.0e-9,
@@ -44,50 +52,47 @@ class KeithLims:
                     6: 2.0e-3,
                     7: 20.0e-3,
                     8: 100.0e-3}
-    source_range_default = source_range.items()[5]
+    source_range_def = 5
     source_range_type = {0: "Best",
                          1: "Fixed"}
-    source_range_type_default = source_range_type.items()[0]
+    source_range_type_def = 0
+
     meter_rate = (0.01, 60.0)
-    meter_rate_default = 5.0
+    meter_rate_def = 5.0
+
     volt_range = {2: 100.0e-3,
                   3: 10.0e-3,
                   4: 1.0,
                   5: 10.0,
                   6: 100.0}
-    volt_range_default = source_range.items()[6]
+    volt_range_def = 6
+
     compl_volt = (0.1, 105.0)
-    compl_volt_default = 10
+    compl_volt_def = 10
     cab_default = False
 
     points = range(1, 65537)
-    points_default = 11
-
-    meas_type = {0: "diffCond",
-                 1: "delta",
-                 2: "pulseDelta",
-                 3: "sweepPulseDeltaStair",
-                 4: "sweepPulseDeltaLog"}
-    meas_type_default = (0, meas_type[0])
+    points_def = 11
 
     # Currents are in Amps
     curr1 = (-105.0e-3, 105.0e-3)
-    curr1_default = 1.0e-3
+    curr1_def = 1.0e-3
     curr2 = (-105.0e-3, 105.0e-3)
-    curr2_default = 1.0e-3
+    curr2_def = 1.0e-3
     curr_step = (1.0e-13, 105.0e-3)
-    curr_step_default = 1.0e-5
+    curr_step_def = 1.0e-5
     meas_rate = (0.1, 60)  # This is in PLC
-    meas_rate_default = 1
+    meas_rate_def = 1
     delay = (1.0e-3, 9999.999)  # This is in seconds
-    delay_default = 2.0e-3
+    delay_def = 2.0e-3
 
-    filt = ((0, "MOV"), (1, "REP"))
-    filt_default = filt[0]
+    filt = {0: "MOV",
+            1: "REP"}
+    filt_def = 0
     filt_window = (0.0, 10.0)
-    filt_window_default = 0.0
+    filt_window_def = 0.0
     filt_count = range(2, 301)
-    filt_count_default = 10
+    filt_count_def = 10
 
 
 class DconLims(KeithLims):
@@ -95,14 +100,15 @@ class DconLims(KeithLims):
 
     DconLims inherits from KeithLims"""
     curr_delta = (0, 105.0e-3)
-    curr_delta_default = 1.0e-6
+    curr_delta_def = 1.0e-6
 
     def __init__(self):
         super().__init__()
-        self.filt = super().filt[1]
-        self.curr1_default = -10.0e-6
-        self.curr2_default = 10.0e-6
-        self.curr_step_default = 1.0e-6
+        self.filt = {1: self.filt[1]}
+        self.filt_def = 1
+        self.curr1_def = -10.0e-6
+        self.curr2_def = 10.0e-6
+        self.curr_step_def = 1.0e-6
 
 
 class DeltaLims(KeithLims):
@@ -113,9 +119,9 @@ class DeltaLims(KeithLims):
     def __init__(self):
         super().__init__()
         self.curr1 = (0, 105.0e-3)
-        self.curr1_default = 10.0e-3
+        self.curr1_def = 10.0e-3
         self.curr2 = (-105.0e-3, 0)
-        self.curr2_default = 0
+        self.curr2_def = 0
 
 
 class PDeltaLims(KeithLims):
@@ -124,18 +130,18 @@ class PDeltaLims(KeithLims):
     PDeltaLims inherits from KeithLims."""
 
     width = (50.0e-6, 12.0e-3)
-    width_default = 110.0e-6
+    width_def = 110.0e-6
     low_meas = (1, 2)
-    low_meas_default = 2
+    low_meas_def = 2
 
     def __init__(self):
         super().__init__()
-        self.curr1_default = 1.0e-3
-        self.curr2_default = 0.0
+        self.curr1_def = 1.0e-3
+        self.curr2_def = 0.0
         self.delay = (16.0e-6, 11.966e-3)
-        self.delay_default = 16.0e-6
+        self.delay_def = 16.0e-6
         self.meas_rate = (5, 999999)  # This is in PLC
-        self.meas_rate_default = 5
+        self.meas_rate_def = 5
 
 
 class PDeltStairLims(PDeltaLims):
@@ -144,15 +150,15 @@ class PDeltStairLims(PDeltaLims):
     PDeltStairLims inherits from PDeltaLims."""
 
     sweeps = range(1, 10000)
-    sweeps_default = 1
+    sweeps_def = 1
 
     def __init__(self):
         super().__init__()
         # ???: Can you have a negative curr2?
         # self.curr2 = (0.0, 105.0e-3)
-        self.curr2_default = -1.0
+        self.curr2_def = -1.0
         self.meas_rate = (1.0e-3, 999999.999)
-        self.meas_rate_default = 0.1
+        self.meas_rate_def = 0.1
 
 
 class PDeltLogLims(KeithLims):
@@ -161,14 +167,14 @@ class PDeltLogLims(KeithLims):
     PDeltLogLims inherits from PDeltaLims."""
 
     sweeps = range(1, 10000)
-    sweeps_default = 1
+    sweeps_def = 1
 
     def __init__(self):
         super().__init__()
         # ???: Do I need to set curr2 bounds for this to avoid negative?
-        self.curr2_default = 0
+        self.curr2_def = 0
         self.meas_rate = (1.03e-3, 999999.999)
-        self.meas_rate_default = 0.1
+        self.meas_rate_def = 0.1
 
 
 class TempLims():
