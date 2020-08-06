@@ -204,10 +204,12 @@ class DeltaInfo(KeithInfo):
 
     def __init__(self):
         super().__init__()
-        self.curr1 = (0, 105.0e-3)
-        self.curr1_def = 10.0e-3
-        self.curr2 = (-105.0e-3, 0)
-        self.curr2_def = 0
+        self.curr1['lim'] = (0, 105.0e-3)
+        self.curr1['def'] = 10.0e-3
+        self.curr2['lim'] = (-105.0e-3, 0)
+        self.curr2['def'] = 0
+
+        self.count['def'] = 100
 
 
 class PDeltInfo(KeithInfo):
