@@ -220,24 +220,25 @@ class Keith(Instrument):
         self.pdelt_stair = PDeltaStair()
         self.pdelt_log = PDeltaLog()
 
-        self.meas_type_switch = {
-                0: self.diffcon,
-                1: self.delta,
-                2: self.pdelta,
-                3: self.pdelt_stair,
-                4: self.pdelt_log}
+        # FIXME: Make this the 'dic' entry of KeithInfo.meas
+        info.meas['typ'] = {0: self.diffcon,
+                            1: self.delta,
+                            2: self.pdelta,
+                            3: self.pdelt_stair,
+                            4: self.pdelt_log}
+        self.meas_typ_idx = info.meas['def']
 
-        self.address = lims.addr_def
+        self.address = info.addr['def']
         self.visa = vKeith(self.address)
 
-        self.source_range_type_idx = lims.source_range_type_def
-        self.source_range_idx = lims.source_range_def
-        self.volt_range_idx = lims.volt_range_def - 2
+        self.source_range_type_idx = info.source_range_type['def']
+        self.source_range_idx = info.source_range['def']
+        self.volt_range_idx = info.volt_range['def'] - 2
 
-        self.compl_volt = lims.compl_volt_def
-        self.compl_abort = lims.cab_def
-        self.meas_type_idx = lims.meas_type_def
+        self.compl_volt = info.compl_volt['def']
+        self.compl_abort = info.cab_def
 
+        # FIXME: Just call this 'arm'
         self.arm_switch = {
                 0: self.get_diffcon_arm,
                 1: self.get_delta_arm,
