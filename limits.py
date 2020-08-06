@@ -134,14 +134,14 @@ class KeithInfo:
                                3: 'Number Points',
                                4: 'Number Points'}
                        }
-        self.meas_rate = {'lim': (0.1, 60),  # This is in PLC
-                          'def': 1,
-                          'txt': {0: 'Measurement Rate (PLC)',
-                                  1: 'Measurement Rate (PLC)',
-                                  2: 'Cycle Interval (PLC)',
-                                  3: 'Cycle Time (s)',
-                                  4: 'Cycle Time (s)'}
-                          }
+        self.rate = {'lim': (0.1, 60),  # This is in PLC
+                     'def': 1,
+                     'txt': {0: 'Measurement Rate (PLC)',
+                             1: 'Measurement Rate (PLC)',
+                             2: 'Cycle Interval (PLC)',
+                             3: 'Cycle Time (s)',
+                             4: 'Cycle Time (s)'}
+                     }
         self.delay = {'lim': (1.0e-3, 9999.999),  # This is in seconds
                       'def': 2.0e-3,
                       # FIXME: Verify that that this delay is pulse delay
@@ -216,20 +216,20 @@ class PDeltInfo(KeithInfo):
     """PDeltInfo contains limits specific to pulse delta measurements.
 
     PDeltInfo inherits from KeithInfo."""
-
-    width = (50.0e-6, 12.0e-3)
-    width_def = 110.0e-6
-    low_meas = (1, 2)
-    low_meas_def = 2
+    low_meas = {'lim': (1, 2),
+                'def': 2}
 
     def __init__(self):
         super().__init__()
-        self.curr1_def = 1.0e-3
-        self.curr2_def = 0.0
-        self.delay = (16.0e-6, 11.966e-3)
-        self.delay_def = 16.0e-6
-        self.meas_rate = (5, 999999)  # This is in PLC
-        self.meas_rate_def = 5
+        self.curr1['def'] = 1.0e-3
+        self.curr2['def'] = 0.0
+
+        self.rate['lim'] = range(5, 1000000)
+        self.rate['def'] = 5
+        self.delay['lim'] = (16.0e-6, 11.966e-3)
+        self.delay['def'] = 16.0e-6
+        self.width['lim'] = (50.0e-6, 12.0e-3)
+        self.width['def'] = 110.0e-6
 
 
 class PDeltStairInfo(PDeltInfo):
