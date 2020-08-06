@@ -223,7 +223,6 @@ class PDeltInfo(KeithInfo):
         super().__init__()
         self.curr1['def'] = 1.0e-3
         self.curr2['def'] = 0.0
-
         self.rate['lim'] = range(5, 1000000)
         self.rate['def'] = 5
         self.delay['lim'] = (16.0e-6, 11.966e-3)
@@ -237,16 +236,19 @@ class PDeltStairInfo(PDeltInfo):
 
     PDeltStairInfo inherits from PDeltInfo."""
 
-    sweeps = range(1, 10000)
-    sweeps_def = 1
-
     def __init__(self):
         super().__init__()
-        # ???: Can you have a negative curr2?
-        # self.curr2 = (0.0, 105.0e-3)
-        self.curr2_def = -1.0
-        self.meas_rate = (1.0e-3, 999999.999)
-        self.meas_rate_def = 0.1
+        # FIXME: Determine if negative currents ok in pulse delta sweeps
+        self.field4['lim'] = range(1, 65535)
+        self.field4['def'] = 11
+        self.rate['lim'] = (1.0e-3, 999999.999)
+        self.rate['def'] = 0.1
+        self.count['lim'] = range(1, 10000)
+        self.count['def'] = 1
+
+        del self.filt['dic'][1]
+        del self.filt['txt'][1]
+        self.filt['def'] = 0
 
 
 class PDeltLogInfo(PDeltInfo):
