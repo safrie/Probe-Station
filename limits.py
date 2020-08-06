@@ -27,121 +27,149 @@ mu = u"\xb5"
 class KeithInfo:
     """Contains instrument limits and defaults for the Keithley stack."""
 
-    addr = range(1, 32)
-    addr_def = 12
+    addr = {'lim': range(1, 32),
+            'def': 12}
 
-    meas_type = {0: "diffCond",
-                 1: "delta",
-                 2: "pulseDelta",
-                 3: "sweepPulseDeltaStair",
-                 4: "sweepPulseDeltaLog"}
-    meas_type_def = 0
+    meas = {'txt': {0: "diffCond",
+                    1: "delta",
+                    2: "pulseDelta",
+                    3: "sweepPulseDeltaStair",
+                    4: "sweepPulseDeltaLog"},
+            'def': 0}
 
-    unit = {0: 'volts',
-            1: 'siemens',
-            2: 'ohms',
-            3: 'avgw',
-            4: 'peakw'}
-    unit_def = 0
+    unit = {'dic': {0: 'volts',
+                    1: 'siemens',
+                    2: 'ohms',
+                    3: 'avgw',
+                    4: 'peakw'},
+            'def': 0}
 
-    power = ("AVER", "PEAK")
-    power_def = "AVER"
+    power = {'lim': ("AVER", "PEAK"),
+             'def': 'AVER'}
 
-    source_range = {0: 2.0e-9,
-                    1: 20.0e-9,
-                    2: 200.0e-9,
-                    3: 2.0e-6,
-                    4: 20.0e-6,
-                    5: 200.0e-6,
-                    6: 2.0e-3,
-                    7: 20.0e-3,
-                    8: 100.0e-3}
-    source_range_def = 5
+    source_range = {'dic': {0: 2.0e-9,
+                            1: 20.0e-9,
+                            2: 200.0e-9,
+                            3: 2.0e-6,
+                            4: 20.0e-6,
+                            5: 200.0e-6,
+                            6: 2.0e-3,
+                            7: 20.0e-3,
+                            8: 100.0e-3},
+                    'def': 5,
+                    'txt': {0: "(nA)",
+                            1: "(nA)",
+                            2: "(nA)",
+                            3: f"({mu}A)",
+                            4: f"({mu}A)",
+                            5: f"({mu}A)",
+                            6: "(mA)",
+                            7: "(mA)",
+                            8: "(mA)"},
+                    'mult': {-1: 1.0e-9,
+                             0: 1.0e-6,
+                             1: 1.0e-3},
+                    'minmax': {0: 2.0,
+                               1: 20.0,
+                               2: 200.0,
+                               3: 2.0,
+                               4: 20.0,
+                               5: 200.0,
+                               6: 2.0,
+                               7: 20.0,
+                               8: 100.0}
+                    }
 
-    source_range_type = {0: "Best",
-                         1: "Fixed"}
-    source_range_type_def = 0
+    source_range_type = {'dic': {0: "Best",
+                                 1: "Fixed"},
+                         'def': 0}
 
-    volt_range = {2: 100.0e-3,
-                  3: 10.0e-3,
-                  4: 1.0,
-                  5: 10.0,
-                  6: 100.0}
-    volt_range_def = 2
+    volt_range = {'dic': {2: 100.0e-3,
+                          3: 10.0e-3,
+                          4: 1.0,
+                          5: 10.0,
+                          6: 100.0},
+                  'def': 2}
 
-    compl_volt = (0.1, 105.0)
-    compl_volt_def = 10
+    compl_volt = {'lim': (0.1, 105.0),
+                  'def': 10.0}
     cab_def = False
 
     # Currents are in Amps
-    curr1 = (-105.0e-3, 105.0e-3)
-    curr1_def = 1.0e-3
-    curr1_text = {0: 'Start Current ',
-                  1: 'High Current ',
-                  2: 'High Current',
-                  3: 'Start Current ',
-                  4: 'Start Current '}
-
-    curr2 = (-105.0e-3, 105.0e-3)
-    curr2_def = 1.0e-3
-    curr2_text = {0: 'Stop Current ',
-                  1: 'Low Current ',
-                  2: 'Low Current ',
-                  3: 'Stop Current ',
-                  4: 'Stop Current '}
-
-    curr_step = (1.0e-13, 105.0e-3)
-    curr_step_def = 1.0e-5
-    curr_step_text = {0: 'Step Size ',
+    curr1 = {'lim': (-105.0e-3, 105.0e-3),
+             'def': -1.0e-3,
+             'txt': {0: 'Start Current ',
+                     1: 'High Current ',
+                     2: 'High Current ',
+                     3: 'Start Current ',
+                     4: 'Start Current '}
+             }
+    curr2 = {'lim': (-105.0e-3, 105.0e-3),
+             'def': 1.0e-3,
+             'txt': {0: 'Stop Current ',
+                     1: 'Low Current ',
+                     2: 'Low Current ',
+                     3: 'Stop Current ',
+                     4: 'Stop Current '}
+             }
+    curr_step = {'lim': (1.0e-13, 105.0e-3),
+                 'def': 1.0e-5,
+                 'txt': {0: 'Step Size ',
+                         1: None,
+                         2: None,
+                         3: 'Step Size ',
+                         4: None}
+                 }
+    field4 = {'lim': None,
+              'def': None,
+              'txt': {0: 'Current Delta ',
                       1: None,
                       2: None,
-                      3: 'Step Size ',
-                      4: None}
-
-    field4_text = {0: 'Current Delta ',
-                   1: None,
-                   2: None,
-                   3: 'Number Points',
-                   4: 'Number Points'}
-
-    meas_rate = (0.1, 60)  # This is in PLC
-    meas_rate_def = 1
-    meas_rate_text = {0: 'Measurement Rate (PLC)',
-                      1: 'Measurement Rate (PLC)',
-                      2: 'Cycle Interval (PLC)',
-                      3: 'Cycle Time (s)',
-                      4: 'Cycle Time (s)'}
-    delay = (1.0e-3, 9999.999)  # This is in seconds
-    delay_def = 2.0e-3
-    # FIXME: Verify that this delay is the pulse delay
-    delay_text = {0: "Measurement Delay (ms)",
-                  1: "Measurement Delay (ms)",
-                  2: f"Pulse Delay ({mu}s)",
-                  3: f"Pulse Delay ({mu}s)"}
-
-    width_text = {0: None,
-                  1: None,
-                  2: f"Pulse Width ({mu}s)",
-                  3: f"Pulse Width ({mu}s)",
-                  4: f"Pulse Width ({mu}s)"}
-
-    points = range(1, 65537)
-    points_def = 11
-    pulse_count_text = {0: None,
-                        1: 'Pulse Count',
-                        2: 'Pulse Count',
-                        3: 'Number Sweeps',
-                        4: 'Number Sweeps'}
-
-    filt = {0: "MOV",  # This replaces filter_switch
-            1: "REP"}
-    filt_def = 0
-    filt_text = {0: "Moving",
-                 1: "Repeating"}
-    filt_window = (0.0, 10.0)
-    filt_window_def = 0.0
-    filt_count = range(2, 301)
-    filt_count_def = 10
+                      3: 'Number Points',
+                      4: 'Number Points'}
+              }
+    meas_rate = {'lim': (0.1, 60),  # This is in PLC
+                 'def': 1,
+                 'txt': {0: 'Measurement Rate (PLC)',
+                         1: 'Measurement Rate (PLC)',
+                         2: 'Cycle Interval (PLC)',
+                         3: 'Cycle Time (s)',
+                         4: 'Cycle Time (s)'}
+                 }
+    delay = {'lim': (1.0e-3, 9999.999),  # This is in seconds
+             'def': 2.0e-3,
+             # FIXME: Verify that that this delay is pulse delay
+             'txt': {0: "Measurement Delay (ms)",
+                     1: "Measurement Delay (ms)",
+                     2: f"Pulse Delay ({mu}s)",
+                     3: f"Pulse Delay ({mu}s)"}
+             }
+    width = {'lim': None,
+             'def': None,
+             'txt': {0: None,
+                     1: None,
+                     2: f"Pulse Width ({mu}s)",
+                     3: f"Pulse Width ({mu}s)",
+                     4: f"Pulse Width ({mu}s)"}
+             }
+    count = {'lim': range(1, 65537),
+             'def': 11,
+             'txt': {0: None,
+                     1: 'Pulse Count',
+                     2: 'Pulse Count',
+                     3: 'Number Sweeps',
+                     4: 'Number Sweeps'}
+             }
+    filt = {'dic': {0: "MOV",  # This replaces filter_switch
+                    1: "REP"},
+            'def': 0,
+            'txt': {0: "Moving",
+                    1: "Repeating"}
+            }
+    fwindow = {'lim': (0.0, 10.0),
+               'def': 0.0}
+    fcount = {'lim': range(2, 301),
+              'def': 10}
 
 
 class DconInfo(KeithInfo):
