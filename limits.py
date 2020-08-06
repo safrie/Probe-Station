@@ -183,13 +183,18 @@ class DconInfo(KeithInfo):
 
     def __init__(self):
         super().__init__()
-        self.filt_def = 1
-        self.filt = {self.filt_def: self.filt[self.filt_def]}
-        self.filt_text = self.filt_text[self.filt_def]
-        self.curr1_def = -10.0e-6
-        self.curr2_def = 10.0e-6
-        self.curr_step_def = 1.0e-6
-        self.points_def = 0
+        self.curr1['def'] = -10.0e-6
+        self.curr2['def'] = 10.0e-6
+        self.curr_step['lim'] = (0, 105.0e-3)
+        self.curr_step['def'] = 1.0e-6
+        self.field4['lim'] = (0, 105.0e-3)
+        self.field4['def'] = 1.0e-6
+
+        self.count['def'] = None
+
+        del self.filt['dic'][0]
+        del self.filt['txt'][0]
+        self.filt['def'] = 1
 
 
 class DeltaInfo(KeithInfo):
