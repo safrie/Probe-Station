@@ -20,7 +20,11 @@ Part of the V3 Probe Station Collection.
 from numpy import array
 
 
-class KeithLims:
+mu = u"\xb5"
+
+
+# TODO: Change veryone over to KeithInfo
+class KeithInfo:
     """Contains instrument limits and defaults for the Keithley stack."""
 
     addr = range(1, 32)
@@ -53,12 +57,10 @@ class KeithLims:
                     7: 20.0e-3,
                     8: 100.0e-3}
     source_range_def = 5
+
     source_range_type = {0: "Best",
                          1: "Fixed"}
     source_range_type_def = 0
-
-    meter_rate = (0.01, 60.0)
-    meter_rate_def = 5.0
 
     volt_range = {2: 100.0e-3,
                   3: 10.0e-3,
@@ -71,24 +73,71 @@ class KeithLims:
     compl_volt_def = 10
     cab_def = False
 
-    points = range(1, 65537)
-    points_def = 11
-
     # Currents are in Amps
     curr1 = (-105.0e-3, 105.0e-3)
     curr1_def = 1.0e-3
+    curr1_text = {0: 'Start Current ',
+                  1: 'High Current ',
+                  2: 'High Current',
+                  3: 'Start Current ',
+                  4: 'Start Current '}
+
     curr2 = (-105.0e-3, 105.0e-3)
     curr2_def = 1.0e-3
+    curr2_text = {0: 'Stop Current ',
+                  1: 'Low Current ',
+                  2: 'Low Current ',
+                  3: 'Stop Current ',
+                  4: 'Stop Current '}
+
     curr_step = (1.0e-13, 105.0e-3)
     curr_step_def = 1.0e-5
+    curr_step_text = {0: 'Step Size ',
+                      1: None,
+                      2: None,
+                      3: 'Step Size ',
+                      4: None}
+
+    field4_text = {0: 'Current Delta ',
+                   1: None,
+                   2: None,
+                   3: 'Number Points',
+                   4: 'Number Points'}
+
     meas_rate = (0.1, 60)  # This is in PLC
     meas_rate_def = 1
+    meas_rate_text = {0: 'Measurement Rate (PLC)',
+                      1: 'Measurement Rate (PLC)',
+                      2: 'Cycle Interval (PLC)',
+                      3: 'Cycle Time (s)',
+                      4: 'Cycle Time (s)'}
     delay = (1.0e-3, 9999.999)  # This is in seconds
     delay_def = 2.0e-3
+    # FIXME: Verify that this delay is the pulse delay
+    delay_text = {0: "Measurement Delay (ms)",
+                  1: "Measurement Delay (ms)",
+                  2: f"Pulse Delay ({mu}s)",
+                  3: f"Pulse Delay ({mu}s)"}
 
-    filt = {0: "MOV",
+    width_text = {0: None,
+                  1: None,
+                  2: f"Pulse Width ({mu}s)",
+                  3: f"Pulse Width ({mu}s)",
+                  4: f"Pulse Width ({mu}s)"}
+
+    points = range(1, 65537)
+    points_def = 11
+    pulse_count_text = {0: None,
+                        1: 'Pulse Count',
+                        2: 'Pulse Count',
+                        3: 'Number Sweeps',
+                        4: 'Number Sweeps'}
+
+    filt = {0: "MOV",  # This replaces filter_switch
             1: "REP"}
     filt_def = 0
+    filt_text = {0: "Moving",
+                 1: "Repeating"}
     filt_window = (0.0, 10.0)
     filt_window_def = 0.0
     filt_count = range(2, 301)
