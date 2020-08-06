@@ -40,8 +40,20 @@ To do with program:
     j) Change limits names to 'info'
         This is where we're holding relevant variables, not just bounds
         - Change in limits.py
-        - Change imports
-            - Change import names
+            - KeithInfo
+            - DconLims
+            - DeltaLims
+            - PDeltaLims
+            - PDeltStairLims
+            - PDeltLogLims
+            - MagLims
+            - TempLims
+        - Change imports and aliases
+            - Main
+            - Keith
+            - temperature
+            - magnet
+            - design
     k) Change field3 stuff to curr_step because that's all it's used for?
     l) Move text switches over to KeithInfo
         - curr1_text
@@ -90,6 +102,8 @@ To do with program:
         - Delta measurement
         - Differential Conductance
         - Pulse Delta
+    n) Make bounds and default two dictionary entries
+        - Unless the bounds are already a dict, in which case no use
 
 • Fix AMI 430 Errors/Issues
     a) On open of Magwindow, for spinbox.setValue(targ), targ is the bound
