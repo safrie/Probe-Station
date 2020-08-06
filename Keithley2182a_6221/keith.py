@@ -252,13 +252,13 @@ class Keith(Instrument):
 
     def meas_type(self, idx: Optional[int] = None) -> KeithMeasure:
         # TODO: Verify KeithMeasure is correct output type.
-        """Return inner class instance for measurement type."""
+        """Return measurement type class instance."""
         if idx is None:
             idx = self.meas_type_idx
-        elif idx not in lims.meas_type.keys():
-            idx = lims.meas_type_def
+        elif idx not in info.meas['mes'].keys():
+            idx = info.meas['def']
             print("Measurement type index out of bounds.  Setting to default "
-                  + f"measurement type ({lims.meas_type[idx]})."
+                  + f"measurement type ({info.meas['txt'][idx]})."
                   )
         print(type(self.meas_type_switch[idx]))
         return self.meas_type_switch[idx]
