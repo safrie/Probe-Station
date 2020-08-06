@@ -148,7 +148,8 @@ class KeithInfo:
                       'txt': {0: "Measurement Delay (ms)",
                               1: "Measurement Delay (ms)",
                               2: f"Pulse Delay ({mu}s)",
-                              3: f"Pulse Delay ({mu}s)"}
+                              3: f"Pulse Delay ({mu}s)",
+                              4: f"Pulse Delay ({mu}s)"}
                       }
         self.width = {'lim': None,
                       'def': None,
@@ -178,8 +179,6 @@ class DconInfo(KeithInfo):
     """DconInfo contains limits specific to differential conductance.
 
     DconInfo inherits from KeithInfo"""
-    curr_delta = (0, 105.0e-3)
-    curr_delta_def = 1.0e-6
 
     def __init__(self):
         super().__init__()
@@ -256,15 +255,26 @@ class PDeltLogInfo(PDeltInfo):
 
     PDeltLogInfo inherits from PDeltInfo."""
 
-    sweeps = range(1, 10000)
-    sweeps_def = 1
-
     def __init__(self):
         super().__init__()
         # ???: Do I need to set curr2 bounds for this to avoid negative?
-        self.curr2_def = 0
-        self.meas_rate = (1.03e-3, 999999.999)
-        self.meas_rate_def = 0.1
+        self.field4['lim'] = range(1, 65535)
+        self.field4['def'] = 11
+        self.rate['lim'] = (1.0e-3, 999999.999)
+        self.rate['def'] = 0.1
+        self.count['lim'] = range(1, 10000)
+        self.count['def'] = 1
+
+        del self.filt['dic'][1]
+        del self.filt['txt'][1]
+        self.filt['def'] = 0
+
+
+ivinfo = {0: DconInfo,
+          1: DeltaInfo,
+          2: PDeltInfo,
+          3: PDeltStairInfo,
+          4: PDeltLogInfo}
 
 
 # TODO: Change to TempInfo
