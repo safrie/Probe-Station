@@ -95,81 +95,83 @@ class KeithInfo:
                   'def': 10.0}
     cab_def = False
 
-    # Currents are in Amps
-    curr1 = {'lim': (-105.0e-3, 105.0e-3),
-             'def': -1.0e-3,
-             'txt': {0: 'Start Current ',
-                     1: 'High Current ',
-                     2: 'High Current ',
-                     3: 'Start Current ',
-                     4: 'Start Current '}
-             }
-    curr2 = {'lim': (-105.0e-3, 105.0e-3),
-             'def': 1.0e-3,
-             'txt': {0: 'Stop Current ',
-                     1: 'Low Current ',
-                     2: 'Low Current ',
-                     3: 'Stop Current ',
-                     4: 'Stop Current '}
-             }
-    curr_step = {'lim': (1.0e-13, 105.0e-3),
-                 'def': 1.0e-5,
-                 'txt': {0: 'Step Size ',
-                         1: None,
-                         2: None,
-                         3: 'Step Size ',
-                         4: None}
-                 }
-    field4 = {'lim': None,
-              'def': None,
-              'txt': {0: 'Current Delta ',
-                      1: None,
-                      2: None,
-                      3: 'Number Points',
-                      4: 'Number Points'}
-              }
-    meas_rate = {'lim': (0.1, 60),  # This is in PLC
-                 'def': 1,
-                 'txt': {0: 'Measurement Rate (PLC)',
-                         1: 'Measurement Rate (PLC)',
-                         2: 'Cycle Interval (PLC)',
-                         3: 'Cycle Time (s)',
-                         4: 'Cycle Time (s)'}
-                 }
-    delay = {'lim': (1.0e-3, 9999.999),  # This is in seconds
-             'def': 2.0e-3,
-             # FIXME: Verify that that this delay is pulse delay
-             'txt': {0: "Measurement Delay (ms)",
-                     1: "Measurement Delay (ms)",
-                     2: f"Pulse Delay ({mu}s)",
-                     3: f"Pulse Delay ({mu}s)"}
-             }
-    width = {'lim': None,
-             'def': None,
-             'txt': {0: None,
-                     1: None,
-                     2: f"Pulse Width ({mu}s)",
-                     3: f"Pulse Width ({mu}s)",
-                     4: f"Pulse Width ({mu}s)"}
-             }
-    count = {'lim': range(1, 65537),
-             'def': 11,
-             'txt': {0: None,
-                     1: 'Pulse Count',
-                     2: 'Pulse Count',
-                     3: 'Number Sweeps',
-                     4: 'Number Sweeps'}
-             }
-    filt = {'dic': {0: "MOV",  # This replaces filter_switch
-                    1: "REP"},
-            'def': 0,
-            'txt': {0: "Moving",
-                    1: "Repeating"}
-            }
     fwindow = {'lim': (0.0, 10.0),
                'def': 0.0}
     fcount = {'lim': range(2, 301),
               'def': 10}
+
+    def __init__(self):
+
+        self.curr1 = {'lim': (-105.0e-3, 105.0e-3),
+                      'def': -1.0e-3,
+                      'txt': {0: 'Start Current ',
+                              1: 'High Current ',
+                              2: 'High Current ',
+                              3: 'Start Current ',
+                              4: 'Start Current '}
+                      }
+        self.curr2 = {'lim': (-105.0e-3, 105.0e-3),
+                      'def': 1.0e-3,
+                      'txt': {0: 'Stop Current ',
+                              1: 'Low Current ',
+                              2: 'Low Current ',
+                              3: 'Stop Current ',
+                              4: 'Stop Current '}
+                      }
+        self.curr_step = {'lim': (1.0e-13, 105.0e-3),
+                          'def': 1.0e-5,
+                          'txt': {0: 'Step Size ',
+                                  1: None,
+                                  2: None,
+                                  3: 'Step Size ',
+                                  4: None}
+                          }
+        self.field4 = {'lim': None,
+                       'def': None,
+                       'txt': {0: 'Current Delta ',
+                               1: None,
+                               2: None,
+                               3: 'Number Points',
+                               4: 'Number Points'}
+                       }
+        self.meas_rate = {'lim': (0.1, 60),  # This is in PLC
+                          'def': 1,
+                          'txt': {0: 'Measurement Rate (PLC)',
+                                  1: 'Measurement Rate (PLC)',
+                                  2: 'Cycle Interval (PLC)',
+                                  3: 'Cycle Time (s)',
+                                  4: 'Cycle Time (s)'}
+                          }
+        self.delay = {'lim': (1.0e-3, 9999.999),  # This is in seconds
+                      'def': 2.0e-3,
+                      # FIXME: Verify that that this delay is pulse delay
+                      'txt': {0: "Measurement Delay (ms)",
+                              1: "Measurement Delay (ms)",
+                              2: f"Pulse Delay ({mu}s)",
+                              3: f"Pulse Delay ({mu}s)"}
+                      }
+        self.width = {'lim': None,
+                      'def': None,
+                      'txt': {0: None,
+                              1: None,
+                              2: f"Pulse Width ({mu}s)",
+                              3: f"Pulse Width ({mu}s)",
+                              4: f"Pulse Width ({mu}s)"}
+                      }
+        self.count = {'lim': range(1, 65537),
+                      'def': 11,
+                      'txt': {0: None,
+                              1: 'Pulse Count',
+                              2: 'Pulse Count',
+                              3: 'Number Sweeps',
+                              4: 'Number Sweeps'}
+                      }
+        self.filt = {'dic': {0: "MOV",  # This replaces filter_switch
+                             1: "REP"},
+                     'def': 0,
+                     'txt': {0: "Moving",
+                             1: "Repeating"}
+                     }
 
 
 class DconInfo(KeithInfo):
