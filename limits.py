@@ -144,7 +144,7 @@ class KeithInfo:
     filt_count_def = 10
 
 
-class DconLims(KeithLims):
+class DconInfo(KeithInfo):
     """DconLims contains limits specific to differential conductance.
 
     DconLims inherits from KeithLims"""
@@ -153,11 +153,13 @@ class DconLims(KeithLims):
 
     def __init__(self):
         super().__init__()
-        self.filt = {1: self.filt[1]}
         self.filt_def = 1
+        self.filt = {self.filt_def: self.filt[self.filt_def]}
+        self.filt_text = self.filt_text[self.filt_def]
         self.curr1_def = -10.0e-6
         self.curr2_def = 10.0e-6
         self.curr_step_def = 1.0e-6
+        self.points_def = 0
 
 
 class DeltaLims(KeithLims):
