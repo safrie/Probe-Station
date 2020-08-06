@@ -21,6 +21,8 @@ import numpy
 # import time
 from typing import Union, Optional, Tuple
 
+mu = u'\xb5'
+
 
 class Keith(Instrument):
     """
@@ -119,7 +121,6 @@ class Keith(Instrument):
         field4_text(optional int)
         source_range_minmax(optional int)
     """
-    mu = u'\xb5'
     source_range_type_switch = {
             0: 'Best',
             1: 'Fixed',
@@ -155,6 +156,7 @@ class Keith(Instrument):
             6: 2.0,
             7: 20.0,
             8: 100.0}
+
     source_range_mult_switch = {
         # This converts to/from Amps from/to nA, uA, and mA
         -1: 1e-9,
@@ -257,6 +259,7 @@ class Keith(Instrument):
             print("Measurement type index out of bounds.  Setting to default "
                   + f"measurement type ({lims.meas_type[idx]})."
                   )
+        print(type(self.meas_type_switch[idx]))
         return self.meas_type_switch[idx]
 
     def get_header_string(self, idx: Optional[int] = None) -> str:
