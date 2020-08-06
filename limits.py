@@ -3,10 +3,10 @@
 limits contains the bounds for parameter settings for all instruments.
 
 classes_
-    KeithLims: Bounds for the Keithley 2182a/6221 stack
-    DconLims: Bounds for Keithley differential conductance measurement
-    DeltaLims: Bounds for Keithley delta measurement
-    PDeltaLims: Bounds for Keithley pulse delta measurement
+    KeithInfo: Bounds for the Keithley 2182a/6221 stack
+    DconInfo: Bounds for Keithley differential conductance measurement
+    DeltaInfo: Bounds for Keithley delta measurement
+    PDeltInfo: Bounds for Keithley pulse delta measurement
     PDeltStairLims: Bounds for Keithley pulse delta staircase sweep
     PDeltLogLims: Bounds for Keithley pulse delta logarithmic sweep
 
@@ -145,9 +145,9 @@ class KeithInfo:
 
 
 class DconInfo(KeithInfo):
-    """DconLims contains limits specific to differential conductance.
+    """DconInfo contains limits specific to differential conductance.
 
-    DconLims inherits from KeithLims"""
+    DconInfo inherits from KeithInfo"""
     curr_delta = (0, 105.0e-3)
     curr_delta_def = 1.0e-6
 
@@ -162,10 +162,10 @@ class DconInfo(KeithInfo):
         self.points_def = 0
 
 
-class DeltaLims(KeithLims):
-    """DeltaLims contains limits specific to delta measurements.
+class DeltaInfo(KeithInfo):
+    """DeltaInfo contains limits specific to delta measurements.
 
-    DeltaLims inherits from KeithLims."""
+    DeltaInfo inherits from KeithInfo."""
 
     def __init__(self):
         super().__init__()
@@ -175,10 +175,10 @@ class DeltaLims(KeithLims):
         self.curr2_def = 0
 
 
-class PDeltaLims(KeithLims):
-    """PDeltaLims contains limits specific to pulse delta measurements.
+class PDeltInfo(KeithInfo):
+    """PDeltInfo contains limits specific to pulse delta measurements.
 
-    PDeltaLims inherits from KeithLims."""
+    PDeltInfo inherits from KeithInfo."""
 
     width = (50.0e-6, 12.0e-3)
     width_def = 110.0e-6
@@ -195,10 +195,10 @@ class PDeltaLims(KeithLims):
         self.meas_rate_def = 5
 
 
-class PDeltStairLims(PDeltaLims):
-    """PDeltStairLims contains limits specific to pulse delta measurements.
+class PDeltStairInfo(PDeltInfo):
+    """PDeltStairInfo contains limits specific to pulse delta measurements.
 
-    PDeltStairLims inherits from PDeltaLims."""
+    PDeltStairInfo inherits from PDeltInfo."""
 
     sweeps = range(1, 10000)
     sweeps_def = 1
@@ -212,10 +212,10 @@ class PDeltStairLims(PDeltaLims):
         self.meas_rate_def = 0.1
 
 
-class PDeltLogLims(KeithLims):
-    """PDeltLogLims contains limits specific to pulse delta measurements.
+class PDeltLogInfo(PDeltInfo):
+    """PDeltLogInfo contains limits specific to pulse delta measurements.
 
-    PDeltLogLims inherits from PDeltaLims."""
+    PDeltLogInfo inherits from PDeltInfo."""
 
     sweeps = range(1, 10000)
     sweeps_def = 1
@@ -228,6 +228,7 @@ class PDeltLogLims(KeithLims):
         self.meas_rate_def = 0.1
 
 
+# TODO: Change to TempInfo
 class TempLims():
     """Contains instrument parameter limits and defaults for LakeShore 336."""
     addr = range(1, 32)
@@ -247,6 +248,7 @@ class TempLims():
     setpt_default = 4.0
 
 
+# TODO: Change to MagInfo
 class MagLims():
     """Contains instrument parameter limits for the AMI 430."""
     # TODO: Get COM address limits
