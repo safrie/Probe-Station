@@ -21,10 +21,6 @@ from limits import (DconLims as dclims, DeltaLims as deltlims, PDeltaLims as
 
 mu = u'\xb5'
 
-filter_switch = {
-        0: 'Moving',
-        1: 'Repeating'}
-
 meas_lims = {0: dclims,
              1: deltlims,
              2: pulsedlims,
@@ -52,12 +48,6 @@ class Delta(KeithMeasure):
         set_meas_rate(int)
         set_filter_idx(int)
     """
-
-    curr1_text = 'High Current '
-    curr2_text = 'Low Current '
-    meas_rate_text = 'Measurement Rate (PLC) '
-    meas_delay_text = 'Measurement Delay (ms) '
-    pulse_count_text = 'Pulse Count'
 
     def __init__(self) -> None:
         """Instantiate delta measurement."""
@@ -115,26 +105,19 @@ class DiffCon(KeithMeasure):
         set_meas_rate(int)
     """
 
-    curr1_text = 'Start Current '
-    curr2_text = 'Stop Current '
-    curr_step_text = 'Step Size '
-    curr_delta_text = field4_text = 'Delta Current '
-    meas_rate_text = 'Measurement Rate (PLC)'
-    meas_delay_text = 'Measurement Delay (ms)'
-
     num_sweeps = None
 
     def __init__(self) -> None:
         """Instantiate differntial conductance measurement."""
         super().__init__()
-        self.curr1 = -1000.00
-        self.curr2 = 1000.00
-        self.curr_step = 10.00
-        self.curr_delta = 1.00
-        self.meas_rate = 1
-        self.filter_idx = 1
-        self.filter_type = 'Repeating'
-        self.num_points = 0
+        self.curr1 = dclims.curr1_def
+        self.curr2 = dclims.curr2_def
+        self.curr_step = dclims.curr_step_def
+        self.curr_delta = dclims.curr_delta_def
+        self.meas_rate = dclims.meas_rate_def
+        self.filter_idx = dclims.filt_def
+        self.filter_type = dclims.filt_text
+        self.num_points = dclims.points_def
 
     def get_meas_type_str(self) -> str:
         """Return type of measurement followed by a new line."""
@@ -193,13 +176,6 @@ class PDelta(KeithMeasure):
         set_filter_idx(int)
         set_low_meas(bool)
     """
-
-    curr1_text = 'High Current '
-    curr2_text = 'Low Current '
-    meas_rate_text = 'Cycle Interval (PLC)'
-    meas_delay_text = f'Source Delay ({mu}s)'
-    pulse_width_text = f'Pulse Width ({mu}s)'
-    pulse_count_text = 'Pulse Count'
 
     def __init__(self) -> None:
         """Instantiate pulse delta measurement."""
@@ -268,14 +244,6 @@ class PDeltaLog(KeithMeasure):
         set_low_meas(bool)
         get_total_points()
     """
-
-    curr1_text = 'Start Current '
-    curr2_text = 'Stop Current '
-    field4_text = 'Number Points '
-    meas_rate_text = 'Cycle Time (s)'
-    meas_delay_text = 'Source Delay ({mu}s)'
-    pulse_width_text = 'Pulse Width ({mu}s)'
-    pulse_count_text = 'Number Sweeps'
 
     def __init__(self) -> None:
         """Instantiate pulse delta log sweep."""
@@ -354,15 +322,6 @@ class PDeltaStair(KeithMeasure):
         set_low_meas(bool)
         get_total_points()
     """
-
-    curr1_text = 'Start Current '
-    curr2_text = 'Stop Current '
-    curr_step_text = 'Step Size '
-    field4_text = 'Number Points '
-    meas_rate_text = 'Cycle Time (s)'
-    meas_delay_text = 'Source Delay ({mu}s)'
-    pulse_width_text = 'Pulse Width ({mu}s)'
-    pulse_count_text = 'Number Sweeps'
 
     def __init__(self) -> None:
         """Instantiate pulse delta staircase sweep measurement."""
