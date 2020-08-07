@@ -393,11 +393,12 @@ class Keith(Instrument):
     def volt_range(self, typ: type = float) -> Union[float, str]:
         """Return Keithley voltmeter range as either float or str."""
         # TODO: Test volt_range exhaustively as well.
-        out = self.volt_range_switch[self.volt_range_idx]
+        out = info.volt_range['dic'][self.volt_range_idx]
 #        out = num if int(num) > 0 else format(num, '.0e')
         if typ not in (float, str):
-            raise ValueError('Valid output type not given.  volt_rang: typ '
-                             'must be either float or str (default is float).')
+            typ = float
+            print('Valid output type not given.  volt_rang: typ '
+                  + 'must be either float or str (default is float).')
         else:
             return (out if typ is float else format(out, '.0e'))
 
