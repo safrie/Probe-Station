@@ -485,7 +485,7 @@ class Keith(Instrument):
         lim = inf.curr1['lim']
         if not lim[0] <= curr <= lim[1]:
             curr = inf.curr1['def']
-            print(f"{inf.curr1['txt'][meas_idx]} out of bounds.  Setting to "
+            print(f"{inf.curr1['txt'][meas_idx]}out of bounds.  Setting to "
                   + f"default value ({inf.curr1['def']} A).")
         self.meas_type(meas_idx).set_curr1(curr)
 
@@ -495,13 +495,19 @@ class Keith(Instrument):
         lim = inf.curr2['lim']
         if not lim[0] <= curr <= lim[1]:
             curr = inf.curr2['def']
-            print(f"{inf.curr2['txt'][meas_idx]} out of bounds.  Setting to "
+            print(f"{inf.curr2['txt'][meas_idx]}out of bounds.  Setting to "
                   + f"default value ({inf.curr2['def']} A).")
         self.meas_type(meas_idx).set_curr2(curr)
 
     def set_curr_step(self, curr: float,
                       meas_idx: Optional[int] = None) -> None:
         """Set curr_step of desired meas type instance to curr in Amps."""
+        inf = self.info_type(meas_idx)
+        lim = inf.curr_step['lim']
+        if lim is not None and not lim[0] <= curr <= lim[1]:
+            curr = inf.curr_step['def']
+            print(f"{inf.curr_step['txt'][meas_idx]}out of bounds.  Setting "
+                  + f"to default value ({inf.curr_step['def']} A).")
         self.meas_type(meas_idx).set_curr_step(curr)
 
     def set_curr_delta(self, curr: float,
