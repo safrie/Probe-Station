@@ -285,15 +285,16 @@ class Keith(Instrument):
         you did.
         """
         # TODO: Test, verify get_header_string
+        idx = self.meas_type_idx if idx is None else idx
         meas = self.meas_type(idx)
-        curr1 = self.curr1_text()
-        curr2 = self.curr2_text()
-        step = self.curr_step_text()
-        delta = self.curr_delta_text()
-        rate = meas.meas_rate_text
-        delay = meas.meas_delay_text
-        pulse_width = meas.pulse_width_text
-        pulse_count = meas.pulse_count_text
+        curr1 = self.curr1_text(idx)
+        curr2 = self.curr2_text(idx)
+        step = self.curr_step_text(idx)
+        delta = self.curr_delta_text(idx)
+        rate = info.rate['txt'][idx]
+        delay = info.delay['txt'][idx]
+        pulse_width = info.width['txt'][idx]
+        pulse_count = info.count['txt'][idx]
         out = (meas.get_meas_type_str()
                + f'{curr1}{meas.curr1}\t'
                + f'{curr2}{meas.curr2}\t'
@@ -791,38 +792,35 @@ class Keith(Instrument):
 
     def source_range_text(self) -> str:
         """Access the source range text conveniently."""
-        return self.source_range_txt_switch.get(
-                self.source_range_idx, 'ERR')
+        return info.sour_range['txt'].get(self.source_range_idx, "ERR")
 
     def curr1_text(self, idx: Optional[int]) -> str:
         """Label curr1 in UI and headers."""
-        return self.meas_type(idx).curr1_text + self.source_range_text()
+        idx = self.meas_type_idx if idx is None else idx
+        return self.info_type(idx).curr1['txt'][idx] + self.source_range_text()
 
     def curr2_text(self, idx: Optional[int]) -> str:
         """Label curr2 in UI and headers."""
-        return self.meas_type(idx).curr2_text + self.source_range_text()
+        idx = self.meas_type_idx if idx is None else idx
+        return self.info_type(idx).curr2['txt'][idx] + self.source_range_text()
 
     def curr_step_text(self, idx: Optional[int]) -> str:
         """Label curr_step in UI and headers."""
-        step = self.meas_type(idx).curr_step_text
+        idx = self.meas_type_idx if idx is None else idx
+        step = self.info_type(idx).curr_step['txt'][idx]
         if step is not None:
             step += self.source_range_text()
         return step
 
     def field4_text(self, idx: Optional[int]) -> str:
         """Label field4 in UI and headers.  field4 changes with meas_type."""
-        if idx is None:
-            idx = self.meas_type_idx
-        try:
-            field4 = self.meas_type(idx).field4_text
-        except AttributeError:
-            field4 = None
-        else:
-            if idx == 0:
-                field4 += self.source_range_text()
+        idx = self.meas_type_idx if idx is None else idx
+        field4 = self.info_type(idx).field4['txt'][idx]
+        if idx == 0:
+            field4 += self.source_range_text()
         return field4
 
     def source_range_minmax(self, idx: Optional[int] = None) -> float:
         """Retrieve minimum and maximum values for spinboxes in the UI."""
-        return (self.source_range_minmax_switch[self.source_range_idx] if
-                idx is None else self.source_range_minmax_switch[idx])
+        idx = self.source_range_idx if idx is None else idx
+        return info.sour_range['minmax'][idx]
