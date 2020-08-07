@@ -164,6 +164,14 @@ class KeithInfo:
                               3: f"Pulse Width ({mu}s)",
                               4: f"Pulse Width ({mu}s)"}
                       }
+        self.points = {'lim': range(1, 65537),
+                       'def': 11,
+                       'txt': {0: None,
+                               1: 'Pulse Count',
+                               2: 'Pulse Count',
+                               3: 'Number Points',
+                               4: 'Number Points'}
+                       }
         self.count = {'lim': range(1, 65537),
                       'def': 11,
                       'txt': {0: None,
