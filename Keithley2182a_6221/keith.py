@@ -331,7 +331,7 @@ class Keith(Instrument):
 
     def source_range_type(self) -> str:
         """Look up string for source_range_type.  Convenience function."""
-        return self.source_range_type_switch[self.source_range_type_idx]
+        return info.sour_range['typ']['dic'][self.source_range_type_idx]
 
     def set_source_range(self, value: Union[int, float, str]) -> int:
         """Set source_range_idx to given value and update Keithleys.
