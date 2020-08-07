@@ -435,9 +435,9 @@ class Keith(Instrument):
     def set_compl_abort(self, enable: bool) -> None:
         """Set compliance abort."""
         if not isinstance(enable, bool):
-            enable = lims.cab_default
+            enable = info.cab_default
             print("Setting for compliance abort not available. "
-                  + f" Setting to default ({lims.cab_default}).")
+                  + f" Setting to default ({info.cab_default}).")
         self.compl_abort = enable
 
     def set_meas_type(self, value: Union[int, str]) -> KeithMeasure:
