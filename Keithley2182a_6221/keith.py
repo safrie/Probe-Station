@@ -406,12 +406,12 @@ class Keith(Instrument):
                  meas_idx: Optional[int] = None) -> None:
         """Set the unit index for the measurement type and update Keithleys."""
         # TODO: Test set_unit
-        if unit_val in lims.unit.values():
-            unit_val = self.unit_switch[unit_val]
-        elif unit_val not in lims.unit.keys():
-            unit_val = lims.unit_def[0]
+        if unit_val in info.unit['dic'].values():
+            unit_val = key(dic=info.unit['dic'], val=unit_val)
+        elif unit_val not in info.unit.keys():
+            unit_val = info.unit['def']
             print("Unit index out of bounds.  Setting to default "
-                  + f"({lims.unit[unit_val]}).")
+                  + f"({info.unit['dic'][unit_val]}).")
         self.meas_type(meas_idx).set_unit_idx(unit_val)
         self.visa.set_unit(unit_val)
 
