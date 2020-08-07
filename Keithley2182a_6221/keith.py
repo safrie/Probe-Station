@@ -319,9 +319,10 @@ class Keith(Instrument):
         caller wants the index.
         """
         # TODO: Test set_source_range_type str input
-        if value in info.sour_range['typ']['dic'].values():
-            value = key(dic=info.sour_range['typ']['dic'], val=value)
-        elif value not in info.sour_range['typ']['dic'].keys():
+        dic = info.sour_range['typ']['dic']
+        if value in dic.values():
+            value = key(dic=dic, val=value)
+        elif value not in dic.keys():
             value = info.sour_range['typ']['def']
             print("Source range type invalid.  Source range type set to "
                   + f"default ({value})")
@@ -341,13 +342,13 @@ class Keith(Instrument):
         Returns source_range_idx in case input was a float or str.
         """
         # TODO: Test set_source_range str input
-        if (value in info.sour_range['dic'].values()
-                or float(value) in info.sour_range['dic'].values()):
-            value = key(dic=info.sour_range['dic'], val=float(value))
-        elif value not in info.sour_range.keys():
+        dic = info.sour_range['dic']
+        if (value in dic.values() or float(value) in dic.values()):
+            value = key(dic=dic, val=float(value))
+        elif value not in dic.keys():
             value = info.sour_range['def']
             print("Source range index out of bounds.  Source range set to "
-                  + f"default value ({info.sour_range['dic'][value]}).")
+                  + f"default value ({dic[value]}).")
         self.source_range_idx = value
         self.visa.set_source_range(meas_idx=self.meas_type_idx,
                                    auto=(not value),
@@ -372,18 +373,19 @@ class Keith(Instrument):
         for the range.  Returns volt_range_idx in case input was a float
         """
         # TODO: Verify set_volt_range actually works
+        dic = info.volt_range['dic']
         print(f'volt range value = {value} and is int = {type(value) is int}')
-        if value in info.volt_range['dic'].values():
+        if value in dic.values():
             out = value
-            value = key(dic=info.volt_range['dic'], val=value)
+            value = key(dic=dic, val=value)
         else:
             if isinstance(value, int):
                 value += 2
-            if value not in info.volt_range['dic'].keys():
+            if value not in dic.keys():
                 value = info.volt_range['def']
                 print("Voltmeter range index out of bounds.  Setting to "
-                      + f"default ({info.volt_range['dic'][value]} V).")
-            out = info.volt_range['dic'][value]
+                      + f"default ({dic[value]} V).")
+            out = dic[value]
         self.volt_range_idx = value
         print(f"keith volt range idx = {value}")
         print(f"volt range = {out} V")
@@ -406,12 +408,13 @@ class Keith(Instrument):
                  meas_idx: Optional[int] = None) -> None:
         """Set the unit index for the measurement type and update Keithleys."""
         # TODO: Test set_unit
-        if unit_val in info.unit['dic'].values():
-            unit_val = key(dic=info.unit['dic'], val=unit_val)
-        elif unit_val not in info.unit.keys():
+        dic = info.unit['dic']
+        if unit_val in dic.values():
+            unit_val = key(dic=dic, val=unit_val)
+        elif unit_val not in dic.keys():
             unit_val = info.unit['def']
             print("Unit index out of bounds.  Setting to default "
-                  + f"({info.unit['dic'][unit_val]}).")
+                  + f"({dic[unit_val]}).")
         self.meas_type(meas_idx).set_unit_idx(unit_val)
         self.visa.set_unit(unit_val)
 

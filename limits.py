@@ -106,7 +106,7 @@ class KeithInfo:
               'def': 10}
 
     def __init__(self):
-
+        # TODOC
         self.curr1 = {'lim': (-105.0e-3, 105.0e-3),
                       'def': -1.0e-3,
                       'txt': {0: 'Start Current ',
