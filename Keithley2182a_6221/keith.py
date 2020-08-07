@@ -339,13 +339,14 @@ class Keith(Instrument):
         Returns source_range_idx in case input was a float or str.
         """
         # TODO: Test set_source_range str input
-        if (value in lims.source_range.values()
-                or float(value) in lims.source_range.values()):
-            value = self.source_range_switch[float(value)]
-        elif value not in lims.source_range.keys():
-            value = lims.source_range_def
+        if (value in info.sour_range['dic'].values()
+                or float(value) in info.sour_range['dic'].values()):
+            value = [k for k, v in info.sour_range['dic']
+                     if float(value) == v][0]
+        elif value not in info.sour_range.keys():
+            value = info.sour_range['def']
             print("Source range index out of bounds.  Source range set to "
-                  + f"default value ({lims.source_range[value]}).")
+                  + f"default value ({info.sour_range['dic'][value]}).")
         self.source_range_idx = value
         self.visa.set_source_range(meas_idx=self.meas_type_idx,
                                    auto=(not self.source_range_type_idx),
