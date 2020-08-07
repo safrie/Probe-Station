@@ -263,8 +263,18 @@ class Keith(Instrument):
             print("Measurement type index out of bounds.  Setting to default "
                   + f"measurement type ({info.meas['txt'][idx]})."
                   )
-        print(type(self.meas_type_switch[idx]))
-        return self.meas_type_switch[idx]
+        print(type(info.meas['mes'][idx]))
+        return info.meas['mes'][idx]
+
+    def info_type(self, idx: Optional[int] = None) -> info:
+        """Return measurement type info class instance."""
+        if idx is None:
+            idx = self.meas_type_idx
+        elif idx not in ivinfo['mes'].keys():
+            idx = ivinfo['def']
+            print("Measurement type index out of bounds.  Setting to default "
+                  + f"measurement type ({ivinfo['def']}).")
+        return ivinfo['mes'][idx]
 
     def get_header_string(self, idx: Optional[int] = None) -> str:
         """Return header string for a measurement type.

@@ -275,11 +275,12 @@ class PDeltLogInfo(PDeltInfo):
         self.filt['def'] = 0
 
 
-ivinfo = {0: DconInfo,
-          1: DeltaInfo,
-          2: PDeltInfo,
-          3: PDeltStairInfo,
-          4: PDeltLogInfo}
+ivinfo = {'mes': {0: DconInfo,
+                  1: DeltaInfo,
+                  2: PDeltInfo,
+                  3: PDeltStairInfo,
+                  4: PDeltLogInfo},
+          'def': 0}
 
 
 # TODO: Change to TempInfo
