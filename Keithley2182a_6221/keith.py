@@ -457,15 +457,15 @@ class Keith(Instrument):
 
     def curr_conv_mult(self, num: float) -> float:
         """Convert a number to Amps based on multiplication by source range."""
-        val = numpy.log10(self.source_range_switch[self.source_range_idx])
+        val = numpy.log10(info.sour_range['dic'][self.source_range_idx])
         mult_idx = val // 3
-        return num * self.source_range_mult_switch[mult_idx]
+        return num * info.sour_range['mult'][mult_idx]
 
     def curr_conv_div(self, num: float) -> float:
         """Convert a number from Amps based on division by the source range."""
-        val = numpy.log10(self.source_range_switch[self.source_range_idx])
+        val = numpy.log10(info.sour_range['dic'][self.source_range_idx])
         mult_idx = val // 3
-        return num / self.source_range_mult_switch[mult_idx]
+        return num / info.sour_range['mult'][mult_idx]
 
     # %% Measurement variables section
 
