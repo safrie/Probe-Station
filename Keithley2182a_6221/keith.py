@@ -570,7 +570,7 @@ class Keith(Instrument):
         meas_idx = self.meas_type_idx if meas_idx is None else meas_idx
         inf = self.info_type(meas_idx)
         lim = inf.count['lim']
-        if lim is not None and not lim[0] <= sweeps <= lim[1]:
+        if lim is not None and sweeps not in lim:
             sweeps = inf.count['def']
             print(f"{inf.count['txt'][meas_idx]} out of bounds.  Setting to "
                   + f"default value ({inf.count['def']}).")
@@ -579,6 +579,13 @@ class Keith(Instrument):
     def set_low_meas(self, enable: bool,
                      meas_idx: Optional[int] = None) -> None:
         """Enable or disable low_meas for desired meas type instance."""
+        meas_idx = self.meas_type_idx if meas_idx is None else meas_idx
+        inf = self.info_type(meas_idx)
+        lim = inf.low_meas['lim']
+        if enable not in lim:
+            enable = inf.low_meas['def']
+            print("Enable 2nd low measurement argument invalid.  Setting to "
+                  + f"default value ({inf.low_meas['def']})")
         self.meas_type(meas_idx).set_low_meas(enable)
 
     def set_num_points(self, points: int,
