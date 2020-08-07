@@ -453,7 +453,7 @@ class Keith(Instrument):
 
     def meas_type_txt(self) -> str:
         """Return str of measurement type.  Convenience function."""
-        return self.meas_type_txt_switch.get(self.meas_type_idx, 'ERR')
+        return info.meas['txt'].get(self.meas_type_idx, 'ERR')
 
     def curr_conv_mult(self, num: float) -> float:
         """Convert a number to Amps based on multiplication by source range."""
