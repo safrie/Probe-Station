@@ -372,16 +372,17 @@ class Keith(Instrument):
         """
         # TODO: Verify set_volt_range actually works
         print(f'volt range value = {value} and is int = {type(value) is int}')
-        if value in lims.volt_range.values():
+        if value in info.volt_range['dic'].values():
             out = value
-            value = self.volt_range_switch[value]
+            value = [k for k, v in info.volt_range['dic'].items()
+                     if value == v][0]
         else:
             if isinstance(value, int):
                 value += 2
-            if value not in lims.volt_range.keys():
-                value = lims.volt_range_def[0]
+            if value not in info.volt_range['dic'].keys():
+                value = info.volt_range['def']
                 print("Voltmeter range index out of bounds.  Setting to "
-                      + f"default ({lims.volt_range[value]} V).")
+                      + f"default ({info.volt_range['dic'][value]} V).")
             out = self.volt_range_switch[value]
         self.volt_range_idx = value
         print(f"keith volt range idx = {value}")
