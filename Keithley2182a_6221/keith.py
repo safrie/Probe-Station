@@ -637,9 +637,10 @@ class Keith(Instrument):
     def filter_index(self, ftype: Optional[Union[int, str]] = None,
                      meas_idx: Optional[int] = None) -> int:
         """Return filter_idx.  Convenience function."""
+        dic = self.info_type(meas_idx).filt['dic']
         if ftype is None:
             ftype = self.meas_type(meas_idx).filter_type
-        return filter_switch[ftype] if isinstance(ftype, str) else ftype
+        return key(dic=dic, val=ftype) if ftype in dic.values() else ftype
 
     def set_filter(self, enable: bool, meas_idx: Optional[int] = None) -> None:
         """Set filter_on of meas type to enable and update Keithleys."""
