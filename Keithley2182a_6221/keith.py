@@ -612,11 +612,17 @@ class Keith(Instrument):
     def set_filter_idx(self, ftype: Union[int, str],
                        meas_idx: Optional[int] = None) -> None:
         """Set filter_idx of meas type instance and update Keithleys."""
-        findex = (ftype if isinstance(ftype, int)
-                  else filter_switch[ftype])
+        inf = self.info_type(meas_idx)
+        dic = inf.filt['dic']
+        if ftype in dic.values():
+            ftype = key(dic=dic, value=ftype)
+        elif ftype not in dic.keys():
+            ftype = inf.filt['def']
+            print("Filter type index invalid.  Setting to default value "
+                  + f"({inf.filt['txt'][ftype]}).")
         meas = self.meas_type(meas_idx)
         enable = meas.filter_on
-        meas.set_filter_idx(findex)
+        meas.set_filter_idx(ftype)
         self.visa.set_filter_on(enable)
         self.visa.set_filter(enable)
 
