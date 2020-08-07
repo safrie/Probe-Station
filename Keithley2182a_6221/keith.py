@@ -421,8 +421,9 @@ class Keith(Instrument):
 
     def set_compl_volt(self, volt: float) -> None:
         """Set compliance voltage and update Keithleys."""
-        if not lims.compl_volt[0] < volt < lims.compl_volt[1]:
-            volt = lims.compl_volt_def
+        lim = info.compl_volt['lim']
+        if not lim[0] <= volt <= lim[1]:
+            volt = info.compl_volt['def']
             print("Compliance voltage out of bounds.  Setting to default "
                   f"value ({volt} V).")
         self.compl_volt = volt
