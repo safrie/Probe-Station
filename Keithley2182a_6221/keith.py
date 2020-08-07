@@ -626,12 +626,13 @@ class Keith(Instrument):
         self.visa.set_filter_on(enable)
         self.visa.set_filter(enable)
 
-    def filter_type(self, findex: Optional[Union[int, str]] = None,
+    def filter_type(self, fidx: Optional[Union[int, str]] = None,
                     meas_idx: Optional[int] = None) -> str:
         """Return str of filter type.  Convenience function."""
-        if findex is None:
-            findex = self.meas_type(meas_idx).filter_idx
-        return filter_switch[findex] if isinstance(findex, int) else findex
+        inf = self.info_type(meas_idx)
+        if fidx is None:
+            fidx = self.meas_type(meas_idx).filter_idx
+        return inf.filt['dic'][fidx] if isinstance(fidx, int) else fidx
 
     def filter_index(self, ftype: Optional[Union[int, str]] = None,
                      meas_idx: Optional[int] = None) -> int:
