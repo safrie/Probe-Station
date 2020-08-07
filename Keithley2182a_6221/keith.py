@@ -341,7 +341,7 @@ class Keith(Instrument):
         # TODO: Test set_source_range str input
         if (value in info.sour_range['dic'].values()
                 or float(value) in info.sour_range['dic'].values()):
-            value = [k for k, v in info.sour_range['dic']
+            value = [k for k, v in info.sour_range['dic'].items()
                      if float(value) == v][0]
         elif value not in info.sour_range.keys():
             value = info.sour_range['def']
@@ -356,10 +356,11 @@ class Keith(Instrument):
     def source_range(self, typ: type = float) -> Union[float, str]:
         """Return Keithley source range as either a float or a str."""
         # TODO: Test source_range
-        out = self.source_range_switch[self.source_range_idx]
+        out = info.sour_range['dic'][self.source_range_idx]
         if typ not in (float, str):
-            raise ValueError('Valid output type not given.  source_range: typ '
-                             'must be either float or str (default is float).')
+            print('Valid output type not given.  source_range: typ '
+                  + 'must be either float or str (default is float).')
+            typ = float
         else:
             return (out if typ is float else format(out, '.0e'))
 
