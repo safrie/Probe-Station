@@ -16,7 +16,10 @@ from Keithley2182a_6221.keith_meas_types import (Delta, DiffCon, PDelta,
 from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 # import math
 from Keithley2182a_6221.visa_keith import vKeith
-from limits import KeithLims as lims
+from limits import (KeithInfo as info, DconInfo as dcinfo,
+                    DeltaInfo as deltinfo, PDeltInfo as pdinfo,
+                    PDeltStairInfo as pdsinfo, PDeltLogInfo as pdlinfo, ivinfo,
+                    key)
 import numpy
 # import time
 from typing import Union, Optional, Tuple
@@ -317,8 +320,7 @@ class Keith(Instrument):
         """
         # TODO: Test set_source_range_type str input
         if value in info.sour_range['typ']['dic'].values():
-            value = (k for k, v in info.sour_range['typ']['dic'].items()
-                     if value == v)[0]
+            value = key(dic=info.sour_range['typ']['dic'], val=value)
         elif value not in info.sour_range['typ']['dic'].keys():
             value = info.sour_range['typ']['def']
             print("Source range type invalid.  Source range type set to "
@@ -341,15 +343,14 @@ class Keith(Instrument):
         # TODO: Test set_source_range str input
         if (value in info.sour_range['dic'].values()
                 or float(value) in info.sour_range['dic'].values()):
-            value = [k for k, v in info.sour_range['dic'].items()
-                     if float(value) == v][0]
+            value = key(dic=info.sour_range['dic'], val=float(value))
         elif value not in info.sour_range.keys():
             value = info.sour_range['def']
             print("Source range index out of bounds.  Source range set to "
                   + f"default value ({info.sour_range['dic'][value]}).")
         self.source_range_idx = value
         self.visa.set_source_range(meas_idx=self.meas_type_idx,
-                                   auto=(not self.source_range_type_idx),
+                                   auto=(not value),
                                    rang=self.source_range(float))
         return value
 
@@ -374,8 +375,7 @@ class Keith(Instrument):
         print(f'volt range value = {value} and is int = {type(value) is int}')
         if value in info.volt_range['dic'].values():
             out = value
-            value = [k for k, v in info.volt_range['dic'].items()
-                     if value == v][0]
+            value = key(dic=info.volt_range['dic'], val=value)
         else:
             if isinstance(value, int):
                 value += 2
@@ -383,7 +383,7 @@ class Keith(Instrument):
                 value = info.volt_range['def']
                 print("Voltmeter range index out of bounds.  Setting to "
                       + f"default ({info.volt_range['dic'][value]} V).")
-            out = self.volt_range_switch[value]
+            out = info.volt_range['dic'][value]
         self.volt_range_idx = value
         print(f"keith volt range idx = {value}")
         print(f"volt range = {out} V")

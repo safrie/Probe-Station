@@ -18,14 +18,15 @@ Part of the V3 Probe Station Collection.
 """
 
 from numpy import array
+from typing import Dict
 
 
 mu = u"\xb5"
 
 
-def key(dic, val):
+def key(dic: Dict, val):
     """Get the 1st matching key from a dictionary dic given a value val."""
-    return [k for k, v in dic.items() if val == v][0]
+    return (k for k, v in dic.items() if val == v)[0]
 
 
 # TODO: Change veryone over to KeithInfo
