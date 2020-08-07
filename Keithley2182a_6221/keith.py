@@ -316,12 +316,13 @@ class Keith(Instrument):
         caller wants the index.
         """
         # TODO: Test set_source_range_type str input
-        if value in lims.source_range_type.values():
-            value = self.source_range_type_switch[value]
-        elif value not in lims.source_range_type.keys():
-            value = lims.source_range_type_def
+        if value in info.sour_range['typ']['dic'].values():
+            value = (k for k, v in info.sour_range['typ']['dic'].items()
+                     if value == v)[0]
+        elif value not in info.sour_range['typ']['dic'].keys():
+            value = info.sour_range['typ']['def']
             print("Source range type invalid.  Source range type set to "
-                  + f"default ({lims.source_range_type[value]})")
+                  + f"default ({value})")
         self.source_range_type_idx = value
         self.visa.set_source_range(meas_idx=self.meas_type_idx,
                                    auto=(not value),
