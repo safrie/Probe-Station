@@ -23,6 +23,11 @@ from numpy import array
 mu = u"\xb5"
 
 
+def key(dic, val):
+    """Get the 1st matching key from a dictionary dic given a value val."""
+    return [k for k, v in dic.items() if val == v][0]
+
+
 # TODO: Change veryone over to KeithInfo
 class KeithInfo:
     """Contains instrument limits and defaults for the Keithley stack."""
