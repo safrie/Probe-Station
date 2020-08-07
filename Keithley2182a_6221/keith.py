@@ -510,9 +510,18 @@ class Keith(Instrument):
                   + f"to default value ({inf.curr_step['def']} A).")
         self.meas_type(meas_idx).set_curr_step(curr)
 
+    # FIXME: Change this to set_field4
     def set_curr_delta(self, curr: float,
                        meas_idx: Optional[int] = None) -> None:
         """Set curr_delta of desired measurement type instance to curr in A."""
+        inf = self.info_type(meas_idx)
+        lim = inf.field4['lim']
+        # FIXME: Change to set_field4 and have that redirect to delta or
+        # set_num_points as needed after this validation
+        if lim is not None and not lim[0] <= curr <= lim[1]:
+            curr = inf.field4['def']
+            print(f"{inf.field4['txt'][meas_idx]} out of bounds.  Setting to "
+                  + f"default value ({inf.field4['def']}).")
         self.meas_type(meas_idx).set_curr_delta(curr)
 
     def set_meas_rate(self, rate: Union[int, float],
