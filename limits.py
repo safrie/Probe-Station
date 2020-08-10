@@ -260,52 +260,48 @@ class PDeltInfo(KeithInfo):
         self.width['def'] = 110.0e-6
 
 
-class PDeltStairInfo(PDeltInfo):
-    """PDeltStairInfo contains limits specific to pulse delta measurements.
+# TODO: Determine if I need separate classes for PDeltStair and PDeltLog
+class SweepInfo(PDeltInfo):
+    """SweepInfo contains limits specific to both types of pulse delta sweeps.
 
-    PDeltStairInfo inherits from PDeltInfo."""
+    SweepInfo inherits from PDeltInfo."""
 
     def __init__(self):
         super().__init__()
-        # FIXME: Determine if negative currents ok in pulse delta sweeps
-        self.field4['lim'] = range(1, 65535)
-        self.field4['def'] = 11
+        # TODO: Determine if negative currents OK in pulse delta sweeps
+        self.points['lim'] = range(1, 65535)
+        self.points['def'] = 11
         self.rate['lim'] = (1.0e-3, 999999.999)
         self.rate['def'] = 0.1
-        self.sweeps = {'txt': "Number Sweeps",
+        self.sweeps = {'txt': "Number Sweps",
                        'lim': range(1, 10000),
                        'def': 1}
-        self.count['lim'] = range(1, 10000)
-        self.count['def'] = 1
 
         del self.filt['dic'][1]
         del self.filt['txt'][1]
         self.filt['def'] = 0
 
 
-class PDeltLogInfo(PDeltInfo):
+class PDeltStairInfo(SweepInfo):
+    """PDeltStairInfo contains limits specific to pulse delta stair sweeps.
+
+    PDeltStairInfo inherits from SweepInfo."""
+
+    def __init__(self):
+        super().__init__()
+
+
+class PDeltLogInfo(SweepInfo):
     """PDeltLogInfo contains limits specific to pulse delta measurements.
 
-    PDeltLogInfo inherits from PDeltInfo."""
+    PDeltLogInfo inherits from SweepInfo."""
 
     def __init__(self):
         super().__init__()
         # ???: Do I need to set curr2 bounds for this to avoid negative?
-        self.field4['lim'] = range(1, 65535)
-        self.field4['def'] = 11
-        self.rate['lim'] = (1.0e-3, 999999.999)
-        self.rate['def'] = 0.1
-        self.sweeps = {'txt': "Number Sweeps",
-                       'lim': range(1, 10000),
-                       'def': 1}
-        self.count['lim'] = range(1, 10000)
-        self.count['def'] = 1
-
-        del self.filt['dic'][1]
-        del self.filt['txt'][1]
-        self.filt['def'] = 0
 
 
+# FIXME: Maybe??? change 3, 4 to both SweepsInfo
 ivinfo = {'mes': {0: DconInfo,
                   1: DeltaInfo,
                   2: PDeltInfo,
