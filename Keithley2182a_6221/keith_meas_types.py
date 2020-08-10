@@ -51,7 +51,7 @@ class Delta(KeithMeasure):
 
     def __init__(self) -> None:
         """Instantiate delta measurement."""
-        super().__init__()
+        super().__init__(1)
         self.curr1 = self.lims.curr1_def
         self.num_points = deltlims.points_def
         self.meas_rate = deltlims.meas_rate_def
@@ -109,7 +109,7 @@ class DiffCon(KeithMeasure):
 
     def __init__(self) -> None:
         """Instantiate differntial conductance measurement."""
-        super().__init__()
+        super().__init__(0)
         self.curr1 = dclims.curr1_def
         self.curr2 = dclims.curr2_def
         self.curr_step = dclims.curr_step_def
@@ -179,7 +179,7 @@ class PDelta(KeithMeasure):
 
     def __init__(self) -> None:
         """Instantiate pulse delta measurement."""
-        super().__init__()
+        super().__init__(2)
         self.curr1 = 10.00
         self.curr2 = 0.00
         self.num_points = 100
@@ -247,7 +247,7 @@ class PDeltaLog(KeithMeasure):
 
     def __init__(self) -> None:
         """Instantiate pulse delta log sweep."""
-        super().__init__()
+        super().__init__(4)
         self.curr1 = 1.00
         self.curr2 = 10.00
         self.num_points = 10
@@ -325,7 +325,7 @@ class PDeltaStair(KeithMeasure):
 
     def __init__(self) -> None:
         """Instantiate pulse delta staircase sweep measurement."""
-        super().__init__()
+        super().__init__(3)
         self.curr1 = 1.00
         self.curr2 = 10.00
         self.curr_step = 0.100

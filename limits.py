@@ -254,7 +254,7 @@ class SweepInfo(PDeltInfo):
         self.points['def'] = 11
         self.rate['lim'] = (1.0e-3, 999999.999)
         self.rate['def'] = 0.1
-        self.sweeps = {'txt': "Number Sweps",
+        self.sweeps = {'txt': "Number Sweeps",
                        'lim': range(1, 10000),
                        'def': 1}
 

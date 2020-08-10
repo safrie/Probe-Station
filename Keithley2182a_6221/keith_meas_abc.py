@@ -70,21 +70,26 @@ class KeithMeasure():
     pulse_width_text = ''
     pulse_count_text = ''
 
-    def __init__(self) -> None:
+    def __init__(self, meas_idx: int) -> None:
         """Instantiate general Keithley 6221/2182A transport measurement."""
-        self.unit_idx = 0
-        self.curr1 = 0
-        self.curr2 = 0
-        self.num_points = 0
-        self.meas_delay = 2
-        self.low_meas = True
-#        self.filter_idx = 0
-#        self.filter_type = 'Moving'
-        self.filter_on = False
-        self.filter_window = 0
-        self.filter_count = 10
-        self.pulse_width = None
-#        self.num_sweeps = None
+        # self.meas_idx = meas_idx
+        self.inf = ivinfo['dic'][meas_idx]
+        self.meas_idx = meas_idx
+        self.unit_idx = kinfo.unit['def']
+        self.curr1 = self.inf.curr1['def']
+        self.curr2 = self.inf.curr2['def']
+        self.num_points = self.inf.points['def']
+        self.meas_delay = self.inf.delay['def']
+        # NOTE: This conditional may break initialization.  Remove if so
+        if meas_idx > 1:
+            self.low_meas = self.inf.low_meas['def']
+        if meas_idx > 2:
+            self.num_sweeps = self.inf.sweeps['def']
+        self.filter_idx = self.inf.filt['def']
+        self.filter_on = kinfo.filt['ondef']
+        self.filter_window = kinfo.fwindow['def']
+        self.filter_count = kinfo.fcount['def']
+        self.pulse_width = self.inf.width['def']
 
     @abstractmethod
     def get_meas_type_str(self) -> None:
