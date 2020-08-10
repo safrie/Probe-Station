@@ -513,7 +513,7 @@ class Keith(Instrument):
                   + f"to default value ({inf.curr_step['def']} A).")
         self.meas_type(meas_idx).set_curr_step(curr)
 
-    # FIXME: Change this to set_field4
+    # NOTE: set_curr_delta ONLY implemented in DiffCon, all else are pass
     def set_curr_delta(self, curr: float,
                        meas_idx: Optional[int] = None) -> None:
         """Set curr_delta of desired measurement type instance to curr in A."""

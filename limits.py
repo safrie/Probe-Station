@@ -100,6 +100,14 @@ class KeithInfo:
                   'def': 10.0}
     cab_def = False
 
+    field4 = {'def': 0,
+              'txt': {0: 'Current Delta ',
+                      1: None,
+                      2: None,
+                      3: 'Number Points',
+                      4: 'Number Points'}
+              }
+
     fwindow = {'lim': (0.0, 10.0),
                'def': 0.0}
     fcount = {'lim': range(2, 301),
@@ -131,14 +139,14 @@ class KeithInfo:
                                   3: 'Step Size ',
                                   4: None}
                           }
-        self.field4 = {'lim': None,
-                       'def': None,
-                       'txt': {0: 'Current Delta ',
-                               1: None,
-                               2: None,
-                               3: 'Number Points',
-                               4: 'Number Points'}
-                       }
+        # self.field4 = {'lim': None,
+        #                'def': None,
+        #                'txt': {0: 'Current Delta ',
+        #                        1: None,
+        #                        2: None,
+        #                        3: 'Number Points',
+        #                        4: 'Number Points'}
+        #                }
         self.rate = {'lim': (0.1, 60),  # This is in PLC
                      'def': 1,
                      'txt': {0: 'Measurement Rate (PLC)',
