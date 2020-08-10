@@ -207,8 +207,9 @@ class DconInfo(KeithInfo):
         self.curr2['def'] = 10.0e-6
         self.curr_step['lim'] = (0, 105.0e-3)
         self.curr_step['def'] = 1.0e-6
-        self.field4['lim'] = (0, 105.0e-3)
-        self.field4['def'] = 1.0e-6
+        self.curr_delta = {'lim': (0, 105.0e-3),
+                           'def': 1.0e-6,
+                           'txt': self.field4['txt'][0]}
 
         self.count['def'] = None
 
