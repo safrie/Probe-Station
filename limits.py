@@ -108,6 +108,14 @@ class KeithInfo:
                       4: 'Number Points'}
               }
 
+    count = {'def': 11,
+             'txt': {0: None,
+                     1: 'Pulse Count',
+                     2: 'Pulse Count',
+                     3: 'Number Sweeps',
+                     4: 'Number Sweeps'}
+             }
+
     fwindow = {'lim': (0.0, 10.0),
                'def': 0.0}
     fcount = {'lim': range(2, 301),
@@ -180,14 +188,14 @@ class KeithInfo:
                                3: 'Number Points',
                                4: 'Number Points'}
                        }
-        self.count = {'lim': range(1, 65537),
-                      'def': 11,
-                      'txt': {0: None,
-                              1: 'Pulse Count',
-                              2: 'Pulse Count',
-                              3: 'Number Sweeps',
-                              4: 'Number Sweeps'}
-                      }
+        # self.count = {'lim': range(1, 65537),
+        #               'def': 11,
+        #               'txt': {0: None,
+        #                       1: 'Pulse Count',
+        #                       2: 'Pulse Count',
+        #                       3: 'Number Sweeps',
+        #                       4: 'Number Sweeps'}
+        #               }
         self.filt = {'dic': {0: "MOV",  # This replaces filter_switch
                              1: "REP"},
                      'def': 0,
@@ -264,6 +272,9 @@ class PDeltStairInfo(PDeltInfo):
         self.field4['def'] = 11
         self.rate['lim'] = (1.0e-3, 999999.999)
         self.rate['def'] = 0.1
+        self.sweeps = {'txt': "Number Sweeps",
+                       'lim': range(1, 10000),
+                       'def': 1}
         self.count['lim'] = range(1, 10000)
         self.count['def'] = 1
 
@@ -284,6 +295,9 @@ class PDeltLogInfo(PDeltInfo):
         self.field4['def'] = 11
         self.rate['lim'] = (1.0e-3, 999999.999)
         self.rate['def'] = 0.1
+        self.sweeps = {'txt': "Number Sweeps",
+                       'lim': range(1, 10000),
+                       'def': 1}
         self.count['lim'] = range(1, 10000)
         self.count['def'] = 1
 
