@@ -122,7 +122,7 @@ class KeithInfo:
               'def': 10}
 
     def __init__(self):
-        # TODOC
+        """Initialize KeithInfo."""
         self.curr1 = {'lim': (-105.0e-3, 105.0e-3),
                       'def': -1.0e-3,
                       'txt': {0: 'Start Current ',
@@ -147,14 +147,6 @@ class KeithInfo:
                                   3: 'Step Size ',
                                   4: None}
                           }
-        # self.field4 = {'lim': None,
-        #                'def': None,
-        #                'txt': {0: 'Current Delta ',
-        #                        1: None,
-        #                        2: None,
-        #                        3: 'Number Points',
-        #                        4: 'Number Points'}
-        #                }
         self.rate = {'lim': (0.1, 60),  # This is in PLC
                      'def': 1,
                      'txt': {0: 'Measurement Rate (PLC)',
@@ -165,7 +157,7 @@ class KeithInfo:
                      }
         self.delay = {'lim': (1.0e-3, 9999.999),  # This is in seconds
                       'def': 2.0e-3,
-                      # FIXME: Verify that that this delay is pulse delay
+                      # TODO: Verify that that this delay is pulse delay
                       'txt': {0: "Measurement Delay (ms)",
                               1: "Measurement Delay (ms)",
                               2: f"Pulse Delay ({mu}s)",
@@ -184,14 +176,7 @@ class KeithInfo:
                        'def': 11,
                        'txt': "Number Points"
                        }
-        # self.count = {'lim': range(1, 65537),
-        #               'def': 11,
-        #               'txt': {0: None,
-        #                       1: 'Pulse Count',
-        #                       2: 'Pulse Count',
-        #                       3: 'Number Sweeps',
-        #                       4: 'Number Sweeps'}
-        #               }
+
         self.filt = {'dic': {0: "MOV",  # This replaces filter_switch
                              1: "REP"},
                      'def': 0,
@@ -278,13 +263,13 @@ class SweepInfo(PDeltInfo):
         self.filt['def'] = 0
 
 
-class PDeltStairInfo(SweepInfo):
-    """PDeltStairInfo contains limits specific to pulse delta stair sweeps.
+# class PDeltStairInfo(SweepInfo):
+#     """PDeltStairInfo contains limits specific to pulse delta stair sweeps.
 
-    PDeltStairInfo inherits from SweepInfo."""
+#     PDeltStairInfo inherits from SweepInfo."""
 
-    def __init__(self):
-        super().__init__()
+#     def __init__(self):
+#         super().__init__()
 
 
 class PDeltLogInfo(SweepInfo):
@@ -301,7 +286,7 @@ class PDeltLogInfo(SweepInfo):
 ivinfo = {'mes': {0: DconInfo,
                   1: DeltaInfo,
                   2: PDeltInfo,
-                  3: PDeltStairInfo,
+                  3: SweepInfo,
                   4: PDeltLogInfo},
           'def': 0}
 
