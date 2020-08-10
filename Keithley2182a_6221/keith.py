@@ -562,17 +562,16 @@ class Keith(Instrument):
                   + f"default value ({inf.width['def']}).")
         self.meas_type(meas_idx).set_pulse_width(width)
 
-    # FIXME: figure out how to do input validation on this elegantly
     def set_num_sweeps(self, sweeps: int,
                        meas_idx: Optional[int] = None) -> None:
-        """Set num_sweeps of desired meas type instance to sweeps."""
+        """Set num_sweeps of desired meas type instance to sweeps.
+
+        set_num_sweeps is implemented ONLY by the sweep measurements."""
         meas_idx = self.meas_type_idx if meas_idx is None else meas_idx
-        inf = self.info_type(meas_idx)
-        lim = inf.count['lim']
-        if lim is not None and sweeps not in lim:
-            sweeps = inf.count['def']
-            print(f"{inf.count['txt'][meas_idx]} out of bounds.  Setting to "
-                  + f"default value ({inf.count['def']}).")
+        inf = self.info_type(meas_idx).sweeps
+        if sweeps not in inf['lim']:
+            sweeps = inf['def']
+            print(f"{inf['txt']} invalid.  Setting to default ({inf['def']}).")
         self.meas_type(meas_idx).set_num_sweeps(sweeps)
 
     def set_low_meas(self, enable: bool,
