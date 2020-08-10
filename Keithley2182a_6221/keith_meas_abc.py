@@ -72,24 +72,23 @@ class KeithMeasure():
 
     def __init__(self, meas_idx: int) -> None:
         """Instantiate general Keithley 6221/2182A transport measurement."""
-        # self.meas_idx = meas_idx
-        self.inf = ivinfo['dic'][meas_idx]
+        self.info = ivinfo['dic'][meas_idx]
         self.meas_idx = meas_idx
         self.unit_idx = kinfo.unit['def']
-        self.curr1 = self.inf.curr1['def']
-        self.curr2 = self.inf.curr2['def']
-        self.num_points = self.inf.points['def']
-        self.meas_delay = self.inf.delay['def']
+        self.curr1 = self.info.curr1['def']
+        self.curr2 = self.info.curr2['def']
+        self.num_points = self.info.points['def']
+        self.meas_delay = self.info.delay['def']
         # NOTE: This conditional may break initialization.  Remove if so
         if meas_idx > 1:
-            self.low_meas = self.inf.low_meas['def']
+            self.low_meas = self.info.low_meas['def']
         if meas_idx > 2:
-            self.num_sweeps = self.inf.sweeps['def']
-        self.filter_idx = self.inf.filt['def']
+            self.num_sweeps = self.info.sweeps['def']
+        self.filter_idx = self.info.filt['def']
         self.filter_on = kinfo.filt['ondef']
         self.filter_window = kinfo.fwindow['def']
         self.filter_count = kinfo.fcount['def']
-        self.pulse_width = self.inf.width['def']
+        self.pulse_width = self.info.width['def']
 
     @abstractmethod
     def get_meas_type_str(self) -> None:
@@ -108,7 +107,12 @@ class KeithMeasure():
 
     def set_curr1(self, curr: float) -> None:
         """Set curr1 to num."""
-        self.curr1 = num
+        info = self.inf.curr1
+        if not info['lim'][0] <= curr <= info['lim'][1]:
+            curr = info['def']
+            print(f"{info['txt'][self.meas_idx]}out of bounds.  Setting to "
+                  + f"default value ({info['def']:.2e} A).")
+        self.curr1 = curr
 
     def set_curr2(self, num: float) -> None:
         """Set curr2 to num."""
