@@ -147,6 +147,7 @@ class KeithMeasure():
 
     def calc_num_points(self, start: float, stop: float, step: float) -> int:
         """Calculate the number of points in a staircase sweep."""
+        # TODO: Verify this works with ZeroDivisionError and without
         try:
             out = (abs((stop - start) // step) + 1)
         except ZeroDivisionError:
