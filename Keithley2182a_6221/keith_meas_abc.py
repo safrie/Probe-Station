@@ -106,17 +106,22 @@ class KeithMeasure():
         return unit
 
     def set_curr1(self, curr: float) -> None:
-        """Set curr1 to num."""
-        info = self.inf.curr1
+        """Set curr1 to curr."""
+        info = self.info.curr1
         if not info['lim'][0] <= curr <= info['lim'][1]:
             curr = info['def']
             print(f"{info['txt'][self.meas_idx]}out of bounds.  Setting to "
                   + f"default value ({info['def']:.2e} A).")
         self.curr1 = curr
 
-    def set_curr2(self, num: float) -> None:
-        """Set curr2 to num."""
-        self.curr2 = num
+    def set_curr2(self, curr: float) -> None:
+        """Set curr2 to curr."""
+        info = self.info.curr2
+        if not info['lim'][0] <= curr <= info['lim'][1]:
+            curr = info['def']
+            print(f"{info['txt'][self.meas_idx]}out of bounds.  Setting to "
+                  + f"default value ({info['def']:.2e} A).")
+        self.curr2 = curr
 
     def set_curr_step(self, num: float) -> None:
         """Overidden in daughter classes in which current step functions."""

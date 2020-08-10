@@ -479,13 +479,6 @@ class Keith(Instrument):
 
     def set_curr2(self, curr: float, meas_idx: Optional[int] = None) -> None:
         """Set curr2 of desired measurement type instance to curr in Amps."""
-        meas_idx = self.meas_type_idx if meas_idx is None else meas_idx
-        inf = self.info_type(meas_idx)
-        lim = inf.curr2['lim']
-        if not lim[0] <= curr <= lim[1]:
-            curr = inf.curr2['def']
-            print(f"{inf.curr2['txt'][meas_idx]}out of bounds.  Setting to "
-                  + f"default value ({inf.curr2['def']} A).")
         self.meas_type(meas_idx).set_curr2(curr)
 
     def set_curr_step(self, curr: float,
