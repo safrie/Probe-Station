@@ -131,12 +131,18 @@ class KeithMeasure():
         """Overidden in daughter classes in which current delta functions."""
         pass
 
+    # FIXME: Figure out what happens when overflow occurs b/c update_num_points
     def set_num_points(self, points: int) -> None:
         """Set the number of points for a measurement to points.
 
         Delta, pulse delta, and pulse delta log sweep measurements require the
         user to specify the number of points to measure.
         """
+        info = self.info.points
+        if points not in info['lim']:
+            points = info['def']
+            print(f"{info['txt']} invalid.  Setting to default "
+                  + f"({info['def']}).")
         self.num_points = points
 
     def calc_num_points(self, start: float, stop: float, step: float) -> int:

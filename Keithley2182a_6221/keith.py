@@ -565,17 +565,9 @@ class Keith(Instrument):
                   + f"default value ({inf.low_meas['def']})")
         self.meas_type(meas_idx).set_low_meas(enable)
 
-    # FIXME: Figure out how to implement this elegantly
-    # NOTE: Implemented in all meas types.
     def set_num_points(self, points: int,
                        meas_idx: Optional[int] = None) -> None:
         """Set num_points of desired meas type instance to points."""
-        meas_idx = self.meas_type_idx if meas_idx is None else meas_idx
-        inf = self.info_type(meas_idx)
-        dic = inf.points
-        if points not in dic['lim']:
-            points = dic['def']
-            print(f"{dic['txt']} invalid.  Setting to default ({dic['def']})."
         self.meas_type(meas_idx).set_num_points(points)
 
     def update_num_points(self, meas_idx: Optional[int] = None) -> None:
