@@ -95,11 +95,18 @@ class KeithMeasure():
     def get_meas_type_str(self) -> None:
         """Return a string of the type of measurement."""
 
-    def set_unit_idx(self, idx: int) -> None:
-        """Set the unit index for the Keithleys to idx."""
-        self.unit_idx = idx
+    def set_unit(self, unit: Union[int, str]) -> int:
+        """Set the unit index for Keithleys to unit or corresponding index."""
+        dic = kinfo.unit['dic']
+        if unit in dic.values():
+            unit = key(dic=dic, val=unit)
+        elif unit not in dic.keys():
+            unit = kinfo.unit['def']
+            print(f"Unit index invalid.  Setting to default ({dic[unit]}).")
+        self.unit_idx = unit
+        return unit
 
-    def set_curr1(self, num: float) -> None:
+    def set_curr1(self, curr: float) -> None:
         """Set curr1 to num."""
         self.curr1 = num
 
