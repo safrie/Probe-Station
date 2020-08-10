@@ -182,11 +182,7 @@ class KeithInfo:
                       }
         self.points = {'lim': range(1, 65537),
                        'def': 11,
-                       'txt': {0: None,
-                               1: 'Pulse Count',
-                               2: 'Pulse Count',
-                               3: 'Number Points',
-                               4: 'Number Points'}
+                       'txt': "Number Points"
                        }
         # self.count = {'lim': range(1, 65537),
         #               'def': 11,
@@ -219,7 +215,7 @@ class DconInfo(KeithInfo):
                            'def': 1.0e-6,
                            'txt': self.field4['txt'][0]}
 
-        self.count['def'] = None
+        self.points['def'] = None
 
         del self.filt['dic'][0]
         del self.filt['txt'][0]
@@ -238,7 +234,7 @@ class DeltaInfo(KeithInfo):
         self.curr2['lim'] = (-105.0e-3, 0)
         self.curr2['def'] = 0
 
-        self.count['def'] = 100
+        self.points['def'] = 100
 
 
 class PDeltInfo(KeithInfo):

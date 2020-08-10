@@ -596,8 +596,7 @@ class Keith(Instrument):
         dic = inf.points
         if points not in dic['lim']:
             points = dic['def']
-            print("Allowable number of points out of bounds.  Setting to "
-                  + f"default value ({dic['def']}).")
+            print(f"{dic['txt']} invalid.  Setting to default ({dic['def']})."
         self.meas_type(meas_idx).set_num_points(points)
 
     def update_num_points(self, meas_idx: Optional[int] = None) -> None:
