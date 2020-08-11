@@ -11,8 +11,7 @@ Part of the V3 Probe Station Collection.
 # import inspect
 from abcs.instrument_abc import Instrument
 from Keithley2182a_6221.keith_meas_types import (Delta, DiffCon, PDelta,
-                                                 PDeltaLog, PDeltaStair,
-                                                 filter_switch, mlims)
+                                                 PDeltaLog, PDeltaStair)
 from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 # import math
 from Keithley2182a_6221.visa_keith import vKeith

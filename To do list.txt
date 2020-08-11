@@ -9,34 +9,10 @@ To do with program:
     e) Unsure if changing filter type works
     f) Test measurement with dummy resistor
     g) Implement input validation
-        - setters in keith.py
-        - setters in keith_meas_types.py
         - UI updaters in main.py
-        - Move references to dicts over to limits rather than define in-class?
-            -- SPOT benefits, unsure if more readable, though?
     h) Fix any VISA issues
     i) Change all internal variables to A for ease of switching scales
-        - limits.py (include a way to look up the correct multiplier by index)
         - test_environment.yaml
-
-        - meas_rate:
-            -- Delta: PLC
-            -- Diffcon: PLC
-            -- PDelta: cycle_int: PLC
-            -- PDeltLog: cycle_time: s
-            -- PDeltStair: cycle_time: s
-        - meas_delay:
-            -- Delta: ms
-            -- Diffcon: ms
-            -- PDelta: μs
-            -- PDeltLog: μs
-            -- PDeltStair: μs
-        - pulse_width:
-            -- Delta: N/A
-            -- Diffcon: N/A
-            -- PDelta: μs
-            -- PDeltLog: μs
-            -- PDeltStair: μs
     j) Change limits names to 'info'
         This is where we're holding relevant variables, not just bounds
         - Change in limits.py
@@ -44,58 +20,11 @@ To do with program:
             - TempLims
         - Change imports and aliases
             - Main
-            - Keith
             - temperature
             - magnet
             - design
     k) Change field3 stuff to curr_step because that's all it's used for?
     l) Move text switches over to KeithInfo
-        - curr1_text
-            ii) Update what rg finds
-        - curr2_text
-            ii) Update what rg finds
-        - curr_step_text
-            ii) Update what rg finds
-        - field4_text
-            ii) Update what rg finds
-        - filter_switch
-            ii) Update what rg finds
-        - meas_rate_text
-            ii) Update what rg finds
-        - meas_delay_text
-            ii) Update what rg finds
-        - pulse_count_text
-            ii) Update what rg finds
-        - pulse_width_text
-            ii) Update what rg finds
-        - source_range_type_switch
-            i) Move to KeithInfo
-            ii) Update what rg finds
-        - source_range_switch
-            i) Move to KeithInfo
-            ii) Update what rg finds
-        - source_range_minmax_switch
-            i) Move to KeithInfo
-            ii) Update what rg finds
-        - source_range_mult_switch
-            i) Move to KeithInfo
-            ii) Update what rg finds
-        - source_range_txt_switch
-            i) Move to KeithInfo
-            ii) Update what rg finds
-        - volt_range_switch
-            i) Move to KeithInfo
-            ii) Update what rg finds
-        - unit_switch
-            i) Move to KeithInfo
-            ii) Update what rg finds
-        - meas_type_txt_switch
-            i) Move to KeithInfo
-            ii) Update what rg finds
-    m) Change meas rate options to integer only for:
-        - Delta measurement
-        - Differential Conductance
-        - Pulse Delta
     n) Debug KeithMeasure.set_num_points when overflows b/c update_num_points
 
 • Fix AMI 430 Errors/Issues
