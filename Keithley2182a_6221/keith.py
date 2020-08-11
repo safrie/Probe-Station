@@ -486,17 +486,9 @@ class Keith(Instrument):
         """Set curr_step of desired meas type instance to curr in Amps."""
         self.meas_type(meas_idx).set_curr_step(curr)
 
-    # NOTE: set_curr_delta ONLY implemented in DiffCon, all else are pass
     def set_curr_delta(self, curr: float,
                        meas_idx: Optional[int] = None) -> None:
         """Set curr_delta of desired measurement type instance to curr in A."""
-        meas_idx = self.meas_type_idx if meas_idx is None else meas_idx
-        inf = self.info_type(meas_idx)
-        lim = inf.curr_delta['lim']
-        if lim is not None and not lim[0] <= curr <= lim[1]:
-            curr = inf.field4['def']
-            print(f"{inf.curr_delta['txt'][meas_idx]} out of bounds.  Setting "
-                  + f"to default value ({inf.field4['def']}).")
         self.meas_type(meas_idx).set_curr_delta(curr)
 
     def set_meas_rate(self, rate: Union[int, float],

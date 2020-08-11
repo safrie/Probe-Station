@@ -102,6 +102,11 @@ class DiffCon(KeithMeasure):
 
     def set_curr_delta(self, delta: float) -> None:
         """Set curr_delta to delta."""
+        info = self.info.curr_delta
+        if not info['lim'][0] <= delta <= info['lim'][1]:
+            delta = info['def']
+            print(f"{info['txt']} out of bounds.  Setting to default value "
+                  + f"({delta:.2e} A).")
         self.curr_delta = delta
 
     def set_meas_rate(self, rate: Union[int, float]) -> None:
