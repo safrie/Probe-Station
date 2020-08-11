@@ -99,7 +99,7 @@ class Keith(Instrument):
         source_range_text()
         curr1_text(optional int)
         curr2_text(optional int)
-        field3_text(optional int)
+        curr_step_text(optional int)
         field4_text(optional int)
         source_range_minmax(optional int)
     """

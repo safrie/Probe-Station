@@ -266,15 +266,6 @@ class SweepInfo(PDeltInfo):
         self.filt['def'] = 0
 
 
-# class PDeltStairInfo(SweepInfo):
-#     """PDeltStairInfo contains limits specific to pulse delta stair sweeps.
-
-#     PDeltStairInfo inherits from SweepInfo."""
-
-#     def __init__(self):
-#         super().__init__()
-
-
 class PDeltLogInfo(SweepInfo):
     """PDeltLogInfo contains limits specific to pulse delta measurements.
 
@@ -286,7 +277,7 @@ class PDeltLogInfo(SweepInfo):
 
 
 # FIXME: Maybe??? change 3, 4 to both SweepsInfo
-ivinfo = {'mes': {0: DconInfo,
+ivinfo = {'dic': {0: DconInfo,
                   1: DeltaInfo,
                   2: PDeltInfo,
                   3: SweepInfo,

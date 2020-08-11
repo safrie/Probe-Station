@@ -35,7 +35,7 @@ class Instrument():
 
     def __init__(self) -> None:
         # self.do_control = False
-        self.do_measure = False
+        # self.do_measure = False
         self.address = 0
 
     @abstractmethod
