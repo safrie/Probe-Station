@@ -82,7 +82,7 @@ class Temp(Instrument):
 
     def __init__(self) -> None:
         """Initialize the LakeShore 336 and open visa communications."""
-        super().__init__()
+        super().__init__('Temp')
         self.rad_control = None
         self.rad_setpoint = None
         self.rad_ramp = None

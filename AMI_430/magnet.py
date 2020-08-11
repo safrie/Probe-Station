@@ -114,7 +114,7 @@ class Mag(Instrument):
 
     def __init__(self) -> None:
         """Instantiate magnet power supply control."""
-        super().__init__()
+        super().__init__('Mag')
         self.address = lims.addr_default
         self.visa = visa(self.address)
         self.ramp_segments = lims.seg_default
