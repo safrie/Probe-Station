@@ -290,7 +290,7 @@ class ProbeGui(QMainWindow):
                 ui.complianceSpinbox:  self.set_keith_compliance,
                 ui.current1Spinbox: self.set_keith_curr1,
                 ui.current2Spinbox: self.set_keith_curr2,
-                ui.field3Spinbox: self.set_keith_curr_step,
+                ui.currStepSpinbox: self.set_keith_curr_step,
                 ui.field4Spinbox: self.set_keith_curr_delta,
                 ui.rateSpinbox:  self.set_keith_meas_rate,
                 ui.delaySpinbox: self.set_keith_meas_delay,
@@ -553,8 +553,8 @@ class ProbeGui(QMainWindow):
                             meas_idx: Optional[int] = None) -> None:
         # TODO: Test set_keith_curr_step
         """Set the Keithley current step size and update UI if needed."""
-        spinbox = self.kwind.ui.field3Spinbox
-        label = self.kwind.ui.field3Label
+        spinbox = self.kwind.ui.currStepSpinbox
+        label = self.kwind.ui.currStepLabel
         (keith, meas) = (self.keith, self.keith.meas_type(meas_idx))
         if step is not None:
             keith.set_curr_step(step, meas_idx)
@@ -790,9 +790,8 @@ class ProbeGui(QMainWindow):
         (ui, keith, meas) = (self.kwind.ui, self.keith, self.keith.meas_type())
         ui.current1Spinbox.setValue(keith.curr_conv_div(meas.curr1))
         ui.current2Spinbox.setValue(keith.curr_conv_div(meas.curr2))
-        if ui.field3Spinbox.isVisible():
-            # FIXME: Does this fuck up with field3 is used for something else?
-            ui.field3Spinbox.setValue(keith.curr_conv_div(meas.curr_step))
+        if ui.currStepSpinbox.isVisible():
+            ui.currStepSpinbox.setValue(keith.curr_conv_div(meas.curr_step))
         if ui.field4Spinbox.isVisible():
             if 'Delta Current' in ui.field4Label.text():
                 ui.field4Spinbox.setValue(keith.curr_conv_div(meas.curr_delta))
@@ -827,7 +826,7 @@ class ProbeGui(QMainWindow):
         idx = keith.meas_type_idx
         ui.current1Label.setText(keith.curr1_text(idx))
         ui.current2Label.setText(keith.curr2_text(idx))
-        ui.field3Label.setText(keith.curr_step_text(idx))
+        ui.currStepLabel.setText(keith.curr_step_text(idx))
         ui.field4Label.setText(keith.field4_text(idx))
         ui.rateLabel.setText(meas.meas_rate_text)
         ui.delayLabel.setText(meas.meas_delay_text)
@@ -839,7 +838,7 @@ class ProbeGui(QMainWindow):
         """Update UI for requisite inputs for differential conductance."""
         ui = self.kwind.ui
         self.update_keith_text()
-        ui.field3Spinbox.show()
+        ui.currStepSpinbox.show()
         ui.field4Spinbox.show()
         ui.field4Spinbox.setReadOnly(False)
         ui.field4Spinbox.editingFinished.disconnect()
@@ -861,7 +860,7 @@ class ProbeGui(QMainWindow):
         """Update UI for requisite inputs for delta measurement."""
         ui = self.kwind.ui
         self.update_keith_text()
-        ui.field3Spinbox.hide()
+        ui.currStepSpinbox.hide()
         ui.field4Spinbox.hide()
         ui.rateSpinbox.setDecimals(3)
         ui.rateSpinbox.setRange(0.01, 60)
@@ -881,7 +880,7 @@ class ProbeGui(QMainWindow):
         """Update UI for requisite inputs for pulse delta measurement."""
         ui = self.kwind.ui
         self.update_keith_text()
-        ui.field3Spinbox.hide()
+        ui.currStepSpinbox.hide()
         ui.field4Spinbox.hide()
         ui.delaySpinbox.show()
         ui.delaySpinbox.setRange(16, 11966)
@@ -901,7 +900,7 @@ class ProbeGui(QMainWindow):
         """Update UI for requisite inputs for pulse delta stair sweep."""
         ui = self.kwind.ui
         self.update_keith_text()
-        ui.field3Spinbox.show()
+        ui.currStepSpinbox.show()
         ui.field4Spinbox.show()
         ui.field4Spinbox.setReadOnly(True)
         ui.field4Spinbox.editingFinished.disconnect()
@@ -925,7 +924,7 @@ class ProbeGui(QMainWindow):
         """Update UI for requisite inputs for pulse delta log sweep."""
         ui = self.kwind.ui
         self.update_keith_text()
-        ui.field3Spinbox.hide()
+        ui.currStepSpinbox.hide()
         ui.field4Spinbox.show()
         ui.field4Spinbox.setReadOnly(False)
         ui.field4Spinbox.editingFinished.disconnect()
@@ -995,16 +994,16 @@ class ProbeGui(QMainWindow):
         if keith.source_range_type_idx:  # Fixed range
             ui.current1Spinbox.setRange(-bound, bound)
             ui.current2Spinbox.setRange(-bound, bound)
-            # TODO: Figure out what to do with field3Spinbox (has current step)
-            ui.field3Spinbox.setRange(0, bound)
+            # TODO: Figure out what to do with currStepSpinbox
+            ui.currStepSpinbox.setRange(0, bound)
             # TODO: Figure out what to do with field4Spinbox (has current delt)
             f4range = (1, max_points) if idx else (0, bound)
             ui.field4Spinbox.setRange(f4range[0], f4range[1])
         else:
             ui.current1Spinbox.setRange(-max_sb_curr, max_sb_curr)
             ui.current2Spinbox.setRange(-max_sb_curr, max_sb_curr)
-            # TODO: Figure out what to do with field3Spinbox (current step)
-            ui.field3Spinbox.setRange(-max_sb_curr, max_sb_curr)
+            # TODO: Figure out what to do with currStepSpinbox
+            ui.currStepSpinbox.setRange(-max_sb_curr, max_sb_curr)
             f4range = (1, max_points) if idx else (0, bound)
             ui.field4Spinbox.setRange(f4range[0], f4range[1])
 
