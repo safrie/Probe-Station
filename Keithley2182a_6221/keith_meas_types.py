@@ -15,9 +15,6 @@ Part of the V3 probe station collection.
 
 from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 from typing import Union
-from limits import (DconLims as dclims, DeltaLims as deltlims, PDeltaLims as
-                    pulsedlims, PDeltStairLims as pdslims,
-                    PDeltLogLims as pdllims)
 
 mu = u'\xb5'
 
@@ -90,8 +87,8 @@ class DiffCon(KeithMeasure):
         info = self.info.curr_step
         if not info['lim'][0] <= step <= info['lim'][1]:
             step = info['def']
-            print(f"Current step out of bounds ([{info['lim'][0]}, "
-                  + f"{info['lim'][1]}]).  Setting to default ({step:.2e} A).")
+            print(f"Current step out of bounds ({info['lim']}).  Setting to "
+                  + f"default value ({step:.2e} A).")
         self.curr_step = step
         self.update_num_points()
 
@@ -105,8 +102,8 @@ class DiffCon(KeithMeasure):
         info = self.info.curr_delta
         if not info['lim'][0] <= delta <= info['lim'][1]:
             delta = info['def']
-            print(f"{info['txt']} out of bounds.  Setting to default value "
-                  + f"({delta:.2e} A).")
+            print(f"{info['txt']} out of bounds ({info['lim']}).  Setting to "
+                  + f"default value ({delta:.2e} A).")
         self.curr_delta = delta
 
     def set_meas_rate(self, rate: Union[int, float]) -> None:
@@ -114,9 +111,8 @@ class DiffCon(KeithMeasure):
         info = self.info.rate
         if rate not in info['lim']:
             rate = info['def']
-            print(f"{info['txt'][self.meas_idx]} out of bounds ("
-                  + f"[{info['lim'][0]}, {info['lim'][1]}]).  Setting to "
-                  + f"default ({rate}).")
+            print(f"{info['txt'][self.meas_idx]} out of bounds ({info['lim']})"
+                  + f".  Setting to default value ({rate}).")
         self.meas_rate = rate
 
 
@@ -160,9 +156,8 @@ class Delta(KeithMeasure):
         info = self.info.rate
         if rate not in info['lim']:
             rate = info['def']
-            print(f"{info['txt'][self.meas_idx]} out of bounds (["
-                  + f"{info['lim'][0]}, {info['lim'][1]}]).  Setting to "
-                  + f"default value ({rate}).")
+            print(f"{info['txt'][self.meas_idx]} out of bounds ({info['lim']})"
+                  + f".  Setting to default value ({rate}).")
         self.meas_rate = rate
 
     def set_filter_idx(self, index: int) -> None:
@@ -225,9 +220,8 @@ class PDelta(KeithMeasure):
         info = self.info.rate
         if rate not in info['lim']:
             rate = info['def']
-            print(f"{info['txt'][self.meas_idx]} out of bounds (["
-                  + f"{info['lim'][0]}, {info['lim'][1]}]).  Setting to "
-                  + f"default value ({rate}).")
+            print(f"{info['txt'][self.meas_idx]} out of bounds ({info['lim']})"
+                  + f".  Setting to default value ({rate}).")
         self.cycle_int = rate
 
     def set_pulse_width(self, width: float) -> None:

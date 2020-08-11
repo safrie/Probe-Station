@@ -112,8 +112,8 @@ class KeithMeasure():
         info = self.info.curr1
         if not info['lim'][0] <= curr <= info['lim'][1]:
             curr = info['def']
-            print(f"{info['txt'][self.meas_idx]}out of bounds.  Setting to "
-                  + f"default value ({curr:.2e} A).")
+            print(f"{info['txt'][self.meas_idx]}out of bounds ({info['lim']})."
+                  + f"  Setting to default value ({curr:.2e} A).")
         self.curr1 = curr
 
     def set_curr2(self, curr: float) -> None:
@@ -121,8 +121,8 @@ class KeithMeasure():
         info = self.info.curr2
         if not info['lim'][0] <= curr <= info['lim'][1]:
             curr = info['def']
-            print(f"{info['txt'][self.meas_idx]}out of bounds.  Setting to "
-                  + f"default value ({curr:.2e} A).")
+            print(f"{info['txt'][self.meas_idx]}out of bounds ({info['lim']})."
+                  + f"  Setting to default value ({curr:.2e} A).")
         self.curr2 = curr
 
     def set_curr_step(self, num: float) -> None:
@@ -143,7 +143,8 @@ class KeithMeasure():
         info = self.info.points
         if points not in info['lim']:
             points = info['def']
-            print(f"{info['txt']} invalid.  Setting to default ({points}).")
+            print(f"{info['txt']} out of bounds ({info['lim']}).  Setting to "
+                  + f"default value ({points}).")
         self.num_points = points
 
     def calc_num_points(self, start: float, stop: float, step: float) -> int:
@@ -180,8 +181,8 @@ class KeithMeasure():
         info = self.info.delay
         if not info['lim'][0] <= delay <= info['lim'][1]:
             delay = info['def']
-            print(f"{info['txt'][self.meas_idx]} invalid.  Setting to default "
-                  + f"({delay}).")
+            print(f"{info['txt'][self.meas_idx]} out of bounds ({info['lim']})"
+                  + f".  Setting to default value ({delay}).")
         self.meas_delay = delay
 
     def set_pulse_width(self, num: float) -> None:
@@ -221,8 +222,8 @@ class KeithMeasure():
         info = self.info.fcount
         if count not in info['lim']:
             count = info['def']
-            print(f"Filter count out of bounds ([{info['lim'][0]}, "
-                  + f"{info['lim'][1]}]).  Setting to default ({count}).")
+            print(f"Filter count out of bounds ({info['lim']}).  Setting to "
+                  + f"default value ({count}).")
         self.filter_count = count
         return count
 
