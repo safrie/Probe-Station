@@ -326,6 +326,11 @@ class PDeltaStair(KeithMeasure):
 
     def set_curr_step(self, step: float) -> None:
         """Set curr_step to step and update number of points in the sweep."""
+        info = self.info.curr_step
+        if not info['lim'][0] <= step <= info['lim'][1]:
+            step = info['def']
+            print(f"Current step out of bounds ({info['lim']}).  Setting to "
+                  + f"default value ({step:.2e} A).")
         self.curr_step = step
         self.update_num_points()
 
