@@ -32,14 +32,14 @@ class DiffCon(KeithMeasure):
     as an inner class in Keith.
 
     attributes_
-        curr1: Start current for differential conductance sweep in microamps
-        curr2: Stop current for differential conductance sweep in microamps
-        curr_step: Base step size for differential conductance sweep in
-            microamps. Differential conductance sweeps are basically staircase
-            sweeps with differentials imposed on top of the stairs. curr_step
-            is the step height.
+        curr1: Start current for differential conductance sweep in amps
+        curr2: Stop current for differential conductance sweep in amps
+        curr_step: Base step size for differential conductance sweep in amps.
+            Differential conductance sweeps are basically staircase sweeps
+            with differentials imposed on top of the stairs. curr_step is the
+            step height.
         curr_step_text: Text for what curr_step represents in labels/headers
-        curr_delta: Differential above/below the current step in microamps
+        curr_delta: Differential above/below the current step in amps
         field4_text: Labels Delta current in Diffcon
         meas_rate: Integration rate for the 2182a in PLC
         meas_rate_text: Text for what meas_rate represents in labels/headers
