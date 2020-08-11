@@ -222,6 +222,12 @@ class PDelta(KeithMeasure):
 
         cycle_int should be greater than pulse width plus measurement delay.
         """
+        info = self.info.rate
+        if rate not in info['lim']:
+            rate = info['def']
+            print(f"{info['txt'][self.meas_idx]} out of bounds (["
+                  + f"{info['lim'][0]}, {info['lim'][1]}]).  Setting to "
+                  + f"default value ({rate}).")
         self.cycle_int = rate
 
     def set_pulse_width(self, width: float) -> None:
