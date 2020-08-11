@@ -61,14 +61,15 @@ class DiffCon(KeithMeasure):
     def __init__(self) -> None:
         """Instantiate differntial conductance measurement."""
         super().__init__(0)
-        self.curr1 = dclims.curr1_def
-        self.curr2 = dclims.curr2_def
-        self.curr_step = dclims.curr_step_def
-        self.curr_delta = dclims.curr_delta_def
-        self.meas_rate = dclims.meas_rate_def
-        self.filter_idx = dclims.filt_def
-        self.filter_type = dclims.filt_text
-        self.num_points = dclims.points_def
+        info = self.info
+        self.curr1 = info.curr1['def']
+        self.curr2 = info.curr2['def']
+        self.curr_step = info.curr_step['def']
+        self.curr_delta = info.curr_delta['def']
+        self.meas_rate = info.rate['def']
+        self.filter_idx = info.filt['def']
+        self.filter_type = info.filt['txt'][self.filter_idx]
+        self.num_points = info.points['def']
 
     def get_meas_type_str(self) -> str:
         """Return type of measurement followed by a new line."""
