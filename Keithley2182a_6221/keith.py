@@ -203,10 +203,11 @@ class Keith(Instrument):
 
     # %% General Variables Section
 
-    def set_address(self, addr: int) -> None:
+    def set_address(self, addr: int) -> int:
         """Set GPIB address of the stack, then check if connected."""
         addr = super().set_address(addr)
         self.visa.check_connected(addr)
+        return addr
 
     def set_source_range_type(self, value: Union[int, str]) -> int:
         """Set source_range_type_idx and then update the Keithleys.

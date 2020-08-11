@@ -368,7 +368,7 @@ class ProbeGui(QMainWindow):
         spinbox = self.kwind.ui.GPIBSpinbox
         keith = self.keith
         if addr is not None:
-            keith.set_address(addr)
+            addr = keith.set_address(addr)
             spinbox.setValue(addr)
         else:
             keith.set_address(spinbox.value())
