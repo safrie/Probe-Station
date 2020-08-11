@@ -345,7 +345,7 @@ class PDeltaStair(KeithMeasure):
         cycle_time should be greater than pulse width plus measurement delay.
         """
         info = self.info.rate
-        if rate not in info['lim']:
+        if not info['lim'][0] <= rate <= info['lim'][1]:
             rate = info['def']
             print(f"{info['txt'][self.meas_idx]} out of bounds ({info['lim']})"
                   + f".  Setting to default value ({rate}).")
@@ -356,6 +356,11 @@ class PDeltaStair(KeithMeasure):
 
         Pulse width plus measurement delay should be less than cycle_time.
         """
+        info = self.info.width
+        if not info['lim'][0] <= width <= info['lim'][1]:
+            width = info['def']
+            print(f"Pulse width out of bounds ({info['lim']}).  Setting to "
+                  + f"default value ({width}).")
         self.pulse_width = width
 
     def set_num_sweeps(self, sweeps: int) -> None:
