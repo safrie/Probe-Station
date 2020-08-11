@@ -42,6 +42,8 @@ from file_io import Save, Config
 from LakeShore_336.temperature import Temp
 from Keithley2182a_6221.keith import Keith
 from AMI_430.magnet import Mag
+from limits import (KeithInfo as kinfo, TempLims as tinfo, MagLims as minfo,
+                    key, ivinfo)
 
 
 def no():
@@ -383,7 +385,8 @@ class ProbeGui(QMainWindow):
         keith = self.keith
         if idx is not None:
             if isinstance(idx, str):
-                idx = keith.meas_type_txt_switch[idx]
+                dic = kinfo.meas['txt']
+                idx = key(dic=dic, val=idx)
             ui.measureTypeCombobox.setCurrentIndex(idx)
         else:
             idx = ui.measureTypeCombobox.currentIndex()
