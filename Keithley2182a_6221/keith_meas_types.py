@@ -114,8 +114,9 @@ class DiffCon(KeithMeasure):
         info = self.info.rate
         if rate not in info['lim']:
             rate = info['def']
-            print(f"{info['txt']} out of bounds ([{info['lim'][0]}, "
-                  + f"{info['lim'][1]}]).  Setting to default ({rate}).")
+            print(f"{info['txt'][self.meas_idx]} out of bounds ("
+                  + f"[{info['lim'][0]}, {info['lim'][1]}]).  Setting to "
+                  + f"default ({rate}).")
         self.meas_rate = rate
 
 
