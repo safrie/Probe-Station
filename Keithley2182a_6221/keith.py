@@ -613,13 +613,7 @@ class Keith(Instrument):
         """Set filter_window of meas type to window and update Keithleys."""
         meas = self.meas_type(meas_idx)
         enable = meas.filter_on
-        inf = info.fwindow
-        if not inf['lim'][0] <= window <= inf['lim'][1]:
-            window = inf['def']
-            print(f"Filter window out of bounds ([{inf['lim'][0]}, "
-                  + f"{inf['lim'][1]}]).  Setting to default value "
-                  + f"({window}).")
-        meas.set_filter_window(window)
+        window = meas.set_filter_window(window)
         self.visa.set_filter_window(window)
         self.visa.set_filter(enable)
 

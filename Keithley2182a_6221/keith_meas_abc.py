@@ -206,7 +206,13 @@ class KeithMeasure():
         program what change in measurement it should consider a measurement of
         a different thing (e.g., applied current).
         """
+        info = self.info.fwindow
+        if not info['lim'][0] <= wind <= info['lim'][1]:
+            wind = info['def']
+            print(f"Filter window out of bounds. ([{info['lim'][0]}, "
+                  + f"{info['lim'][1]}]).  Setting to default value ({wind}).")
         self.filter_window = wind
+        return wind
 
     def set_filter_count(self, count: int) -> None:
         """Set the number of measurements to average to count."""
