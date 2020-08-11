@@ -286,23 +286,48 @@ ivinfo = {'dic': {0: DconInfo,
 
 
 # TODO: Change to TempInfo
-class TempLims():
+class TempInfo():
     """Contains instrument parameter limits and defaults for LakeShore 336."""
-    addr = range(1, 32)
-    addr_default = 11
-    out = (1, 2)
-    inpt = range(0, 9)
+    addr = {'lim': range(1, 32),
+            'def': 11}
+
+    out = {'lim': (1, 2),
+           'def': 1,
+           'txt': {1: 'Radiation Shield Heater',
+                   2: 'Sample Heater'}
+           }
+
+    inpt = {'lim': range(0, 8),
+            'def': 5,
+            'txt': {0: ('A', 'Cryocooler 1 first stage'),
+                    1: ('B', 'Cryocooler 1 second stage'),
+                    2: ('C', 'Magnet Plate'),
+                    3: ('D1', 'Magnet Top'),
+                    4: ('D2', 'Cryocooler 2 second stage'),
+                    5: ('D3', 'Radiation Shield'),
+                    6: ('D4', 'Sample Control'),
+                    7: ('D5', 'Inner Radiation Shield')}
+            }
+
+    to_measure = {'dic': {0: 'controlled',
+                          1: 'all'},
+                  'def': 0}
+
     # Output modes are 0=Off, 1=Closed loop PID, 2=Zone, 3=Open loop
-    outmode = range(0, 4)
-    outmode_default = 0
+    outmode = {'lim': range(0, 4),
+               'def': 0}
     # Heater modes are 0=Off, 1=Low, 2=Med, 3=High
-    heatmode = range(0, 4)
-    heatmode_default = 0
+    power = {'lim': range(0, 4),
+             'def': 0}
     # Rate is in K/min. 0 means "ramp as fast as possible."
-    rate = (0.1, 100, 0)
-    rate_default = 1
-    setpt = (3, 325)
-    setpt_default = 4.0
+    rate = {'lim': (0.1, 100.0, 0.0),
+            'def': 1.0}
+
+    setpt = {'lim': (3, 325),
+             'def': 4.0}
+
+    rad_cont = {'def': True}
+    stage_cont = {'def': True}
 
 
 # TODO: Change to MagInfo

@@ -14,6 +14,7 @@ from limits import TempLims as lims
 import LakeShore_336.visa_temp as visa
 import time
 from typing import Union, Tuple
+from limits import TempInfo as info, key
 
 
 class Temp(Instrument):
@@ -25,10 +26,6 @@ class Temp(Instrument):
     get_instr_type_str.
 
     attributes_
-        to_measure_switch: dict toggles between measuring only controlled
-            temperatures and all temperature inputs.
-        input_names: dict of names of the different temperature inputs
-        output_names: dict of names for the two heater outputs
         rad_control: bool for whether to control rad shield heaters
         rad_setpoint: temperature setpoint in K for rad shield
         rad_ramp: ramp rate in K/minute for rad shield
@@ -61,24 +58,6 @@ class Temp(Instrument):
         warm()
         process_data(list)
     """
-
-    to_measure_switch = {
-            0: 'controlled',  # Just out1 and out2
-            1: 'all',
-            'controlled': 0,  # Just out1 and out2
-            'all': 1}
-    input_names = {
-            'A': 'Cryocooler 1 first stage',
-            'B': 'Cryocooler 1 second stage',
-            'C': 'Magnet plate',
-            'D1': 'Magnet top',
-            'D2': 'Cryocooler 2 second stage',
-            'D3': 'Radiation shield',
-            'D4': 'Sample control',
-            'D5': 'Inner radiation shield'}
-    output_names = {
-            'out1': 'Radiation shield heater',
-            'out2': 'Sample heater'}
 
     def __init__(self) -> None:
         """Initialize the LakeShore 336 and open visa communications."""
