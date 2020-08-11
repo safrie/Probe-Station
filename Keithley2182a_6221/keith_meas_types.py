@@ -15,6 +15,7 @@ Part of the V3 probe station collection.
 
 from Keithley2182a_6221.keith_meas_abc import KeithMeasure
 from typing import Union
+from limits import key
 
 mu = u'\xb5'
 
@@ -245,10 +246,18 @@ class PDelta(KeithMeasure):
                   + f"default value ({info['def']}).")
         self.low_meas = enable
 
-    def set_filter_idx(self, index: int) -> None:
-        """Set filter index to index."""
-        self.filter_idx = index
-        self.filter_type = filter_switch[index]
+    def set_filter_idx(self, ftype: Union[int, str]) -> None:
+        """Set filter index to index corresponding to ftype."""
+        info = self.info.filt
+        dic = info['dic']
+        if ftype in dic.values():
+            ftype = key(dic=dic, value=ftype)
+        elif ftype not in dic.keys():
+            ftype = info['def']
+            print("Filter type index invalid.  Setting to default value "
+                  + f"({info['txt'][ftype]}).")
+        self.filter_idx = ftype
+        self.filter_type = info['txt'][ftype]
 
 
 class PDeltaStair(KeithMeasure):
