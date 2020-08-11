@@ -107,7 +107,7 @@ class Keith(Instrument):
     def __init__(self) -> None:
         """Initialize instance of general Keithley control."""
         print('Keith.__init__ called.')
-        super().__init__()
+        super().__init__('Keith')
         self.diffcon = DiffCon()
         self.delta = Delta()
         self.pdelta = PDelta()
@@ -205,12 +205,7 @@ class Keith(Instrument):
 
     def set_address(self, addr: int) -> None:
         """Set GPIB address of the stack, then check if connected."""
-        if addr not in info.addr['lim']:
-            addr = info.addr['def']
-            print(f"Given address not in valid range [{info.addr['lim'][0]}, "
-                  + f"{info.addr['lim'][1]}].  GPIB address set to "
-                  + f"default ({addr}).")
-        super().set_address(addr)
+        addr = super().set_address(addr)
         self.visa.check_connected(addr)
 
     def set_source_range_type(self, value: Union[int, str]) -> int:

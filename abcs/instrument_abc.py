@@ -8,6 +8,7 @@ Part of the probe station V3 collection
 """
 
 from abc import ABCMeta, abstractmethod
+from limits import (KeithInfo as kinfo, TempLims as tinfo, MagLims as minfo)
 
 
 class Instrument():
@@ -32,11 +33,20 @@ class Instrument():
     """
 
     __metaclass__ = ABCMeta
+    infodic = {'Keith': kinfo,
+               'Temp': tinfo,
+               'Mag': minfo}
 
-    def __init__(self) -> None:
-        # self.do_control = False
-        # self.do_measure = False
-        self.address = 0
+    def __init__(self, instr: str) -> None:
+        if instr in self.infodic.keys():
+            self.info = self.infodic[instr]
+            # self.do_control = False
+            # self.do_measure = False
+        else:
+            self.info = self.infodic['Keith']
+            print("Invalid instrument given.  Setting to default instrument "
+                  + "(Keith).")
+        self.address = self.info.addr['def']
 
     @abstractmethod
     def get_instr_name(self) -> None:
@@ -55,7 +65,12 @@ class Instrument():
 
     def set_address(self, addr: int) -> None:
         """Change instrument address atribute to addr."""
+        if addr not in self.info.addr['lim']:
+            addr = self.info.addr['def']
+            print(f"Given address out of bounds ({self.info.addr['lim']}).  "
+                  + f"GPIB address set to default ({addr}).")
         self.address = addr
+        return addr
 
     def get_control(self) -> bool:
         """Return instrument do_control attribute. MAYBE DELETE."""
