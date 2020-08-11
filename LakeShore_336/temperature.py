@@ -135,15 +135,15 @@ class Temp(Instrument):
     def set_power(self, power: int, output: str = 'stage') -> None:
         # TODO: Test set_power
         """Set internal heater power variable for stage or rad shield."""
-        out_valid = ('rad', 'stage', 'out1', 'out2')
-        if output not in out_valid:
-            print(f'Output must be in {out_valid}.  Please try again.')
+        valid = (j for i in info.out.name.values() for j in i)
+        if output not in valid:
+            print(f'Output must be in {valid}.  Please try again.')
             return
-        if power not in lims.heatmode:
-            power = lims.heatmode_default
-            print(f'Heater power must be in {list(lims.heatmode)}.  Setting to'
-                  + f" default heater power ({lims.heatmode_default})")
-        if output in ('rad', 'out1'):
+        if power not in info.power['lim']:
+            power = info.power['def']
+            print(f"Heater power must be in {list(info.power['lim'])}.  "
+                  + f"Setting to default heater power ({power}).")
+        if output in info.out.name[1]:
             self.rad_power = power
         else:
             self.stage_power = power
