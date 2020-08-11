@@ -24,6 +24,11 @@ To do with program:
             - magnet
             - design
     k) Change field3 stuff to curr_step because that's all it's used for?
+        - Keith
+        - Keith_meas_types
+        - limits
+        - Main
+        - design
     l) Move text switches over to KeithInfo
     n) Debug KeithMeasure.set_num_points when overflows b/c update_num_points
 
