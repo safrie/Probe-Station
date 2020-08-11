@@ -292,9 +292,11 @@ class TempInfo():
             'def': 11}
 
     out = {'lim': (1, 2),
-           'def': 1,
+           'def': 2,
            'txt': {1: 'Radiation Shield Heater',
-                   2: 'Sample Heater'}
+                   2: 'Sample Heater'},
+           'name': {1: ('out1', 'rad'),
+                    2: ('out2', 'stage')}
            }
 
     inpt = {'lim': range(0, 8),

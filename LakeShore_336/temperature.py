@@ -100,16 +100,15 @@ class Temp(Instrument):
     def set_setpoint(self, temp: float, output: str = 'stage') -> None:
         # TODO: Test set_setpoint
         """Set temperature target for either stage or rad shield in Kelvin."""
-        valid = ('rad', 'stage', 'out1', 'out2')
+        valid = (j for i in info.out.name.values() for j in i)
         if output not in valid:
-            print(f'set_setpoint: output must be in {valid}.  '
-                  + 'Please try again')
+            print(f'set_setpoint: output must be in {valid}. Please try again')
             return
-        if not lims.setpt[0] <= temp <= lims.setpt[1]:
-            temp = lims.setpt_default
+        if not info.setpt['lim'][0] <= temp <= info.setpt['lim'][1]:
+            temp = info.setpt['def']
             print("Temperature setpoint not in valid range.  Setting to "
-                  + f"default value instead ({lims.setpt_default})")
-        if output in ('rad', 'out1'):
+                  + f"default value instead ({temp} K).")
+        if output in info.out.name[1]:
             self.rad_setpoint = temp
         else:
             self.stage_setpoint = temp
