@@ -238,6 +238,11 @@ class PDelta(KeithMeasure):
 
     def set_low_meas(self, enable: bool) -> None:
         """Enable or disable measurement on the second lo in the cycle."""
+        info = self.info.low_meas
+        if enable not in info['lim']:
+            enable = info['def']
+            print("Enable 2nd low measurement argument invalid.  Setting to "
+                  + f"default value ({info['def']}).")
         self.low_meas = enable
 
     def set_filter_idx(self, index: int) -> None:
