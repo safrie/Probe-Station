@@ -622,12 +622,7 @@ class Keith(Instrument):
         """Set filter_count of meas type to count and update Keithleys."""
         meas = self.meas_type(meas_idx)
         enable = meas.filter_on
-        inf = info.fcount
-        if count not in inf['lim']:
-            count = inf['def']
-            print(f"Filter count out of bounds ([{inf['lim'][0]}, "
-                  + f"{inf['lim'][1]}]).  Setting to default value ({count}).")
-        meas.set_filter_count(count)
+        count = meas.set_filter_count(count)
         self.visa.set_filter_count(count)
         self.visa.set_filter(enable)
 

@@ -216,7 +216,13 @@ class KeithMeasure():
 
     def set_filter_count(self, count: int) -> None:
         """Set the number of measurements to average to count."""
+        info = self.info.fcount
+        if count not in info['lim']:
+            count = info['def']
+            print(f"Filter count out of bounds ([{info['lim'][0]}, "
+                  + f"{info['lim'][1]}]).  Setting to default ({count}).")
         self.filter_count = count
+        return count
 
     def get_total_points(self) -> None:
         """Overridden in daughter classes that have a number of sweeps."""
