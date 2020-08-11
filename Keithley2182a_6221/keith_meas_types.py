@@ -229,6 +229,11 @@ class PDelta(KeithMeasure):
 
         Pulse width plus measurement delay should be less than the cycle time.
         """
+        info = self.info.width
+        if not info['lim'][0] <= width <= info['lim'][1]:
+            width = info['def']
+            print(f"Pulse width out of bounds ({info['lim']}).  Setting to "
+                  + f"default value ({width}).")
         self.pulse_width = width
 
     def set_low_meas(self, enable: bool) -> None:
