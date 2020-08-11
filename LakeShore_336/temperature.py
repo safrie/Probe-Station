@@ -117,16 +117,16 @@ class Temp(Instrument):
     def set_ramp(self, rate: float, output: str) -> None:
         # TODO: Test set_ramp
         """Set the ramp rate for either stage or rad shield in Kelvin/sec."""
-        valid = ('rad', 'stage', 'out1', 'out2')
+        valid = (j for i in info.out.name.values() for j in i)
+        lim = info.rate['lim']
         if output not in valid:
             print(f'Output must be in {valid}.  Please try again.')
             return
-        if not (lims.rate[0] <= rate <= lims.rate[1] or rate == lims.rate[2]):
-            rate = lims.rate_default
-            print(f"Ramp rate must be within [{lims.rate[0]}, {lims.rate[1]}] "
-                  + f"or equal to {lims.rate[2]}.  Setting to default value "
-                  + f"({lims.rate_default}).")
-        if output in ('rad', 'out1'):
+        if not (lim[0] <= rate <= lim[1] or rate == lim[2]):
+            rate = info.rate['def']
+            print(f"Ramp rate must be within [{lim[0]}, {lim[1]}] or equal to "
+                  + f"{lim[2]}.  Setting to default value ({rate}).")
+        if output in info.out.name[1]:
             self.rad_ramp = rate
         else:
             self.stage_ramp = rate

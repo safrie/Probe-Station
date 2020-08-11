@@ -322,7 +322,7 @@ class TempInfo():
     power = {'lim': range(0, 4),
              'def': 0}
     # Rate is in K/min. 0 means "ramp as fast as possible."
-    rate = {'lim': (0.1, 100.0, 0.0),
+    rate = {'lim': (0.1, 100.0, 0),
             'def': 1.0}
 
     setpt = {'lim': (3, 325),
