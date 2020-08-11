@@ -167,8 +167,13 @@ class Delta(KeithMeasure):
 
     def set_filter_idx(self, index: int) -> None:
         """Set the filter index attribute to idx to set filter type."""
+        info = self.info.filt
+        if index not in info['dic'].keys():
+            index = info['def']
+            print("Filter index out of bounds.  Setting to default "
+                  + f"({info['def']}).")
         self.filter_idx = index
-        self.filter_type = filter_switch[index]
+        self.filter_type = info['txt'][index]
 
 
 class PDelta(KeithMeasure):
