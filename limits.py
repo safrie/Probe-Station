@@ -147,7 +147,7 @@ class KeithInfo:
                                   3: 'Step Size ',
                                   4: None}
                           }
-        self.rate = {'lim': (0.1, 60),  # This is in PLC
+        self.rate = {'lim': range(1, 61),  # This is in PLC
                      'def': 1,
                      'txt': {0: 'Measurement Rate (PLC)',
                              1: 'Measurement Rate (PLC)',

@@ -494,13 +494,6 @@ class Keith(Instrument):
     def set_meas_rate(self, rate: Union[int, float],
                       meas_idx: Optional[int] = None) -> None:
         """Set meas_rate of desired meas type instance to rate."""
-        meas_idx = self.meas_type_idx if meas_idx is None else meas_idx
-        inf = self.info_type(meas_idx)
-        lim = inf.rate['lim']
-        if not lim[0] <= rate <= lim[1]:
-            rate = inf.rate['def']
-            print(f"{inf.rate['txt'][meas_idx]} out of bounds.  Setting to "
-                  + f"default value ({inf.rate['def']}).")
         self.meas_type(meas_idx).set_meas_rate(rate)
 
     def set_meas_delay(self, delay: float,

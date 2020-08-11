@@ -111,6 +111,11 @@ class DiffCon(KeithMeasure):
 
     def set_meas_rate(self, rate: Union[int, float]) -> None:
         """Set 2182a integration rate (in PLC) to rate."""
+        info = self.info.rate
+        if rate not in info['lim']:
+            rate = info['def']
+            print(f"{info['txt']} out of bounds ([{info['lim'][0]}, "
+                  + f"{info['lim'][1]}]).  Setting to default ({rate}).")
         self.meas_rate = rate
 
 
