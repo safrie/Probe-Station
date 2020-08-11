@@ -73,6 +73,7 @@ class Temp(Instrument):
         self.address = info.addr['def']
         self.to_measure_idx = info.to_measure['def']
         self.to_measure_str = info.to_measure['dic'][self.to_measure_idx]
+        self.outnames = (j for i in info.out.name.values() for j in i)
         self.visa = visa.vTemp(self.address)
         self.running = False
 
@@ -100,7 +101,7 @@ class Temp(Instrument):
     def set_setpoint(self, temp: float, output: str = 'stage') -> None:
         # TODO: Test set_setpoint
         """Set temperature target for either stage or rad shield in Kelvin."""
-        valid = (j for i in info.out.name.values() for j in i)
+        valid = self.outnames
         if output not in valid:
             print(f'set_setpoint: output must be in {valid}. Please try again')
             return
@@ -117,7 +118,7 @@ class Temp(Instrument):
     def set_ramp(self, rate: float, output: str) -> None:
         # TODO: Test set_ramp
         """Set the ramp rate for either stage or rad shield in Kelvin/sec."""
-        valid = (j for i in info.out.name.values() for j in i)
+        valid = self.outnames
         lim = info.rate['lim']
         if output not in valid:
             print(f'Output must be in {valid}.  Please try again.')
@@ -135,7 +136,7 @@ class Temp(Instrument):
     def set_power(self, power: int, output: str = 'stage') -> None:
         # TODO: Test set_power
         """Set internal heater power variable for stage or rad shield."""
-        valid = (j for i in info.out.name.values() for j in i)
+        valid = self.outnames
         if output not in valid:
             print(f'Output must be in {valid}.  Please try again.')
             return
