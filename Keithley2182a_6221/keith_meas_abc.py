@@ -101,7 +101,7 @@ class KeithMeasure():
             unit = key(dic=dic, val=unit)
         elif unit not in dic.keys():
             unit = kinfo.unit['def']
-            print(f"Unit index invalid.  Setting to default ({dic[unit]}).")
+            print(f"Unit index invalid.  Setting to default ({unit}).")
         self.unit_idx = unit
         return unit
 
@@ -111,7 +111,7 @@ class KeithMeasure():
         if not info['lim'][0] <= curr <= info['lim'][1]:
             curr = info['def']
             print(f"{info['txt'][self.meas_idx]}out of bounds.  Setting to "
-                  + f"default value ({info['def']:.2e} A).")
+                  + f"default value ({curr:.2e} A).")
         self.curr1 = curr
 
     def set_curr2(self, curr: float) -> None:
@@ -120,7 +120,7 @@ class KeithMeasure():
         if not info['lim'][0] <= curr <= info['lim'][1]:
             curr = info['def']
             print(f"{info['txt'][self.meas_idx]}out of bounds.  Setting to "
-                  + f"default value ({info['def']:.2e} A).")
+                  + f"default value ({curr:.2e} A).")
         self.curr2 = curr
 
     def set_curr_step(self, num: float) -> None:
@@ -141,8 +141,7 @@ class KeithMeasure():
         info = self.info.points
         if points not in info['lim']:
             points = info['def']
-            print(f"{info['txt']} invalid.  Setting to default "
-                  + f"({info['def']}).")
+            print(f"{info['txt']} invalid.  Setting to default ({points}).")
         self.num_points = points
 
     def calc_num_points(self, start: float, stop: float, step: float) -> int:
@@ -169,14 +168,19 @@ class KeithMeasure():
         """
         pass
 
-    def set_meas_delay(self, num: float) -> None:
+    def set_meas_delay(self, delay: float) -> None:
         """Set the delay time between changing applied current and measurement.
 
         The delay time is a pause between when the 6221 applies a new current
         and when the 2182a measures a voltage, which gives the current time to
         settle.  num is in units of seconds.
         """
-        self.meas_delay = num
+        info = self.info.delay
+        if not info['lim'][0] <= delay <= info['lim'][1]:
+            delay = info['def']
+            print(f"{info['txt'][self.meas_idx]} invalid.  Setting to default "
+                  + f"({delay}).")
+        self.meas_delay = delay
 
     def set_pulse_width(self, num: float) -> None:
         """Overridden in daughter classes that have pulse widths."""
