@@ -32,23 +32,6 @@ class Keith(Instrument):
     get_instr_type_str.
 
     attributes_
-        source_range_type_switch: dict for relating source range type indices
-            to their string representations and vice versa
-        source_range_switch: dict for relating source range indices to their
-            numerical ranges and vice versa
-        source_range_minmax_switch: dict for relating source range indices to
-            their maximum and minimum values in the UI in convenient display
-            units
-        source_range_mult_switch: dict for converting nA, uA, and mA (used in
-            UI) to uA (used internally)
-        source_range_txt_switch: dict for relating source range indices to
-            their unit labels
-        volt_range_switch: dict for relating voltmeter range indices to their
-            numerical ranges in volts
-        unit_switch: dict for relating unit indices to their YAML labels and
-            vice versa
-        filter_switch: dict for relating filter indices to their YAML labels
-            and vice versa
         diffcon: instance of inner class DiffCon
         delta: instance of inner class Delta
         pdelta: instance of inner class PDelta
@@ -131,8 +114,7 @@ class Keith(Instrument):
         self.pdelt_stair = PDeltaStair()
         self.pdelt_log = PDeltaLog()
 
-        # FIXME: Make this the 'dic' entry of KeithInfo.meas
-        info.meas['typ'] = {0: self.diffcon,
+        info.meas['dic'] = {0: self.diffcon,
                             1: self.delta,
                             2: self.pdelta,
                             3: self.pdelt_stair,
@@ -166,23 +148,23 @@ class Keith(Instrument):
         """Return measurement type class instance."""
         if idx is None:
             idx = self.meas_type_idx
-        elif idx not in info.meas['mes'].keys():
+        elif idx not in info.meas['dic'].keys():
             idx = info.meas['def']
             print("Measurement type index out of bounds.  Setting to default "
                   + f"measurement type ({info.meas['txt'][idx]})."
                   )
-        print(type(info.meas['mes'][idx]))
-        return info.meas['mes'][idx]
+        print(type(info.meas['dic'][idx]))
+        return info.meas['dic'][idx]
 
     def info_type(self, idx: Optional[int] = None) -> info:
         """Return measurement type info class instance."""
         if idx is None:
             idx = self.meas_type_idx
-        elif idx not in ivinfo['mes'].keys():
+        elif idx not in ivinfo['dic'].keys():
             idx = ivinfo['def']
             print("Measurement type index out of bounds.  Setting to default "
                   + f"measurement type ({ivinfo['def']}).")
-        return ivinfo['mes'][idx]
+        return ivinfo['dic'][idx]
 
     def get_header_string(self, idx: Optional[int] = None) -> str:
         """Return header string for a measurement type.
@@ -202,7 +184,7 @@ class Keith(Instrument):
         rate = info.rate['txt'][idx]
         delay = info.delay['txt'][idx]
         pulse_width = info.width['txt'][idx]
-        pulse_count = info.count['txt'][idx]
+        pulse_count = info.points['txt'][idx]
         out = (meas.get_meas_type_str()
                + f'{curr1}{meas.curr1}\t'
                + f'{curr2}{meas.curr2}\t'
@@ -552,8 +534,9 @@ class Keith(Instrument):
         # TODO: Test arming thoroughly.
         print(cmd)
         self.visa.write(cmd)
-        print(f'armed = {self.visa.query(self.visa.qarm[self.meas_type_idx])}')
-        return(self.visa.query(self.visa.qarm[self.meas_type_idx]))
+        out = self.visa.query(self.visa.qarm[self.meas_type_idx])
+        print(f'armed = {out}')
+        return(out)
 
     def run(self) -> tuple:
         """Tell the Keithleys to start a measurement."""
@@ -575,7 +558,7 @@ class Keith(Instrument):
 
     def stop(self) -> None:
         """Tell the Keithleys to stop a measurement."""
-        # BUG: Does not actually stop the measurement.  May need to futz w OPC.
+        # FIXME: Does not actually stop the measurement.  Futz w OPC?
         self.visa.write('SOUR:SWE:ABOR; CLE:IMM')
         print('Keithley stopped.')
 
