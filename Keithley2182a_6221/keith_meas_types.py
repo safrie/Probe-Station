@@ -21,55 +21,6 @@ from limits import (DconLims as dclims, DeltaLims as deltlims, PDeltaLims as
 
 mu = u'\xb5'
 
-meas_lims = {0: dclims,
-             1: deltlims,
-             2: pulsedlims,
-             3: pdslims,
-             4: pdllims}
-
-
-class Delta(KeithMeasure):
-    """Implements attributes and methods specific to delta measurement mode.
-
-    Inherits from KeithMeasure abstract base clas and overwrites some of its
-    attributes so that they apply to delta IV measurements.  Extends __init__
-    and overrides get_meas_type_str, set_meas_rate, and set_filter_idx.  Used
-    as an inner class in Keith.
-
-    attributes_
-        curr1: Delta high current in microamps
-        curr2: Delta low current in microamps
-        num_points: Pulse count for the delta measurement
-        meas_rate: Integration rate for 2182a in power line cycles (PLC).
-
-    methods_
-        __init__()
-        get_meas_type_str()
-        set_meas_rate(int)
-        set_filter_idx(int)
-    """
-
-    def __init__(self) -> None:
-        """Instantiate delta measurement."""
-        super().__init__(1)
-        self.curr1 = self.lims.curr1_def
-        self.num_points = deltlims.points_def
-        self.meas_rate = deltlims.meas_rate_def
-        self.set_filter_idx(deltlims.filt_def)
-
-    def get_meas_type_str(self) -> str:
-        """Return type of measurement followed by a new line."""
-        return 'delta\n'
-
-    def set_meas_rate(self, rate: Union[int, float]) -> None:
-        """Set the measurement rate attribute to rate (in PLC)."""
-        self.meas_rate = rate
-
-    def set_filter_idx(self, index: int) -> None:
-        """Set the filter index attribute to idx to set filter type."""
-        self.filter_idx = index
-        self.filter_type = filter_switch[index]
-
 
 class DiffCon(KeithMeasure):
     """Implements attributes/methods unique to differential conductance mode.
@@ -152,6 +103,49 @@ class DiffCon(KeithMeasure):
         self.meas_rate = rate
 
 
+class Delta(KeithMeasure):
+    """Implements attributes and methods specific to delta measurement mode.
+
+    Inherits from KeithMeasure abstract base clas and overwrites some of its
+    attributes so that they apply to delta IV measurements.  Extends __init__
+    and overrides get_meas_type_str, set_meas_rate, and set_filter_idx.  Used
+    as an inner class in Keith.
+
+    attributes_
+        curr1: Delta high current in microamps
+        curr2: Delta low current in microamps
+        num_points: Pulse count for the delta measurement
+        meas_rate: Integration rate for 2182a in power line cycles (PLC).
+
+    methods_
+        __init__()
+        get_meas_type_str()
+        set_meas_rate(int)
+        set_filter_idx(int)
+    """
+
+    def __init__(self) -> None:
+        """Instantiate delta measurement."""
+        super().__init__(1)
+        self.curr1 = self.lims.curr1_def
+        self.num_points = deltlims.points_def
+        self.meas_rate = deltlims.meas_rate_def
+        self.set_filter_idx(deltlims.filt_def)
+
+    def get_meas_type_str(self) -> str:
+        """Return type of measurement followed by a new line."""
+        return 'delta\n'
+
+    def set_meas_rate(self, rate: Union[int, float]) -> None:
+        """Set the measurement rate attribute to rate (in PLC)."""
+        self.meas_rate = rate
+
+    def set_filter_idx(self, index: int) -> None:
+        """Set the filter index attribute to idx to set filter type."""
+        self.filter_idx = index
+        self.filter_type = filter_switch[index]
+
+
 class PDelta(KeithMeasure):
     """Implements methods and attributes specific to pulse delta mode.
 
@@ -214,79 +208,6 @@ class PDelta(KeithMeasure):
         """Set filter index to index."""
         self.filter_idx = index
         self.filter_type = filter_switch[index]
-
-
-class PDeltaLog(KeithMeasure):
-    """Implements attributes and methods unique to pulse delta log sweeps.
-
-    Inherits from KeithMeasure abstract base class and overwrites some of its
-    attributes so that they apply to pulse delta log sweeps.  Extends __init__
-    and overrides get_meas_type_str, set_meas_rate, set_pulse_width,
-    set_num_sweeps, set_low_meas, and get_total_points.  Used as an inner class
-    in Keith.
-
-    attributes_
-        curr1: Start current in microamps (float)
-        curr2: End current in microamps (float)
-        num_points: Number of points in a single sweep (int)
-        num_sweeps: Number of sweeps to perform (int)
-        pulse_width: Length of the high current pulse in microseconds (float)
-        cycle_time: Quasiperiod of the pulse delta cycle (lo-hi-lo) in seconds
-                    (float)
-        low_meas: Whether to measure voltage on second lo in the cycle (bool)
-
-    methods_
-        __init__()
-        get_meas_type_str()
-        set_meas_rate(float)
-        set_pulse_width(float)
-        set_num_sweeps(int)
-        set_low_meas(bool)
-        get_total_points()
-    """
-
-    def __init__(self) -> None:
-        """Instantiate pulse delta log sweep."""
-        super().__init__(4)
-        self.curr1 = 1.00
-        self.curr2 = 10.00
-        self.num_points = 10
-        self.num_sweeps = 1
-        self.pulse_width = 120
-        self.meas_delay = 16
-        self.cycle_time = 5.0
-        self.filter_idx = 0
-        self.filter_type = 'Moving'
-
-    def get_meas_type_str(self) -> None:
-        """Return type of measurement followed by a new line."""
-        return 'Pulse Delta Logarithmic Sweep\n'
-
-    def set_meas_rate(self, rate: float) -> None:
-        """Set cycle_time to rate. cycle_time plays the part of meas_rate.
-
-        cycle_time should be greater than pulse width plus measurement delay.
-        """
-        self.cycle_time = rate
-
-    def set_pulse_width(self, width: float) -> None:
-        """Set pulse width to width.
-
-        Pulse width plus measurement delay should be less than cycle_time.
-        """
-        self.pulse_width = width
-
-    def set_num_sweeps(self, sweeps: int) -> None:
-        """Set num_sweeps to sweeps."""
-        self.num_sweeps = sweeps
-
-    def set_low_meas(self, enable: bool) -> None:
-        """Set low_meas to enable."""
-        self.low_meas = enable
-
-    def get_total_points(self) -> int:
-        """Return the number of points for the set of sweeps."""
-        return self.num_points * self.num_sweeps
 
 
 class PDeltaStair(KeithMeasure):
@@ -386,4 +307,77 @@ class PDeltaStair(KeithMeasure):
 
     def get_total_points(self) -> int:
         """Return total number of points for the set of sweeps."""
+        return self.num_points * self.num_sweeps
+
+
+class PDeltaLog(KeithMeasure):
+    """Implements attributes and methods unique to pulse delta log sweeps.
+
+    Inherits from KeithMeasure abstract base class and overwrites some of its
+    attributes so that they apply to pulse delta log sweeps.  Extends __init__
+    and overrides get_meas_type_str, set_meas_rate, set_pulse_width,
+    set_num_sweeps, set_low_meas, and get_total_points.  Used as an inner class
+    in Keith.
+
+    attributes_
+        curr1: Start current in microamps (float)
+        curr2: End current in microamps (float)
+        num_points: Number of points in a single sweep (int)
+        num_sweeps: Number of sweeps to perform (int)
+        pulse_width: Length of the high current pulse in microseconds (float)
+        cycle_time: Quasiperiod of the pulse delta cycle (lo-hi-lo) in seconds
+                    (float)
+        low_meas: Whether to measure voltage on second lo in the cycle (bool)
+
+    methods_
+        __init__()
+        get_meas_type_str()
+        set_meas_rate(float)
+        set_pulse_width(float)
+        set_num_sweeps(int)
+        set_low_meas(bool)
+        get_total_points()
+    """
+
+    def __init__(self) -> None:
+        """Instantiate pulse delta log sweep."""
+        super().__init__(4)
+        self.curr1 = 1.00
+        self.curr2 = 10.00
+        self.num_points = 10
+        self.num_sweeps = 1
+        self.pulse_width = 120
+        self.meas_delay = 16
+        self.cycle_time = 5.0
+        self.filter_idx = 0
+        self.filter_type = 'Moving'
+
+    def get_meas_type_str(self) -> None:
+        """Return type of measurement followed by a new line."""
+        return 'Pulse Delta Logarithmic Sweep\n'
+
+    def set_meas_rate(self, rate: float) -> None:
+        """Set cycle_time to rate. cycle_time plays the part of meas_rate.
+
+        cycle_time should be greater than pulse width plus measurement delay.
+        """
+        self.cycle_time = rate
+
+    def set_pulse_width(self, width: float) -> None:
+        """Set pulse width to width.
+
+        Pulse width plus measurement delay should be less than cycle_time.
+        """
+        self.pulse_width = width
+
+    def set_num_sweeps(self, sweeps: int) -> None:
+        """Set num_sweeps to sweeps."""
+        self.num_sweeps = sweeps
+
+    def set_low_meas(self, enable: bool) -> None:
+        """Set low_meas to enable."""
+        self.low_meas = enable
+
+    def get_total_points(self) -> int:
+        """Return the number of points for the set of sweeps."""
         return self.num_points * self.num_sweeps
