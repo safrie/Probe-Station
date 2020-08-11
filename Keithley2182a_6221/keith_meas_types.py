@@ -157,6 +157,12 @@ class Delta(KeithMeasure):
 
     def set_meas_rate(self, rate: Union[int, float]) -> None:
         """Set the measurement rate attribute to rate (in PLC)."""
+        info = self.info.rate
+        if rate not in info['lim']:
+            rate = info['def']
+            print(f"{info['txt'][self.meas_idx]} out of bounds (["
+                  + f"{info['lim'][0]}, {info['lim'][1]}]).  Setting to "
+                  + f"default value ({rate}).")
         self.meas_rate = rate
 
     def set_filter_idx(self, index: int) -> None:
