@@ -181,7 +181,8 @@ class KeithInfo:
                              1: "REP"},
                      'def': 0,
                      'txt': {0: "Moving",
-                             1: "Repeating"}
+                             1: "Repeating"},
+                     'ondef': False
                      }
 
 
