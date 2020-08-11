@@ -374,6 +374,11 @@ class PDeltaStair(KeithMeasure):
 
     def set_low_meas(self, enable: bool) -> None:
         """Set low_meas to enable."""
+        info = self.info.low_meas
+        if enable not in info['lim']:
+            enable = info['def']
+            print("Enable 2nd low measurement argument invalid.  Setting to "
+                  + f"default value ({enable}).")
         self.low_meas = enable
 
     def get_total_points(self) -> int:
