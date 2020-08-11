@@ -62,17 +62,17 @@ class Temp(Instrument):
     def __init__(self) -> None:
         """Initialize the LakeShore 336 and open visa communications."""
         super().__init__('Temp')
-        self.rad_control = None
-        self.rad_setpoint = None
-        self.rad_ramp = None
-        self.rad_power = None
-        self.stage_control = None
-        self.stage_setpoint = None
-        self.stage_ramp = None
-        self.stage_power = None
-        self.address = 11
-        self.to_measure_idx = None
-        self.to_measure_str = None
+        self.rad_control = info.rad_cont['def']
+        self.rad_setpoint = info.setpt['def']
+        self.rad_ramp = info.rate['def']
+        self.rad_power = info.power['def']
+        self.stage_control = info.stage_cont['def']
+        self.stage_setpoint = info.setpt['def']
+        self.stage_ramp = info.rate['def']
+        self.stage_power = info.power['def']
+        self.address = info.addr['def']
+        self.to_measure_idx = info.to_measure['def']
+        self.to_measure_str = info.to_measure['dic'][self.to_measure_idx]
         self.visa = visa.vTemp(self.address)
         self.running = False
 
