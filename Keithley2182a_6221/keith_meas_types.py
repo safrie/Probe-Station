@@ -87,6 +87,11 @@ class DiffCon(KeithMeasure):
 
     def set_curr_step(self, step: float) -> None:
         """Set curr_step to step, then update number of points in the sweep."""
+        info = self.info.curr_step
+        if not info['lim'][0] <= step <= info['lim'][1]:
+            step = info['def']
+            print(f"Current step out of bounds ([{info['lim'][0]}, "
+                  + f"{info['lim'][1]}]).  Setting to default ({step:.2e} A).")
         self.curr_step = step
         self.update_num_points()
 
