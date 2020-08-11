@@ -270,12 +270,12 @@ class PDeltaStair(KeithMeasure):
     get_total_points.  Used as an inner class in Keith.
 
     attributes_
-        curr1: Start current in microamps (float)
-        curr2: End current in microamps (float)
-        curr_step: Current step size in microamps (float)
+        curr1: Start current in amps (float)
+        curr2: End current in amps (float)
+        curr_step: Current step size in amps (float)
         num_points: Number of points in a single sweep (int)
         num_sweeps: Number of sweeps to perform (int)
-        pulse_width: Length of the high current pulse in microseconds (float)
+        pulse_width: Length of the high current pulse in seconds (float)
         cycle_time: Quasiperiod of the pulse delta cycle (lo-hi-lo) in seconds
                     (float)
         low_meas: Whether to measure voltage on second lo in the cycle (bool)
@@ -297,17 +297,18 @@ class PDeltaStair(KeithMeasure):
     def __init__(self) -> None:
         """Instantiate pulse delta staircase sweep measurement."""
         super().__init__(3)
-        self.curr1 = 1.00
-        self.curr2 = 10.00
-        self.curr_step = 0.100
+        info = self.info
+        self.curr1 = info.curr1['def']
+        self.curr2 = info.curr2['def']
+        self.curr_step = info.curr_step['def']
         self.num_points = self.calc_num_points(self.curr1, self.curr2,
                                                self.curr_step)
-        self.num_sweeps = 1
-        self.pulse_width = 120
-        self.meas_delay = 16
-        self.cycle_time = 5.0
-        self.filter_idx = 0
-        self.filter_type = 'Moving'
+        self.num_sweeps = info.sweeps['def']
+        self.pulse_width = info.width['def']
+        self.meas_delay = info.delay['def']
+        self.cycle_time = info.rate['def']
+        self.filter_idx = info.filt['def']
+        self.filter_type = info.filt['txt'][self.filter_idx]
 
     def get_meas_type_str() -> str:
         """Return the type of measurement followed by a new line."""
