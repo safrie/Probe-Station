@@ -241,6 +241,8 @@ class PDeltInfo(KeithInfo):
         self.width['lim'] = (50.0e-6, 12.0e-3)
         self.width['def'] = 110.0e-6
 
+        self.points['def'] = 100
+
 
 # TODO: Determine if I need separate classes for PDeltStair and PDeltLog
 class SweepInfo(PDeltInfo):

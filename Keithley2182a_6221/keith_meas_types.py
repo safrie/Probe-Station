@@ -185,10 +185,10 @@ class PDelta(KeithMeasure):
     set_filter_idx, and set_low_meas. Used as an inner class in Keith.
 
     attributes_
-        curr1: High current in microamps (float)
-        curr2: Low current in microamps (float)
+        curr1: High current in amps (float)
+        curr2: Low current in amps (float)
         num_points: How many delta pulses to measure (int)
-        pulse_width: Length of high current pulse in microseconds (float)
+        pulse_width: Length of high current pulse in seconds (float)
         cycle_int: Period of the pulse delta cycle (lo-hi-lo) in PLC (int)
         low_meas: Whether to measure voltage on second lo in the cycle (bool)
 
@@ -204,13 +204,14 @@ class PDelta(KeithMeasure):
     def __init__(self) -> None:
         """Instantiate pulse delta measurement."""
         super().__init__(2)
-        self.curr1 = 10.00
-        self.curr2 = 0.00
-        self.num_points = 100
-        self.pulse_width = 110
-        self.cycle_int = 5
-        self.meas_delay = 16.00
-        self.set_filter_idx(0)
+        info = self.info
+        self.curr1 = info.curr1['def']
+        self.curr2 = info.curr2['def']
+        self.num_points = info.points['def']
+        self.pulse_width = info.width['def']
+        self.cycle_int = info.rate['def']
+        self.meas_delay = info.delay['def']
+        self.set_filter_idx(info.filt['def'])
 
     def get_meas_type_str(self) -> str:
         """Return type of measurement followed by a new line."""
