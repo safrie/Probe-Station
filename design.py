@@ -5,7 +5,7 @@ design.py contains all the logic for creating the user interface.
 @author: Sarah Friedensen
 """
 
-from limits import KeithLims as klims, TempLims as tlims, MagLims as mlims
+from limits import KeithInfo as kinfo, TempLims as tlims, MagLims as mlims
 from PyQt5 import QtCore, QtWidgets
 # from PyQt5 import  QtGui
 from PyQt5.QtWidgets import (QWidget, QFrame, QGridLayout, QVBoxLayout,
@@ -177,8 +177,8 @@ class Ui_KeithWindow(Ui_MainWindow):
         current1Spinbox: QDoubleSpinBox for current1 parameter.
         current2Label: QLabel for the current2 parameter.
         current2Spinbox: QDoubleSpinBox for current2 parameter.
-        field3Label: QLabel for parameters that appear in 3rd field.
-        field3Spinbox: QDoubleSpinBox for parameters that appear in field 3.
+        currStepLabel: QLabel for parameters that appear in 3rd field.
+        currStepSpinbox: QDoubleSpinBox for parameters that appear in field 3.
         field4Label: QLabel for parameters that appear in 4th field.
         field4Spinbox: QDoubleSpinBox for parameters that ppear in 4th field.
         rateLabel: QLabel for measurement rate parameter.
@@ -362,18 +362,18 @@ class Ui_KeithWindow(Ui_MainWindow):
         self.current2Spinbox.setRange(-1.05e8, 1.05e8)
         current2Layout.addWidget(self.current2Spinbox)
 
-        field3Layout = QHBoxLayout(objectName='Field3Layout')
-        measureLayout.addLayout(field3Layout, 2, 0, 1, 1)
+        currStepLayout = QHBoxLayout(objectName='CurrStepLayout')
+        measureLayout.addLayout(currStepLayout, 2, 0, 1, 1)
 
-        self.field3Label = QLabel(measureWidget, text='Step Size (nA)',
-                                  objectName='Field3Label')
-        field3Layout.addWidget(self.field3Label)
+        self.currStepLabel = QLabel(measureWidget, text='Step Size (nA)',
+                                    objectName='CurrStepLabel')
+        currStepLayout.addWidget(self.currStepLabel)
 
-        self.field3Spinbox = QDoubleSpinBox(measureWidget,
-                                            objectName='Field3SpinBox')
-        self.field3Spinbox.setValue(10)
-        self.field3Spinbox.setRange(0, 105e8)
-        field3Layout.addWidget(self.field3Spinbox)
+        self.currStepSpinbox = QDoubleSpinBox(measureWidget,
+                                              objectName='CurrStepSpinBox')
+        self.currStepSpinbox.setValue(10)
+        self.currStepSpinbox.setRange(0, 105e8)
+        currStepLayout.addWidget(self.currStepSpinbox)
 
         field4Layout = QHBoxLayout(objectName='Field4Layout')
         measureLayout.addLayout(field4Layout, 3, 0, 1, 1)
