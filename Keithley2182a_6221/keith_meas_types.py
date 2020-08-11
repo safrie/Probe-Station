@@ -166,8 +166,8 @@ class Delta(KeithMeasure):
         info = self.info.filt
         if index not in info['dic'].keys():
             index = info['def']
-            print("Filter index out of bounds.  Setting to default "
-                  + f"({info['def']}).")
+            print("Filter index out of bounds.  Setting to default filter"
+                  + f"({info['txt'][index]}).")
         self.filter_idx = index
         self.filter_type = info['txt'][index]
 
@@ -365,6 +365,11 @@ class PDeltaStair(KeithMeasure):
 
     def set_num_sweeps(self, sweeps: int) -> None:
         """Set num_sweeps to sweeps."""
+        info = self.info.sweeps
+        if sweeps not in info['lim']:
+            sweeps = info['def']
+            print(f"{info['txt']} out of bounds ({info['lim']}).  Setting to "
+                  + f"default value ({sweeps}).")
         self.num_sweeps = sweeps
 
     def set_low_meas(self, enable: bool) -> None:
