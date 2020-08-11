@@ -23,13 +23,6 @@ To do with program:
             - temperature
             - magnet
             - design
-    k) Change field3 stuff to curr_step because that's all it's used for?
-        - Keith
-        - Keith_meas_types
-        - limits
-        - Main
-        - design
-    l) Move text switches over to KeithInfo
     n) Debug KeithMeasure.set_num_points when overflows b/c update_num_points
 
 • Fix AMI 430 Errors/Issues
@@ -46,7 +39,7 @@ To do with program:
         - This is related to set_enable_trig and qenable_trig methods
     e) Fix any VISA issues
     g) Update UI from main.py in case invalid parameters set to defaults in mag
-    h) Change "default" to "def"
+    h) Update limits and defaults
         - limits.py
         - magnet.py
         - visa_mag.py
@@ -69,7 +62,7 @@ To do with program:
     d) Fix any VISA issues
     e) Input validation
         - setters in temperature.py
-        - change "default" to "def"
+        - Update references and defaults
             -- temperature.py
             -- limits.py
             -- main.py
