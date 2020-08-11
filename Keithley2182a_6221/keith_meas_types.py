@@ -128,8 +128,8 @@ class Delta(KeithMeasure):
     as an inner class in Keith.
 
     attributes_
-        curr1: Delta high current in microamps
-        curr2: Delta low current in microamps
+        curr1: Delta high current in amps
+        curr2: Delta low current in amps
         num_points: Pulse count for the delta measurement
         meas_rate: Integration rate for 2182a in power line cycles (PLC).
 
@@ -143,10 +143,12 @@ class Delta(KeithMeasure):
     def __init__(self) -> None:
         """Instantiate delta measurement."""
         super().__init__(1)
-        self.curr1 = self.lims.curr1_def
-        self.num_points = deltlims.points_def
-        self.meas_rate = deltlims.meas_rate_def
-        self.set_filter_idx(deltlims.filt_def)
+        info = self.info
+        self.curr1 = info.curr1['def']
+        self.curr2 = info.curr2['def']
+        self.num_points = info.points['def']
+        self.meas_rate = info.rate['def']
+        self.set_filter_idx(info.filt['def'])
 
     def get_meas_type_str(self) -> str:
         """Return type of measurement followed by a new line."""
