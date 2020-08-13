@@ -352,23 +352,17 @@ class MagInfo():
              'def': {i: 5 * coil_const[i] for i in range(len(coil_const))}
              }
     rate = {
-        'seconds': {
-            # Values are:
-            # 0: (1.901e-6, 11.407),
-            # 1: (1.901e-7, 1.1407)
-            0: (1.0e-4/60*coil_const[0], 10*coil_const[0]),
-            1: (1.0e-4/60*coil_const[1], 10*coil_const[1]),
-            2: (1.0e-4/60, 10)
-            },
-        'minutes': {
-            # Values are:
-            # 0: (1.1407e-4, 684),
-            # 1: (1.1407e-5, 68.4)
-            0: (1.0e-4*coil_const[0], 600*coil_const[0]),
-            1: (1.0e-4*coil_const[1], 600*coil_const[1]),
-            2: (1.0e-4, 600)}
-            }
-    rate_default = 0.1*coil_const
+        # values for seconds are:
+        # {0: (1.90e-6, 11.4), 1: (1.90e-7, 1.14), 2: (2.67e-6, 10)}
+        # values for minutes are:
+        # {0: (1.14e-4, 684), 1: (1.14e-5, 68.4), 2: (1.0e-4, 600)}
+        'lim': {'seconds': {i: (1.0e-4/60*coil_const[i], 10*coil_const[i])
+                            for i in range(len(coil_const))},
+                'minutes': {i: (1.0e-4*coil_const[i], 600*coil_const[i])
+                            for i in range(len(coil_const))}
+                },
+        'def': {i: 0.1*coil_const[i] for i in range(len(coil_const))}
+    }
     seg = (1, 10)
     seg_default = 1
     field_unit_default = (1, 'Tesla', 'T')
