@@ -70,42 +70,6 @@ class Mag(Instrument):
         time_unit(optional str)
     """
 
-    field_unit_switch = {'Full': {0: 'Kilogauss',
-                                  1: 'Tesla',
-                                  2: 'Amps',
-                                  'Kilogauss': 0,
-                                  'Tesla': 1,
-                                  'Amps': 2,
-                                  'A': 'Amps',
-                                  'T': 'Tesla',
-                                  'kG': 'Kilogauss'},
-                         'Abbv': {0: 'kG',
-                                  1: 'T',
-                                  2: 'A',
-                                  'kG': 0,
-                                  'T': 1,
-                                  'A': 2,
-                                  'Amps': 'A',
-                                  'Tesla': 'T',
-                                  'Kilogauss': 'kG'}
-                         }
-    time_unit_switch = {
-            'Full': {0: 'Seconds',
-                     1: 'Minutes',
-                     2: 'second',
-                     3: 'minute',
-                     'Seconds': 0,
-                     'Minutes': 1,
-                     's': 'Seconds',
-                     'min': 'Minutes'},
-            'Abbv': {0: 's',
-                     1: 'min',
-                     's': 0,
-                     'min': 1,
-                     'Seconds': 's',
-                     'Minutes': 'min'}
-            }
-
     setpoints_title = 'Magnetic Field Setpoints'
     ramp_title = 'Magnetic Field Ramp Rates'
     target_label = 'Target Magnet'
