@@ -10,7 +10,7 @@ Part of the V3 probe station collection.
 """
 from abcs.instrument_abc import Instrument
 from AMI_430.visa_mag import vMag as visa
-from limits import MagLims as lims
+from limits import MagInfo as info
 from typing import Optional, Union
 from pathlib import Path
 
