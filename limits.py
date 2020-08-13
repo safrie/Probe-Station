@@ -345,11 +345,12 @@ class MagInfo():
             'def': 2}
     # 1 T = 10 kG
     # coil const in {field_unit}/A
-    coil_const = array([30/26.3, 3/26.3, 1])
-    field = {0: 30,
-             1: 3,
-             2: 26.3}
-    field_default = 5 * coil_const
+    coil_const = (30/26.3, 3/26.3, 1)
+    field = {'lim': {0: 30,
+                     1: 3,
+                     2: 26.3},
+             'def': {i: 5 * coil_const[i] for i in range(len(coil_const))}
+             }
     rate = {
         'seconds': {
             # Values are:
