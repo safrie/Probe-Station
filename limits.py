@@ -349,8 +349,33 @@ class MagInfo():
     field = {'lim': {0: 30,
                      1: 3,
                      2: 26.3},
-             'def': {i: 5 * coil_const[i] for i in range(len(coil_const))}
+             'def': {i: 5 * coil_const[i] for i in range(len(coil_const))},
+             'unit': {'Full': {0: 'Kilogauss',
+                               1: 'Tesla',
+                               2: 'Amps',
+                               'kG': 'Kilogauss',
+                               'T': 'Tesla',
+                               'A': 'Amps'},
+                      'Abbv': {0: 'kG',
+                               1: 'T',
+                               2: 'A',
+                               'Kilogauss': 'kG',
+                               'Tesla': 'T',
+                               'Amps': 'A'},
+                      'def': 1}
              }
+    time = {'unit': {'Full': {0: 'Seconds',
+                              1: 'Minutes',
+                              2: 'second',
+                              3: 'minute',
+                              's': 'Seconds',
+                              'min': 'Minutes'},
+                     'Abbv': {0: 's',
+                              1: 'min',
+                              'Seconds': 's',
+                              'Minutes': 'min'},
+                     'def': 0}
+            }
     rate = {
         # values for seconds are:
         # {0: (1.90e-6, 11.4), 1: (1.90e-7, 1.14), 2: (2.67e-6, 10)}
