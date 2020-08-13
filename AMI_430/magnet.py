@@ -123,14 +123,14 @@ class Mag(Instrument):
         These are the ramp interval upper bounds.
         """
         # TODO: Test set_setpoints_list
-        bound = lims.field[self.field_unit_idx]
+        lim = info.field['lim'][self.field_unit_idx]
         setpts.sort()
-        if len(setpts) not in range(lims.seg[1], 0, -1):
-            print("Number of ramp segments must be between 1 and "
-                  + f"{lims.seg[1]}.  Please try again.")
+        if len(setpts) not in info.seg['lim']:
+            print("Number of ramp segments must be in {info.seg['lim']}.  "
+                  + "Please try again.")
             setpts = []
-        if abs(setpts[0]) > bound or abs(setpts[-1]) > bound:
-            print(f"Magnet ramp setpoints must be within [{-bound}, {bound}]."
+        if abs(setpts[0]) > lim or abs(setpts[-1]) > lim:
+            print(f"Magnet ramp setpoints must be within [{-lim}, {lim}]."
                   + "  Please try again.")
             setpts = []
         self.setpoints_list = setpts
