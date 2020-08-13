@@ -153,17 +153,16 @@ class Temp(Instrument):
     def set_to_measure(self, measured: Union[int, str]) -> None:
         # TODO: Test set_to_measure
         """Set whether to measure only rad shield and stage or all temps."""
-        valid = (0, 1, 'controlled', 'all')
-        if measured not in valid:
-            print(f"Input must be in {valid}.  Please try again")
-            return None
-        if type(measured) is int:
-            self.to_measure_idx = measured
-            self.to_measure_str = self.to_measure_switch[measured]
-        else:
-            self.to_measure_idx = self.to_measure_switch[measured]
-            self.to_measure_str = measured
-        return self.to_measure_idx
+        if measured in info.to_measure['dic'].values():
+            measured = key(measured)
+        elif measured not in info.to_measure['dic'].keys():
+            measured = info.to_measure['def']
+            print("Argument for temperatures to measure must be in "
+                  + f"{info.to_measure['dic']}.  Setting to default value "
+                  + f"({measured}, {info.to_measure['dic'][measured]}).")
+        self.to_measure_idx = measured
+        self.to_measure_str = info.to_measure['dic'][measured]
+        return measured
 
     def measure(self, t0: float) -> float:
         # TODO: Test measure

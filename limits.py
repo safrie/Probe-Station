@@ -24,9 +24,15 @@ from typing import Dict
 mu = u"\xb5"
 
 
-def key(dic: Dict, val):
-    """Get the 1st matching key from a dictionary dic given a value val."""
-    return (k for k, v in dic.items() if val == v)[0]
+def key(dic: Dict, val, initer=False):
+    """Get the 1st matching key from a dictionary dic given a value val.
+
+    initer is an optional argument indicating that val is inside an iterable
+    structure such as a tuple, and its existence within that tuple is enough
+    to match it with the key."""
+    if initer:
+        return tuple(k for k, v in dic.items() if (val == v or val in v))[0]
+    return tuple(k for k, v in dic.items() if val == v)[0]
 
 
 # TODO: Change veryone over to KeithInfo
