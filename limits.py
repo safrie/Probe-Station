@@ -390,7 +390,7 @@ class MagInfo():
     }
     seg = {'lim': range(1, 11),
            'def': 1}
-    volt = (0.001, 6)
-    volt_default = 2
-    curr = (0, 26.3)
-    curr_default = 26.3
+    volt = {'lim': (0.001, 6),
+            'def': 2}
+    curr = {'lim': (0, 26.3),
+            'def': 26.3}
