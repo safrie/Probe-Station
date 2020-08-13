@@ -23,12 +23,6 @@ class Mag(Instrument):
     get_instr_type_str.
 
     attributes_
-        field_unit_switch: Dict for converting between unit indices and units.
-        time_unit_switch: Dict for converting between unit indices and units.
-        field_limit: Dict for field limit in different units.
-        rate_limits: Dict for maximum and minimum ramp rates in different units
-        setpoints_title: Label for setpoints dialog box
-        ramp_title: Label for ramp rates dialog box
         address: Integer COM addres of the magnet power supply programmer
         visa: Visa resource for the magnet power supply programmer
         target: Target field or current to set the magnet to
@@ -69,12 +63,6 @@ class Mag(Instrument):
         set_time_unit(bint or str)
         time_unit(optional str)
     """
-
-    setpoints_title = 'Magnetic Field Setpoints'
-    ramp_title = 'Magnetic Field Ramp Rates'
-    target_label = 'Target Magnet'
-    setpoints_label = 'Ramp Setpoints '
-    ramps_label = 'Ramp Rates '
 
     def __init__(self) -> None:
         """Instantiate magnet power supply control."""

@@ -362,7 +362,10 @@ class MagInfo():
                                'Kilogauss': 'kG',
                                'Tesla': 'T',
                                'Amps': 'A'},
-                      'def': 1}
+                      'def': 1},
+             'txt': {'setp': ('Magnetic Field Setpoints', 'Ramp Setpoints'),
+                     # Format for above is (Title, Label)
+                     'targ': 'Target Magnet'}
              }
     time = {'unit': {'Full': {0: 'Seconds',
                               1: 'Minutes',
@@ -386,7 +389,8 @@ class MagInfo():
                 'minutes': {i: (1.0e-4*coil_const[i], 600*coil_const[i])
                             for i in range(len(coil_const))}
                 },
-        'def': {i: 0.1*coil_const[i] for i in range(len(coil_const))}
+        'def': {i: 0.1*coil_const[i] for i in range(len(coil_const))},
+        'txt': ('Magnetic Field Ramp Rates', 'Ramp Rates ')  # (Title, Label)
     }
     seg = {'lim': range(1, 11),
            'def': 1}
