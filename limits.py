@@ -291,13 +291,12 @@ ivinfo = {'dic': {0: DconInfo,
           'def': 0}
 
 
-# TODO: Change to TempInfo
 class TempInfo():
     """Contains instrument parameter limits and defaults for LakeShore 336."""
     addr = {'lim': range(1, 32),
             'def': 11}
 
-    out = {'lim': (1, 2),
+    out = {'lim': (1, 2),  # FIXME: Is this ever used? .keys() works fine...
            'def': 2,
            'txt': {1: 'Radiation Shield Heater',
                    2: 'Sample Heater'},
