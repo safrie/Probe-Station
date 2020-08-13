@@ -109,10 +109,10 @@ class Mag(Instrument):
     def set_ramp_segments(self, segs: int) -> None:
         """Set number of ramp segments for magnet range."""
         # TODO: Test set_ramp_segments
-        if segs not in range(lims.seg[1], 0, -1):
-            segs = lims.seg_default
-            print(f"Number of segments must be between 1 and {lims.seg[1]}.  "
-                  + f"Segments set to {lims.seg_default}.")
+        if segs not in info.seg['lim']:
+            segs = info.seg['def']
+            print(f"Number of segments must be in {info.seg['lim']}.  "
+                  + f"Segments set to default ({segs}).")
         self.ramp_segments = segs
         self.visa.set_ramp_segs(segs)
         return segs
