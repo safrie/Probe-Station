@@ -90,11 +90,7 @@ class Mag(Instrument):
     def set_address(self, addr: int) -> None:
         """Set COM address of magnet and check connection."""
         # TODO: Test set_address
-        if addr not in lims.addr:
-            addr = lims.addr_default
-            print(f"COM address must be in {addr}.  "
-                  + f"Address set to {lims.addr_default}.")
-        super().set_address(addr)
+        addr = super().set_address(addr)
         self.visa.check_connected(addr)
         return addr
 
