@@ -388,10 +388,8 @@ class MagInfo():
                 },
         'def': {i: 0.1*coil_const[i] for i in range(len(coil_const))}
     }
-    seg = (1, 10)
-    seg_default = 1
-    field_unit_default = (1, 'Tesla', 'T')
-    time_unit_default = (0, 'Seconds', 's')
+    seg = {'lim': range(1, 11),
+           'def': 1}
     volt = (0.001, 6)
     volt_default = 2
     curr = (0, 26.3)
