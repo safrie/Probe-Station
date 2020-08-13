@@ -337,13 +337,12 @@ class TempInfo():
     stage_cont = {'def': True}
 
 
-# TODO: Change to MagInfo
-class MagLims():
+class MagInfo():
     """Contains instrument parameter limits for the AMI 430."""
     # TODO: Get COM address limits
     # HACK: addr limits are currently (1, 10) just to have something.
-    addr = range(1, 11)
-    addr_default = 2
+    addr = {'lim': range(1, 11),
+            'def': 2}
     # 1 T = 10 kG
     # coil const in {field_unit}/A
     coil_const = array([30/26.3, 3/26.3, 1])
