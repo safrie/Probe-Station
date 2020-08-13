@@ -98,11 +98,11 @@ class Mag(Instrument):
         """Set the target magnetic field or current."""
         # TODO: Test set_target()
         fidx, unit = self.field_unit_idx, self.field_unit('Abbv')
-        bound = lims.field[fidx]
-        if abs(targ) > bound:
-            targ = lims.field_default[fidx]
-            print(f"Target out of bounds. |targ| must be < {bound}{unit}."
-                  + f"Target set to {lims.field_default} {unit}")
+        inf = info.field
+        if abs(targ) > inf['lim'][fidx]:
+            targ = inf['def'][fidx]
+            print(f"Target out of bounds. |targ| must be < {inf['lim'][fidx]}"
+                  + f"{unit}.  Target set to {targ} {unit}")
         self.target = targ
         return targ
 
