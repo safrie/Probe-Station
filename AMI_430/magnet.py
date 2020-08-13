@@ -67,21 +67,21 @@ class Mag(Instrument):
     def __init__(self) -> None:
         """Instantiate magnet power supply control."""
         super().__init__('Mag')
-        self.address = lims.addr_default
+        self.address = info.addr['def']
         self.visa = visa(self.address)
-        self.ramp_segments = lims.seg_default
+        self.field_unit_idx = info.field['unit']['def']
+        self.time_unit_idx = info.time['unit']['def']
+        self.target = info.field['def'][self.field_unit_idx]
+        self.ramp_segments = info.seg['def']
         self.setpoints_list = []
         self.setpoints_text = None
         self.ramps_list = []
         self.ramps_text = None
-        self.quench_detect = None
-        self.volt_limit = lims.volt_default
-        self.curr_limit = lims.curr_default
+        self.volt_limit = info.volt['def']
+        self.curr_limit = info.curr['def']
         self.zero = None
-        self.field_unit_idx = lims.field_unit_default[0]
-        self.time_unit_idx = lims.time_unit_default[0]
-        self.target = lims.field_default[self.field_unit_idx]
         self.calibration_file = None
+        self.quench_detect = None
 
     def get_instr_type_str(self) -> str:
         """Return a string describing this instrument."""

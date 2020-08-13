@@ -349,7 +349,7 @@ class MagInfo():
     field = {'lim': {0: 30,
                      1: 3,
                      2: 26.3},
-             'def': {i: 5 * coil_const[i] for i in range(len(coil_const))},
+             'def': {i: 0 for i in range(len(coil_const))},
              'unit': {'Full': {0: 'Kilogauss',
                                1: 'Tesla',
                                2: 'Amps',
