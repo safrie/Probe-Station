@@ -11,7 +11,7 @@ Part of the V3 probe station collection.
 from abcs.instrument_abc import Instrument
 from AMI_430.visa_mag import vMag as visa
 from limits import MagInfo as info
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 from pathlib import Path
 
 
@@ -117,43 +117,45 @@ class Mag(Instrument):
         self.visa.set_ramp_segs(segs)
         return segs
 
-    def set_setpoints_list(self, setpts: list) -> bool:
-        """Set the list of magnet setpoints to setpts, return validation flag.
+    def set_setpoints(self, stpts: Union[list, str]) -> Tuple:
+        """Set the list of magnet setpoints to setpts, return list or str.
 
         These are the ramp interval upper bounds.
         """
-        # TODO: Test set_setpoints_list
+        # TODO: Test set_setpoints
         lim = info.field['lim'][self.field_unit_idx]
-        setpts.sort()
-        if len(setpts) not in info.seg['lim']:
+        if isinstance(stpts, str):
+            stpts = [float(x) for x in stpts.split(', ')]
+        stpts.sort()
+        if len(stpts) not in info.seg['lim']:
             print("Number of ramp segments must be in {info.seg['lim']}.  "
                   + "Please try again.")
-            setpts = []
-        if abs(setpts[0]) > lim or abs(setpts[-1]) > lim:
+            stpts = []
+        if abs(stpts[0]) > lim or abs(stpts[-1]) > lim:
             print(f"Magnet ramp setpoints must be within [{-lim}, {lim}]."
                   + "  Please try again.")
-            setpts = []
-        self.setpoints_list = setpts
-        return setpts
+            stpts = []
+        self.setpoints_text = str(stpts).strip('[]')
+        self.setpoints_list = stpts
+        return (stpts, self.setpoints_text)
 
-    def set_setpoints_text(self, setpts: str) -> None:
-        """Set the setpoints string listing to setpts.
+    # def set_setpoints_text(self, setpts: str) -> None:
+    #     """Set the setpoints string listing to setpts.
 
-        These are the ramp interval upper bounds.
-        """
-        # TODO: Test set_setpoints_text
-        bound = lims.field[self.field_unit_idx]
-        setpts.sort()
-        if len(setpts) not in range(lims.seg[1], 0, -1):
-            print("Number of ramp segments must be between 1 and"
-                  + f"{lims.seg[1]}.  Please try again.")
-            setpts = ''
-        if abs(float(setpts[0])) > bound or abs(float(setpts[-1])) > bound:
-            print(f"Magnet ramp setpoints must be within [{-bound}, {bound}]."
-                  + "  Please try again.")
-            setpts = ''
-        self.setpoints_text = setpts
-        return setpts
+    #     These are the ramp interval upper bounds.
+    #     """
+    #     bound = lims.field[self.field_unit_idx]
+    #     setpts.sort()
+    #     if len(setpts) not in range(lims.seg[1], 0, -1):
+    #         print("Number of ramp segments must be between 1 and"
+    #               + f"{lims.seg[1]}.  Please try again.")
+    #         setpts = ''
+    #     if abs(float(setpts[0])) > bound or abs(float(setpts[-1])) > bound:
+    #        print(f"Magnet ramp setpoints must be within [{-bound}, {bound}]."
+    #               + "  Please try again.")
+    #         setpts = ''
+    #     self.setpoints_text = setpts
+    #     return setpts
 
     def set_ramps_list(self, ramps: list) -> bool:
         """Set list of magnet ramp rates to ramps, return validation flag."""

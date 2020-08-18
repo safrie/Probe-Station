@@ -1438,7 +1438,8 @@ class ProbeGui(QMainWindow):
         d1 = {self.set_mag_ramp_segments: segs}
         self.mag_ui_internal.update(d1)
 
-    def set_mag_ramp_setpoints(self, setpts: Optional[List] = None) -> None:
+    def set_mag_ramp_setpoints(self, setpts: Optional[Union[List, str]]
+                               = None) -> None:
         # TODO: Test set_mag_ramp_setpoints
         # TODO: Input validation on fields
         """Open dialog box to set magnet ramp setpoints.
@@ -1451,26 +1452,23 @@ class ProbeGui(QMainWindow):
         unit_type = 'curr' if abbv == 'A' else 'field'
         unit_idx = mag.field_unit_idx
         bounds = (-mag.lims.field[unit_idx], mag.lims.field[unit_idx])
-        if setpts is not None:
-            setpoints_list = [float(x) for x in setpts]
-            setpoints_text = ', '.join(setpts)
-        else:
+        if setpts is None:
             title = f'{mag.setpoints_title} ({unit})'
             label = (f'Enter your list of magnet ramp setpoints in {unit}.\n'
                      + 'Setpoints should be numbers separated by commas '
                      + '(e.g., 1, 2, 3).\n'
                      + f'Range is {bounds[0]} {abbv} to {bounds[1]} {abbv}.')
-            setpoints_text = self.list_box.getText(self, title, label)[0]
-            setpoints_list = [float(x) for x in setpoints_text.split(', ')]
-        setpoints_list = mag.set_setpoints_list(setpoints_list)
-        setpoints_text = mag.set_setpoints_text(setpoints_text)
-        d1 = {self.set_mag_ramp_setpoints: setpoints_list}
+            txt = self.list_box.getText(self, title, label)[0]
+        (lst, txt) = mag.set_setpoints(txt)
+        d1 = {self.set_mag_ramp_setpoints: lst}
         self.mag_ui_internal.update(d1)
-        if len(setpoints_list) == len(mag.ramps_list) == mag.ramp_segments:
+        if not len(lst) == mag.ramp_segments:
+            self.set_mag_ramp_segments(len(lst))
+        if len(lst) == len(mag.ramps_list):
             print("Setting ramp segments")
             for i in range(0, mag.ramp_segments):
                 mag.visa.set_rate(seg=i, rate=mag.ramps_list[i],
-                                  upbound=setpoints_list[i], unit=unit_type)
+                                  upbound=lst[i], unit=unit_type)
 
     def set_mag_ramp_rates(self, ramps: Optional[List] = None) -> None:
         # TODO: Test set_mag_ramp_rates
