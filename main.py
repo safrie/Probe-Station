@@ -1478,9 +1478,9 @@ class ProbeGui(QMainWindow):
         fabbv, fidx = mag.field_unit('Abbv'), mag.field_unit_idx
         tabbv, tunit = mag.time_unit('Abbv'), mag.time_unit('Full')
         unit_type = 'curr' if fabbv == 'A' else 'field'
-        bounds = mag.rate_limits[tunit][fidx]
+        bounds = mag.info.rate['lim'][tunit][fidx]
         if ramps is None:
-            title = f'{mag.ramp_title} ({fabbv}/{tabbv})'
+            title = f'{mag.info.rate["txt"][0]} ({fabbv}/{tabbv})'
             label = (f'Enter list of magnet ramp rates in {fabbv}/{tabbv}.\n'
                      + 'Ramp rates should be numbers separated by commas '
                      + '(e.g., 1, 2, 3).\n'
