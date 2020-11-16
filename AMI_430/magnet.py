@@ -157,41 +157,44 @@ class Mag(Instrument):
     #     self.setpoints_text = setpts
     #     return setpts
 
-    def set_ramps_list(self, ramps: list) -> bool:
-        """Set list of magnet ramp rates to ramps, return validation flag."""
-        # TODO: Test set_ramps_list
+    def set_ramps(self, ramps: Union[list, str]) -> Tuple:
+        """Set list of magnet ramp rates to ramps, return tuple of values."""
+        # TODO: Test set_ramps
         fidx, fabbv = self.field_unit_idx, self.field_unit['Abbv']
         tunit, tabbv = self.time_unit['Full'], self.time_unit['Abbv']
-        bounds = lims.rate[tunit][fidx]
+        bounds = info.rate['lim'][tunit][fidx]
+        if isinstance(ramps, str):
+            ramps = [float(x) for x in ramps.split(', ')]
         ramps.sort()
-        if len(ramps) not in range(lims.seg[1], 0, -1):
-            print("Number of ramp segments must be between 1 and "
-                  + f"{lims.seg[1]}.  Please try again.")
+        if len(ramps) not in info.seg['lim']:
+            print(f"Number of ramp segments must be in {info.seg['lim']}.  "
+                  + "Please try again.")
             ramps = []
         if ramps[0] < bounds[0] or ramps[-1] > bounds[1]:
             print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
                   + f"and {bounds[1]} {fabbv}/{tabbv}.  Please try again.")
             ramps = []
         self.ramps_list = ramps
-        return ramps
+        self.ramps_text = str(ramps).strip('[]')
+        return (ramps, self.ramps_text)
 
-    def set_ramps_text(self, ramps: str) -> None:
-        """Set the ramps string listing to ramps."""
-        # TODO: Test set_ramps_text
-        fidx, fabbv = self.field_unit_idx, self.field_unit['Abbv']
-        tunit, tabbv = self.time_unit['Full'], self.time_unit['Abbv']
-        bounds = lims.rate[tunit][fidx]
-        ramps.sort()
-        if len(ramps) not in range(lims.seg[1], 0, -1):
-            print("Number of ramp segments must be between 1 and "
-                  + f"{lims.seg[1]}.  Please try again")
-            ramps = ''
-        if float(ramps[0]) < bounds[0] or float(ramps[-1]) > bounds[1]:
-            print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
-                  + f"and {bounds[1]} {fabbv}/{tabbv}.  Please try again.")
-            ramps = ''
-        self.ramps_text = ramps
-        return ramps
+    # def set_ramps_text(self, ramps: str) -> None:
+    #     """Set the ramps string listing to ramps."""
+    #     # TODO: Test set_ramps_text
+    #     fidx, fabbv = self.field_unit_idx, self.field_unit['Abbv']
+    #     tunit, tabbv = self.time_unit['Full'], self.time_unit['Abbv']
+    #     bounds = lims.rate[tunit][fidx]
+    #     ramps.sort()
+    #     if len(ramps) not in range(lims.seg[1], 0, -1):
+    #         print("Number of ramp segments must be between 1 and "
+    #               + f"{lims.seg[1]}.  Please try again")
+    #         ramps = ''
+    #     if float(ramps[0]) < bounds[0] or float(ramps[-1]) > bounds[1]:
+    #         print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
+    #               + f"and {bounds[1]} {fabbv}/{tabbv}.  Please try again.")
+    #         ramps = ''
+    #     self.ramps_text = ramps
+    #     return ramps
 
     def set_quench_detect(self, enable: bool) -> None:
         """Enable/disable automatic quench detection.
