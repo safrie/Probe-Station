@@ -101,8 +101,8 @@ class Mag(Instrument):
         inf = info.field
         if abs(targ) > inf['lim'][fidx]:
             targ = inf['def'][fidx]
-            print(f"Target out of bounds. |targ| must be < {inf['lim'][fidx]}"
-                  + f"{unit}.  Target set to {targ} {unit}")
+            print(f"Target out of bounds. |targ| must be < "
+                  f"{inf['lim'][fidx]}{unit}.  Target set to {targ} {unit}")
         self.target = targ
         return targ
 
@@ -139,24 +139,6 @@ class Mag(Instrument):
         self.setpoints_list = stpts
         return (stpts, self.setpoints_text)
 
-    # def set_setpoints_text(self, setpts: str) -> None:
-    #     """Set the setpoints string listing to setpts.
-
-    #     These are the ramp interval upper bounds.
-    #     """
-    #     bound = lims.field[self.field_unit_idx]
-    #     setpts.sort()
-    #     if len(setpts) not in range(lims.seg[1], 0, -1):
-    #         print("Number of ramp segments must be between 1 and"
-    #               + f"{lims.seg[1]}.  Please try again.")
-    #         setpts = ''
-    #     if abs(float(setpts[0])) > bound or abs(float(setpts[-1])) > bound:
-    #        print(f"Magnet ramp setpoints must be within [{-bound}, {bound}]."
-    #               + "  Please try again.")
-    #         setpts = ''
-    #     self.setpoints_text = setpts
-    #     return setpts
-
     def set_ramps(self, ramps: Union[list, str]) -> Tuple:
         """Set list of magnet ramp rates to ramps, return tuple of values."""
         # TODO: Test set_ramps
@@ -177,24 +159,6 @@ class Mag(Instrument):
         self.ramps_list = ramps
         self.ramps_text = str(ramps).strip('[]')
         return (ramps, self.ramps_text)
-
-    # def set_ramps_text(self, ramps: str) -> None:
-    #     """Set the ramps string listing to ramps."""
-    #     # TODO: Test set_ramps_text
-    #     fidx, fabbv = self.field_unit_idx, self.field_unit['Abbv']
-    #     tunit, tabbv = self.time_unit['Full'], self.time_unit['Abbv']
-    #     bounds = lims.rate[tunit][fidx]
-    #     ramps.sort()
-    #     if len(ramps) not in range(lims.seg[1], 0, -1):
-    #         print("Number of ramp segments must be between 1 and "
-    #               + f"{lims.seg[1]}.  Please try again")
-    #         ramps = ''
-    #     if float(ramps[0]) < bounds[0] or float(ramps[-1]) > bounds[1]:
-    #         print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
-    #               + f"and {bounds[1]} {fabbv}/{tabbv}.  Please try again.")
-    #         ramps = ''
-    #     self.ramps_text = ramps
-    #     return ramps
 
     def set_quench_detect(self, enable: bool) -> None:
         """Enable/disable automatic quench detection.
@@ -254,10 +218,7 @@ class Mag(Instrument):
         inf = info.field['unit']
         index = (unit_val if unit_val in (0, 1, 2)
                  else key(dic=inf['Full'], val=unit_val) if len(unit_val) > 2
-                 # else inf['Full'].get(
-                 # unit_val, inf['def']) if len(unit_val) > 2
                  else key(dic=inf['Abbv'], val=unit_val)
-                 # else inf['Abbv'].get(unit_val, inf['def'])
                  )
         if index is None:
             index = inf['def']
@@ -312,12 +273,10 @@ class Mag(Instrument):
         # TODO: Test set_pars.
         """Send parameters to the AMI 430 but do not start ramping."""
         self.visa = visa
-        if self.field_unit('Abbv') == 'A':
-            visa.set_targ_curr(self.target)
-            # unit = 'curr'
+        if self.field_unit_idx == 2:
+            visa.set_targ_curr(self.target)  # Magnet unit is Amps
         else:
-            visa.set_targ_field(self.target)
-            # unit = 'field'
+            visa.set_targ_field(self.target)  # Magnet unit is kG or Tesla
         visa.set_ramp_segs(self.ramp_segments)
         for i in range(0, self.ramp_segments):
             visa.set_rate(seg=i, rate=self.ramps_list[i],
