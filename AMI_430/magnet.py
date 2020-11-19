@@ -10,7 +10,7 @@ Part of the V3 probe station collection.
 """
 from abcs.instrument_abc import Instrument
 from AMI_430.visa_mag import vMag as visa
-from limits import MagInfo as info
+from limits import MagInfo as info, key as key
 from typing import Optional, Union, Tuple
 from pathlib import Path
 
@@ -251,12 +251,16 @@ class Mag(Instrument):
     def set_field_unit(self, unit_val: Union[int, str]) -> None:
         """Set unit for magnetic field and update magnet."""
         # TODO: Test set_field_unit
+        inf = info.field['unit']
         index = (unit_val if unit_val in (0, 1, 2)
-                 else self.field_unit_switch['Full'].get(
-                     unit_val, lims.field_unit_default[1]) if len(unit_val) > 2
-                 else self.field_unit_switch['Abbv'].get(
-                     unit_val, lims.field_unit_default[2])
+                 else key(dic=inf['Full'], val=unit_val) if len(unit_val) > 2
+                 # else inf['Full'].get(
+                 # unit_val, inf['def']) if len(unit_val) > 2
+                 else key(dic=inf['Abbv'], val=unit_val)
+                 # else inf['Abbv'].get(unit_val, inf['def'])
                  )
+        if index is None:
+            index = inf['def']
         if index < 2:
             self.visa.set_field_unit(index)
         self.field_unit_idx = index
@@ -273,8 +277,6 @@ class Mag(Instrument):
             print(f'field_unit form must be in {valid}.')
         else:
             return info.field['unit'][form.capitalize()][self.field_unit_idx]
-            # return self.field_unit_switch[form.capitalize()][
-            #         self.field_unit_idx]
 
     def field_type(self) -> str:
         """Look up the field type string for the field unit."""
