@@ -286,13 +286,57 @@ class Mag(Instrument):
 
     def set_pars(self) -> None:
         # TODO: Test set_pars.
-        """Send parameters to the AMI 430 but do not start ramping."""
-        self.visa = visa
-        if self.field_unit_idx == 2:
-            visa.set_targ_curr(self.target)  # Magnet unit is Amps
+        """Send parameters to the AMI 430 but do not start ramping.
+
+        This method includes input validation (but does not set to defaults).
+        """
+        # self.visa = visa
+        fidx = self.field_unit_idx
+        tunit = self.time_unit('full').lower()
+        targ = self.target
+        segs = self.ramp_segments
+        setpts = self.setpoints_list
+        ramps = self.ramps_list
+        typ = self.field_type()
+        err = False
+        mes = ""
+
+        if fidx not in (0, 1, 2):
+            print("Field unit index out of bounds.  Please fix and try again.")
+            return
+        if tunit not in ('seconds', 'minutes'):
+            print("Time unit index out of bounds.  Please fix and try again.")
+            return
+
+        if abs(targ) > info.field['lim'][fidx] or targ is None:
+            err = True
+            mes += "Magnet target out of bounds.  "
+        if segs not in info.seg['lim']:
+            err = True
+            mes += "Number of ramp segments out of bounds.  "
+        if not len(ramps) == len(setpts) == segs:
+            err = True
+            mes += ("Number of segments, ramp setpoints, and ramp rates not "
+                    + "all equal.  ")
+        for i in range(0, segs):
+            if abs(ramps[i]) > info.rate['lim'][tunit][fidx]:
+                err = True
+                mes += f"Ramp rate {i} out of bounds.  "
+            if abs(setpts[i]) > info.field['lim'][fidx]:
+                err = True
+                mes += f"Setpoint {i} out of bounds.  "
+
+        if err:
+            print(mes)
+            return
+
+        self.visa.set_ramp_segs(segs)
+
+        if fidx == 2:
+            self.visa.set_targ_curr(targ)  # Magnet unit is Amps
         else:
-            visa.set_targ_field(self.target)  # Magnet unit is kG or Tesla
-        visa.set_ramp_segs(self.ramp_segments)
-        for i in range(0, self.ramp_segments):
-            visa.set_rate(seg=i, rate=self.ramps_list[i],
-                          upbound=self.setpoints_list[i])
+            self.visa.set_targ_field(targ)  # Magnet unit is kG or Tesla
+
+        for i in range(0, segs):
+            self.visa.set_rate(seg=i, rate=self.ramps_list[i],
+                               upbound=self.setpoints_list[i], typ=typ)
