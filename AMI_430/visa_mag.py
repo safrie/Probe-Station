@@ -20,6 +20,10 @@ class vMag(Visa):
     vMag inherits from visa_out.Visa and extends __init__, write, query,
     and check_connected.
 
+    DO NOT USE THIS CLASS DIRECTLY. IT IS MEANT TO BE USED WITHIN MAG!!!
+    You will miss out on input validation if you use this directly, and that
+    could cause troubling times by sending invalid commands to the AMI 430.
+
     atributes_
         state_table: dictionary connecting numerical output state of 430 to its
             meaning
@@ -108,7 +112,7 @@ class vMag(Visa):
     def __init__(self, address: int) -> None:
         """Extend visa_out's init with 430 attributes and check connection."""
         super().__init__()
-        self.mag = None
+        self.magnet = None
         self.targ_curr_cmd = ''
         self.targ_field_cmd = ''
         self.ramp_segs_cmd = ''
@@ -119,15 +123,15 @@ class vMag(Visa):
 
     def write(self, cmd: str) -> None:
         """Extend  write to automatically write to this instrument."""
-        if self.mag is not None:
-            super().write(self.mag, cmd)
+        if self.magnet is not None:
+            super().write(self.magnet, cmd)
         else:
             print('No write--magnet not connected')
 
     def query(self, cmd: str) -> str:
         """Extend query to automatically write to this instrument."""
-        if self.mag is not None:
-            return super().query(self.mag, cmd)
+        if self.magnet is not None:
+            return super().query(self.magnet, cmd)
         else:
             print('No query--magnet not connected')
 
@@ -136,9 +140,9 @@ class vMag(Visa):
         magnet_list = [x for x in self.instruments
                        if (str(com) and 'ASRL') in x]
         if not magnet_list:
-            self.mag = None
+            self.magnet = None
         else:
-            self.mag = self.rm.open_resource(magnet_list[0])
+            self.magnet = self.rm.open_resource(magnet_list[0])
 
     def set_targ_curr(self, curr: float) -> None:
         # TODO: Test set_targ_curr
@@ -154,33 +158,20 @@ class vMag(Visa):
         # TODO: Test set_ramp_segs
         """Create command to set number of ramp segments along magnet range.
 
-        This means the magnet will ramp at a rate specified by the segment
-        when it is within range.
+        This means the magnet will ramp at a rate specified by the segment.
         """
-        if segs < 1:
-            raise ValueError(
-                  'set_ramp_segs: segs must be a positive integer.')
-        else:
-            self.ramp_segs_cmd = f'CONF:RAMP:RATE:SEG {segs}'
+        self.ramp_segs_cmd = f'CONF:RAMP:RATE:SEG {segs}'
 
     def set_rate(self, seg: int, rate: float, upbound: float,
-                 unit: str = 'curr') -> None:
+                 typ: str = 'curr') -> None:
         # TODO: Test set_rate
-        # TODO: Validation on max number of segments
         """Create command to set ramp rate and upper bound for segment seg.
 
         rate is in units of fieldUnit/timeUnit and upbound is in units of
         fieldUnit.
         """
-        valid = ['curr', 'field']
-        if seg < 0:
-            raise ValueError('set_rate: seg must be nonnegative.')
-        elif unit not in valid:
-            raise ValueError('set_rate: unit must be "curr" or "field".')
-        else:
-            self.rate_cmd = (
-                f'CONF:RAMP:RATE:{unit} {seg},{rate},{upbound}')
-            self.write(self.rate_cmd)
+        self.rate_cmd = f'CONF:RAMP:RATE:{typ} {seg},{rate},{upbound}'
+        self.write(self.rate_cmd)
 
     def qrate(self, seg: int, unit: str) -> str:
         # TODO: Test qrate
@@ -188,13 +179,7 @@ class vMag(Visa):
 
         Ramp rate is in fieldUnit/timeUnit and upper bound is in fieldUnit.
         """
-        valid = ['curr', 'field']
-        if seg < 0:
-            raise ValueError('qrate: seg must be nonnegative.')
-        elif unit not in valid:
-            raise ValueError(f'qrate: unit must be in {valid}.')
-        else:
-            return self.query(f'RAMP:RATE:{unit}:{seg}?')
+        return self.query(f'RAMP:RATE:{unit}:{seg}?')
 
     def set_quench_det(self, enable: bool) -> None:
         # TODO: Test set_quench_det
@@ -210,20 +195,14 @@ class vMag(Visa):
     def set_volt_limit(self, limit: float) -> None:
         # TODO: Test set_volt_limit
         """Set voltage limit for magnet (V)."""
-        if limit < 0:
-            raise ValueError('set_volt_limit: limit must be positive.')
-        else:
-            cmd = f'CONF:VOLT:LIM {limit}'
-            self.write(cmd)
+        cmd = f'CONF:VOLT:LIM {limit}'
+        self.write(cmd)
 
     def set_curr_limit(self, limit: float) -> None:
         # TODO: Test set_curr_limit
         """Set current limit (A) for the magnet."""
-        if limit < 0:
-            raise ValueError('set_curr_limit: limit must be positive.')
-        else:
-            cmd = f'CONF:CURR:LIM {limit}'
-            self.write(cmd)
+        cmd = f'CONF:CURR:LIM {limit}'
+        self.write(cmd)
 
     def set_field_unit(self, unit: bool) -> None:
         # TODO: Test set_field_unit
