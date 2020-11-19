@@ -343,34 +343,6 @@ class MagInfo():
     # HACK: addr limits are currently (1, 10) just to have something.
     addr = {'lim': range(1, 11),
             'def': 2}
-    # 1 T = 10 kG
-    # coil const in {field_unit}/A
-    coil_const = (30/26.3, 3/26.3, 1)
-    field = {'lim': {0: 30,
-                     1: 3,
-                     2: 26.3},
-             'def': {i: 0 for i in range(len(coil_const))},
-             'unit': {'Full': {0: 'Kilogauss',
-                               1: 'Tesla',
-                               2: 'Amps',
-                               'kG': 'Kilogauss',
-                               'T': 'Tesla',
-                               'A': 'Amps'},
-                      'Abbv': {0: 'kG',
-                               1: 'T',
-                               2: 'A',
-                               'Kilogauss': 'kG',
-                               'Tesla': 'T',
-                               'Amps': 'A'},
-                      'def': 1,
-                      'typ': {0: 'field',
-                              1: 'field',
-                              2: 'curr'}
-                      },
-             'txt': {'setp': ('Magnetic Field Setpoints', 'Ramp Setpoints'),
-                     # Format for above is (Title, Label)
-                     'targ': 'Target Magnet'}
-             }
     time = {'unit': {'Full': {0: 'Seconds',
                               1: 'Minutes',
                               2: 'second',
@@ -381,24 +353,56 @@ class MagInfo():
                               1: 'min',
                               'Seconds': 's',
                               'Minutes': 'min'},
-                     'def': 0}
-            }
-    rate = {
-        # values for seconds are:
-        # {0: (1.90e-6, 11.4), 1: (1.90e-7, 1.14), 2: (2.67e-6, 10)}
-        # values for minutes are:
-        # {0: (1.14e-4, 684), 1: (1.14e-5, 68.4), 2: (1.0e-4, 600)}
-        'lim': {'seconds': {i: (1.0e-4/60*coil_const[i], 10*coil_const[i])
-                            for i in range(len(coil_const))},
-                'minutes': {i: (1.0e-4*coil_const[i], 600*coil_const[i])
-                            for i in range(len(coil_const))}
-                },
-        'def': {i: 0.1*coil_const[i] for i in range(len(coil_const))},
-        'txt': ('Magnetic Field Ramp Rates', 'Ramp Rates ')  # (Title, Label)
-    }
+                     'def': 0}}
     seg = {'lim': range(1, 11),
            'def': 1}
     volt = {'lim': (0.001, 6),
             'def': 2}
     curr = {'lim': (0, 26.3),
-            'def': 26.3}
+            'def': 26.3}    # 1 T = 10 kG
+    # coil const in {field_unit}/A
+    coil_const = (30/26.3, 3/26.3, 1)
+
+    def __init__(self):
+        """Init all the variables that need to refer to something else."""
+        self.field = {
+            'lim': {0: 30,
+                    1: 3,
+                    2: 26.3},
+            'def': {i: 0 for i in range(len(self.coil_const))},
+            'unit': {'Full': {0: 'Kilogauss',
+                              1: 'Tesla',
+                              2: 'Amps',
+                              'kG': 'Kilogauss',
+                              'T': 'Tesla',
+                              'A': 'Amps'},
+                     'Abbv': {0: 'kG',
+                              1: 'T',
+                              2: 'A',
+                              'Kilogauss': 'kG',
+                              'Tesla': 'T',
+                              'Amps': 'A'},
+                     'def': 1,
+                     'typ': {0: 'field',
+                             1: 'field',
+                             2: 'curr'}},
+            'txt': {'setp': ('Magnetic Field Setpoints', 'Ramp Setpoints'),
+                    # Format for above is (Title, Label)
+                    'targ': 'Target Magnet'}}
+        self.rate = {
+            # values for seconds are:
+            # {0: (1.90e-6, 11.4), 1: (1.90e-7, 1.14), 2: (2.67e-6, 10)}
+            # values for minutes are:
+            # {0: (1.14e-4, 684), 1: (1.14e-5, 68.4), 2: (1.0e-4, 600)}
+            'lim': {'seconds': {i: (1.0e-4/60*self.coil_const[i],
+                                    10*self.coil_const[i])
+                                for i in range(len(self.coil_const))},
+                    'minutes': {i: (1.0e-4*self.coil_const[i],
+                                    600*self.coil_const[i])
+                                for i in range(len(self.coil_const))}
+                    },
+            'def': {i: 0.1*self.coil_const[i]
+                    for i in range(len(self.coil_const))},
+            'txt': ('Magnetic Field Ramp Rates', 'Ramp Rates ')
+            # Format for above is (Title, Label)
+        }

@@ -217,11 +217,10 @@ class Mag(Instrument):
     def set_volt_limit(self, limit: float) -> None:
         """Set the voltage output limit in V for the magnet."""
         # TODO: Test set_volt_limit
-        if not lims.volt[0] <= limit <= lims.volt[1]:
-            limit = lims.volt_default
-            print("Magnet voltage limit must be between "
-                  + f"{lims.volt[0]} and {lims.volt[1]}.  Value set to "
-                  + f"{lims.volt_default} V.")
+        if not info.volt['lim'][0] <= limit <= info.volt['lim'][1]:
+            limit = info.volt['def']
+            print(f"Magnet voltage limit must be within {info.volt['lim']}."
+                  + f"Value set to {info.volt['def']} V.")
         self.volt_limit = limit
         self.visa.set_volt_lim(limit)
         return limit
@@ -229,11 +228,10 @@ class Mag(Instrument):
     def set_curr_limit(self, limit: float) -> None:
         """Set the current output limit in A for the magnet."""
         # TODO: Test set_curr_limit
-        if not lims.curr[0] <= limit <= lims.curr[1]:
-            limit = lims.curr_default
-            print("Magnet current must be between "
-                  + f"{lims.curr[0]} and {lims.curr[1]}.  Value set to "
-                  + f"{lims.curr_default} A.")
+        if not info.curr['lim'][0] <= limit <= info.curr['lim'][1]:
+            limit = info.curr['def']
+            print(f"Magnet current must be within {info.curr['lim'][0]}.  "
+                  f"Value set to {info.curr['def']} A.")
         self.curr_limit = limit
         self.visa.set_curr_lim(limit)
         return limit
