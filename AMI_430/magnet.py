@@ -126,15 +126,17 @@ class Mag(Instrument):
         lim = info.field['lim'][self.field_unit_idx]
         if isinstance(stpts, str):
             stpts = [float(x) for x in stpts.split(', ')]
-        stpts.sort()
         if len(stpts) not in info.seg['lim']:
             print("Number of ramp segments must be in {info.seg['lim']}.  "
                   + "Please try again.")
             stpts = []
-        if abs(stpts[0]) > lim or abs(stpts[-1]) > lim:
-            print(f"Magnet ramp setpoints must be within [{-lim}, {lim}]."
-                  + "  Please try again.")
-            stpts = []
+        else:
+            for i in range(0, len(stpts)):
+                if abs(stpts[i]) > lim:
+                    print(f"Magnet ramp setpoints must be within "
+                          f"[{-lim}, {lim}].  Please try again.")
+                    stpts = []
+                    break
         self.setpoints_text = str(stpts).strip('[]')
         self.setpoints_list = stpts
         return (stpts, self.setpoints_text)
@@ -147,15 +149,18 @@ class Mag(Instrument):
         bounds = info.rate['lim'][tunit][fidx]
         if isinstance(ramps, str):
             ramps = [float(x) for x in ramps.split(', ')]
-        ramps.sort()
         if len(ramps) not in info.seg['lim']:
             print(f"Number of ramp segments must be in {info.seg['lim']}.  "
                   + "Please try again.")
             ramps = []
-        if ramps[0] < bounds[0] or ramps[-1] > bounds[1]:
-            print(f"Ramp rates must be between {bounds[0]} {fabbv}/{tabbv} "
-                  + f"and {bounds[1]} {fabbv}/{tabbv}.  Please try again.")
-            ramps = []
+        else:
+            for i in range(0, len(ramps)):
+                if ramps[i] < bounds[0] or ramps[i] > bounds[1]:
+                    print(f"Ramp rates must be between {bounds[0]} {fabbv}/"
+                          + f"{tabbv} and {bounds[1]} {fabbv}/{tabbv}.  "
+                          + "Please try again.")
+                    ramps = []
+                    break
         self.ramps_list = ramps
         self.ramps_text = str(ramps).strip('[]')
         return (ramps, self.ramps_text)
