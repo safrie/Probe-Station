@@ -165,6 +165,16 @@ class Mag(Instrument):
         self.ramps_text = str(ramps).strip('[]')
         return (ramps, self.ramps_text)
 
+    def query_rate(self, seg: int) -> str:
+        """Return ramp rate and upper bound for segment seg.
+
+        This method wraps vMag.qrate in order to apply input validation."""
+        typ = self.field_type()
+        if seg not in info.seg['lim']:
+            print("Segment number out of bounds.  Please fix and try again.")
+            return
+        return self.visa.qrate(seg, typ)
+
     def set_quench_detect(self, enable: bool) -> None:
         """Enable/disable automatic quench detection.
 
