@@ -285,12 +285,13 @@ class Mag(Instrument):
     def set_time_unit(self, unit_val: Union[int, str]) -> None:
         """Set unit for time and update magnet."""
         # TODO: Test set_time_unit
+        inf = info.time['unit']
         index = (unit_val if unit_val in (0, 1)
-                 else self.time_unit_switch['Full'].get(
-                     unit_val, lims.time_unit_default[1]) if len(unit_val) > 3
-                 else self.time_unit_switch['Abbv'].get(
-                     unit_val, lims.time_unit_default[2])
+                 else key(dic=inf['Full'], val=unit_val) if len(unit_val) > 3
+                 else key(dic=inf['Abbv'], val=unit_val)
                  )
+        if index is None:
+            index = inf['def']
         self.visa.set_time_unit(index)
         self.time_unit_idx = index
         return index
@@ -303,9 +304,9 @@ class Mag(Instrument):
         # TODO: Test time_unit
         valid = ('full', 'abbv')
         if form.lower() not in valid:
-            raise ValueError(f'time_unit: form must be in {valid}.')
+            print(f'time_unit: form must be in {valid}.')
         else:
-            return self.time_unit_switch[form][self.time_unit_idx]
+            return info.time['unit'][form.capitalize()][self.time_unit_idx]
 
     def set_pars(self) -> None:
         # TODO: Test set_pars.
