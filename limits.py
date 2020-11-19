@@ -362,7 +362,11 @@ class MagInfo():
                                'Kilogauss': 'kG',
                                'Tesla': 'T',
                                'Amps': 'A'},
-                      'def': 1},
+                      'def': 1,
+                      'typ': {0: 'field',
+                              1: 'field',
+                              2: 'curr'}
+                      },
              'txt': {'setp': ('Magnetic Field Setpoints', 'Ramp Setpoints'),
                      # Format for above is (Title, Label)
                      'targ': 'Target Magnet'}

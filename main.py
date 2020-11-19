@@ -1498,12 +1498,12 @@ class ProbeGui(QMainWindow):
         #                           unit=unit_type)
 
     def set_mag_ramp(self, stpts: Optional[list], ramps: Optional[list],
-                     segs: Optional[int], unit: Optional[str]):
+                     segs: Optional[int], typ: Optional[str]):
         mag = self.mag
         stpts = self.mag.setpoints_list if stpts is None else stpts
         ramps = self.mag.ramps_list if ramps is None else ramps
         segs = self.mag.ramp_segments if segs is None else segs
-        unit = self.mag.
+        typ = self.mag.field_type()
         if not len(stpts) == len(ramps):
             print('Number of ramp setpoints and number of ramp rates not '
                   + 'equal.  Please correct.  No ramps set.')
@@ -1512,8 +1512,8 @@ class ProbeGui(QMainWindow):
             self.set_mag_ramp_segments(len(stpts))
         print("Setting magnet ramp segments.")
         for i in range(0, mag.ramp_segments):
-            mag.visa.set_rate(seg=i, rate=ramps[i], upbound=stpts[i])
-
+            mag.visa.set_rate(seg=i, rate=ramps[i], upbound=stpts[i],
+                              unit=typ)
 
     def set_mag_quench_detect(self, enable: Optional[bool] = None) -> None:
         # TODO: Test set_mag_quench_det

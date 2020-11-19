@@ -274,8 +274,13 @@ class Mag(Instrument):
         if form.lower() not in valid:
             print(f'field_unit form must be in {valid}.')
         else:
-            return self.field_unit_switch[form.capitalize()][
-                    self.field_unit_idx]
+            return info.field['unit'][form.capitalize()][self.field_unit_idx]
+            # return self.field_unit_switch[form.capitalize()][
+            #         self.field_unit_idx]
+
+    def field_type(self) -> str:
+        """Look up the field type string for the field unit."""
+        return info.field['unit']['typ'][self.field_unit_idx]
 
     def set_time_unit(self, unit_val: Union[int, str]) -> None:
         """Set unit for time and update magnet."""

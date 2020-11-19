@@ -44,6 +44,7 @@ To do with program:
         - magnet.py
         - visa_mag.py
         - main.py
+    i) make sure 'lims' switched out for 'info'
 • Fix LakeShore 336 Errors/Issues
     a) Implement GUI and YAML control over wait time between measurements
         - Class variable in temperature.py
