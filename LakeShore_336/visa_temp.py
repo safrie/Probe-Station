@@ -110,8 +110,8 @@ class vTemp(Visa):
     def qramp(self, out_idx: int) -> str:
         """Query the 336 to determine ramp rate for specified output."""
         if out_idx not in (1, 2):
-            raise ValueError('query_ramp: out_idx must be 1 or 2.')
-            return
+            print('query_ramp: out_idx must be 1 or 2.')
+            return None
         cmd = f'RAMP? {out_idx}'
         out = self.query(cmd)
         return out
@@ -131,8 +131,8 @@ class vTemp(Visa):
     def qsetpt(self, out_idx: int) -> str:
         """Query the 336 for the output out_idx's setpoint in Kelvin."""
         if out_idx not in (1, 2):
-            raise ValueError('qsetpt: out_idx must be 1 or 2.')
-            return
+            print('qsetpt: out_idx must be 1 or 2.')
+            return None
         cmd = f'SETP? {out_idx}'
         out = self.query(cmd)
         return out
@@ -143,8 +143,8 @@ class vTemp(Visa):
         This function accepts integers in [1, 8] and will look up proper label.
         """
         if in_idx not in range(1, 9):
-            raise ValueError('qtemp: in_idx must be in range(1, 9).')
-            return
+            print('qtemp: in_idx must be in range(1, 9).')
+            return None
         cmd = f'KRDG? {self.input_idx_switch[in_idx]}'
         out = self.query(cmd)
         return out
@@ -158,10 +158,10 @@ class vTemp(Visa):
         """
         if out_idx not in (1, 2):
             print('enable_output: out_idx must be 1 or 2.')
-            return
+            return None
         if mode_idx not in range(0, 6):
             print('enable_output: mode_idx must be in range(0, 6).')
-            return
+            return None
         in_idx = out_idx + 5
         cmd = f'OUTMODE {out_idx}, {mode_idx}, {in_idx}, 1'
         self.write(cmd)
@@ -173,9 +173,9 @@ class vTemp(Visa):
         """
         if out_idx not in (1, 2):
             print('enable_heater: out_idx must be 1 or 2.')
-            return
+            return None
         if htr_idx not in range(0, 4):
             print(f'ENABLE_HEATER: htr_idx must be in {range(0, 4)}.')
-            return
+            return None
         cmd = f'RANGE {out_idx}, {htr_idx}'
         self.write(cmd)
