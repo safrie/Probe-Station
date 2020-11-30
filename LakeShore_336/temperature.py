@@ -10,7 +10,6 @@ Part of the V3 Probe Station Collection.
 """
 
 from abcs.instrument_abc import Instrument
-from limits import TempLims as lims
 import LakeShore_336.visa_temp as visa
 import time
 from typing import Union, Tuple
