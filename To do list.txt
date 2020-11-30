@@ -15,13 +15,8 @@ To do with program:
         - test_environment.yaml
     j) Change limits names to 'info'
         This is where we're holding relevant variables, not just bounds
-        - Change in limits.py
-            - MagLims
-            - TempLims
         - Change imports and aliases
             - Main
-            - temperature
-            - magnet
             - design
     n) Debug KeithMeasure.set_num_points when overflows b/c update_num_points
 
@@ -40,9 +35,6 @@ To do with program:
     e) Fix any VISA issues
     g) Update UI from main.py in case invalid parameters set to defaults in mag
     h) Update limits and defaults
-        - limits.py
-        - magnet.py
-        - visa_mag.py
         - main.py
     i) make sure 'lims' switched out for 'info'
 • Fix LakeShore 336 Errors/Issues
@@ -61,18 +53,13 @@ To do with program:
         - Config file in probe_station_params
     c) Create get_header_string method
     d) Fix any VISA issues
-    e) Input validation
-        - setters in temperature.py
-        - Update references and defaults
-            -- temperature.py
-            -- limits.py
-            -- main.py
-            -- visa_temp.py
     f) Add "warm" button to GUI
     g) Switch radPowerSpinbox to radPowerCombobox
         - in main.py
+        - in design.py?
     h) Switch stagePowerSpinbox to stagePowerCombobox
         - in main.py
+        - in design.py?
 • Add tooltips to:
     a) set_setpoints button
     b) set_ramps button
