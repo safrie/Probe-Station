@@ -338,7 +338,7 @@ class TempInfo():
 
 
 class MagInfo():
-    """Contains instrument parameter limits for the AMI 430."""
+    """Contains instrument parameter info and limits for the AMI 430."""
     # TODO: Get COM address limits
     # HACK: addr limits are currently (1, 10) just to have something.
     addr = {'lim': range(1, 11),
