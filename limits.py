@@ -363,6 +363,27 @@ class MagInfo():
     # coil const in {field_unit}/A
     coil_const = (30/26.3, 3/26.3, 1)
 
+    state_table = {
+            1: 'RAMPING to target value',
+            2: 'HOLDING at target value',
+            3: 'PAUSED',
+            4: 'Ramping in MANUAL UP mode',
+            5: 'Ramping in MANUAL DOWN mode',
+            6: 'ZEROING CURRENT',
+            7: 'Quench detected',
+            8: 'At ZERO current',
+            9: 'Heating persistent switch',
+            10: 'Cooling persistent switch'}
+    trig_out_reg = {
+            0: 'Magnet Voltage',
+            1: 'Magnet Current',
+            2: 'Magnet Field',
+            3: 'Date and Time',
+            4: 'None',
+            5: 'Formatted Output',
+            6: 'Serial Interface',
+            7: 'Ethernet Interface'}
+
     def __init__(self):
         """Init all the variables that need to refer to something else."""
         self.field = {

@@ -11,6 +11,7 @@ Part of the V3 Probe Station Collection
 """
 
 from abcs.visa_abc import Visa
+from limits import MagInfo as info
 
 
 class vMag(Visa):
@@ -25,8 +26,6 @@ class vMag(Visa):
     could cause troubling times by sending invalid commands to the AMI 430.
 
     atributes_
-        state_table: dictionary connecting numerical output state of 430 to its
-            meaning
         addr: integer specifying COM port connection to the computer
         mag: Visa resource for 430 power supply programmer
         targ_curr_cmd: Command for setting target current in amps.
@@ -48,7 +47,6 @@ class vMag(Visa):
         qtime_unit: Query for instrument's time unit (0 = s, 1 = min)
         enable_trig_cmd: Command for setting what data appears in the output
             and which ports (serial, ethernet) data should output to
-        trig_out_reg: Trigger output register
 
     methods_
         __init__(int)
@@ -78,26 +76,6 @@ class vMag(Visa):
         quench(bool)
     """
 
-    state_table = {
-            1: 'RAMPING to target value',
-            2: 'HOLDING at target value',
-            3: 'PAUSED',
-            4: 'Ramping in MANUAL UP mode',
-            5: 'Ramping in MANUAL DOWN mode',
-            6: 'ZEROING CURRENT',
-            7: 'Quench detected',
-            8: 'At ZERO current',
-            9: 'Heating persistent switch',
-            10: 'Cooling persistent switch'}
-    trig_out_reg = {
-            0: 'Magnet Voltage',
-            1: 'Magnet Current',
-            2: 'Magnet Field',
-            3: 'Date and Time',
-            4: 'None',
-            5: 'Formatted Output',
-            6: 'Serial Interface',
-            7: 'Ethernet Interface'}
     qtarg_curr = 'CURR:TARG?'
     qtarg_field = 'FIELD:TARG?'
     qramp_segs = 'RAMP:RATE:SEG?'
@@ -240,7 +218,7 @@ class vMag(Visa):
     def qstate(self) -> str:
         # TODO: Test qstate
         """Return ramp/general state of instrument."""
-        return self.state_table[self.query('STATE?')]
+        return info.state_table[self.query('STATE?')]
 
     def set_enable_trig(self, mag_volt: bool, mag_curr: bool, mag_field: bool,
                         time: bool, format_out: bool, serial_out: bool,
