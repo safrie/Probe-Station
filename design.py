@@ -204,8 +204,6 @@ class Ui_KeithWindow(Ui_MainWindow):
         closeEvent(event)
     """
 
-    mu = u'\xb5'
-
     def __init__(self):
         super().__init__()
 

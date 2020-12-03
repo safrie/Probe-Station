@@ -17,11 +17,12 @@ Part of the V3 Probe Station Collection.
 @author: Sarah Friedensen
 """
 
-from numpy import array
+# from numpy import array
 from typing import Dict
 
 
 mu = u"\xb5"
+ohm = u"\xe2"
 
 
 def key(dic: Dict, val, initer=False):
@@ -47,6 +48,11 @@ class KeithInfo:
                     2: "pulseDelta",
                     3: "sweepPulseDeltaStair",
                     4: "sweepPulseDeltaLog"},
+            'labels': ["Differential Conductance",
+                       "Delta",
+                       "Pulse Delta",
+                       "Pulse Delta Staircase Sweep",
+                       "Pulse Delta Logarithmic Sweep"],
             'def': 0}
 
     unit = {'dic': {0: 'volts',
@@ -54,6 +60,11 @@ class KeithInfo:
                     2: 'ohms',
                     3: 'avgw',
                     4: 'peakw'},
+            'labels': ['Voltage (V)',
+                       '(Differential) Conductance (S)',
+                       f'(Differential) Resistance ({ohm})',
+                       'Average Power (W)',
+                       'Peak Power (W)'],
             'def': 0}
 
     power = {'lim': ("AVER", "PEAK"),
@@ -100,18 +111,19 @@ class KeithInfo:
                           4: 1.0,
                           5: 10.0,
                           6: 100.0},
-                  'def': 2}
+                  'def': 2,
+                  'labels': ['10 mV', '100 mV', '1 V', '10 V', '100 V']}
 
     compl_volt = {'lim': (0.1, 105.0),
                   'def': 10.0}
     cab_def = False
 
     field4 = {'def': 0,
-              'txt': {0: 'Current Delta ',
-                      1: None,
-                      2: None,
-                      3: 'Number Points',
-                      4: 'Number Points'}
+              'labels': {0: 'Current Delta ',
+                         1: None,
+                         2: None,
+                         3: 'Number Points',
+                         4: 'Number Points'}
               }
 
     count = {'def': 11,
@@ -180,7 +192,8 @@ class KeithInfo:
                       }
         self.points = {'lim': range(1, 65537),
                        'def': 11,
-                       'txt': "Number Points"
+                       'txt': "Number Points",
+                       'decim': 0
                        }
 
         self.filt = {'dic': {0: "MOV",  # This replaces filter_switch
@@ -188,6 +201,7 @@ class KeithInfo:
                      'def': 0,
                      'txt': {0: "Moving",
                              1: "Repeating"},
+                     'labels': ["Moving", "Repeating"],
                      'ondef': False
                      }
 
@@ -197,6 +211,8 @@ class DconInfo(KeithInfo):
 
     DconInfo inherits from KeithInfo"""
 
+    idx = 0
+
     def __init__(self):
         super().__init__()
         self.curr1['def'] = -10.0e-6
@@ -205,9 +221,12 @@ class DconInfo(KeithInfo):
         self.curr_step['def'] = 1.0e-6
         self.curr_delta = {'lim': (0, 105.0e-3),
                            'def': 1.0e-6,
-                           'txt': self.field4['txt'][0]}
+                           'txt': self.field4['label'][self.idx],
+                           'decim': 5}
 
-        self.points['def'] = None
+        self.points['def'] = abs(
+            ((self.curr2['def'] - self.curr1['def']) // self.curr_step['def'])
+            + 1)
 
         del self.filt['dic'][0]
         del self.filt['txt'][0]
@@ -218,6 +237,8 @@ class DeltaInfo(KeithInfo):
     """DeltaInfo contains limits specific to delta measurements.
 
     DeltaInfo inherits from KeithInfo."""
+
+    idx = 1
 
     def __init__(self):
         super().__init__()
@@ -233,6 +254,7 @@ class PDeltInfo(KeithInfo):
     """PDeltInfo contains limits specific to pulse delta measurements.
 
     PDeltInfo inherits from KeithInfo."""
+    idx = 2
     low_meas = {'lim': (1, 2),
                 'def': 2}
 
@@ -256,6 +278,8 @@ class SweepInfo(PDeltInfo):
 
     SweepInfo inherits from PDeltInfo."""
 
+    idx = 3
+
     def __init__(self):
         super().__init__()
         # TODO: Determine if negative currents OK in pulse delta sweeps
@@ -277,18 +301,30 @@ class PDeltLogInfo(SweepInfo):
 
     PDeltLogInfo inherits from SweepInfo."""
 
+    idx = 4
+
     def __init__(self):
         super().__init__()
-        # ???: Do I need to set curr2 bounds for this to avoid negative?
 
 
-# FIXME: Maybe??? change 3, 4 to both SweepsInfo
+# FIXME: Maybe??? change 3, 4 to both SweepInfo
 ivinfo = {'dic': {0: DconInfo,
                   1: DeltaInfo,
                   2: PDeltInfo,
                   3: SweepInfo,
                   4: PDeltLogInfo},
-          'def': 0}
+          'def': KeithInfo().meas['def'],
+          # 'txt': {0: "Differential Conductance",
+          #         1: "Delta",
+          #         2: "Pulse Delta",
+          #         3: "Pulse Delta Staircase Sweep",
+          #         4: "Pulse Delta Logarithmic Sweep"},
+          'field4': {0: DconInfo().curr_delta,
+                     1: None,
+                     2: None,
+                     3: SweepInfo().points,
+                     # TODO: Determine if 4 can be the same as 3
+                     4: PDeltLogInfo().points}}
 
 
 class TempInfo():
