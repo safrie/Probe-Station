@@ -356,12 +356,18 @@ class TempInfo():
                           1: 'all'},
                   'def': 0}
 
-    # Output modes are 0=Off, 1=Closed loop PID, 2=Zone, 3=Open loop
     outmode = {'lim': range(0, 4),
-               'def': 0}
-    # Heater modes are 0=Off, 1=Low, 2=Med, 3=High
+               'def': 0,
+               'labels': {0: 'Off',
+                          1: 'Closed loop PID',
+                          2: 'Zone',
+                          3: 'Open loop'}}
     power = {'lim': range(0, 4),
-             'def': 0}
+             'def': 0,
+             'labels': {0: 'Off',
+                        1: 'Low',
+                        2: 'Medium',
+                        3: 'High'}}
     # Rate is in K/min. 0 means "ramp as fast as possible."
     rate = {'lim': (0.1, 100.0, 0),
             'def': 1.0}

@@ -5,10 +5,8 @@ design.py contains all the logic for creating the user interface.
 @author: Sarah Friedensen
 """
 
-from limits import (mu, KeithInfo as kinfo, DconInfo as dcinfo,
-                    DeltaInfo as delinfo, PDeltInfo as pdinfo,
-                    SweepInfo as swinfo, PDeltLogInfo as pdloginfo, ivinfo,
-                    TempInfo as tinfo, MagInfo as minfo)
+from limits import (KeithInfo as kinfo, ivinfo, TempInfo as tinfo,
+                    MagInfo as minfo)
 from PyQt5 import QtCore, QtWidgets
 # from PyQt5 import  QtGui
 from PyQt5.QtWidgets import (QWidget, QFrame, QGridLayout, QVBoxLayout,
@@ -872,8 +870,8 @@ class Ui_TempWindow(Ui_MainWindow):
 
         self.GPIBSpinbox = QSpinBox(paramWidget, objectName='GPIBSpinBox')
         self.GPIBSpinbox.setToolTip('GPIB address of LakeShore 336')
-        self.GPIBSpinbox.setRange(tlims.addr[0], tlims.addr[-1])
-        self.GPIBSpinbox.setValue(tlims.addr_default)
+        self.GPIBSpinbox.setRange(tinfo.addr['lim'][0], tinfo.addr['lim'][-1])
+        self.GPIBSpinbox.setValue(tinfo.addr['def'])
         paramLayout.addWidget(self.GPIBSpinbox, 0, 1, 1, 1)
 
         measuredTempLabel = QLabel(paramWidget, text='Temperatures to measure',
@@ -883,14 +881,18 @@ class Ui_TempWindow(Ui_MainWindow):
         self.measuredTempCombobox = QComboBox(paramWidget,
                                               objectName='MeasuredTempComboBox'
                                               )
-        self.measuredTempCombobox.addItem('Controlled')
-        self.measuredTempCombobox.addItem('All')
+        # TODO: Make sure MeasuredTempComboBox adds items correctly
+        self.measuredTempCombobox.addItems(list(
+            tinfo.to_measure['dic'].values()))
+        # self.measuredTempCombobox.addItem('Controlled')
+        # self.measuredTempCombobox.addItem('All')
         paramLayout.addWidget(self.measuredTempCombobox, 1, 1, 1, 1)
 
         self.radControlCheckbox = QCheckBox(
             paramWidget, text='Control rad shield/magnet temperature',
             objectName='RadControlCheckBox')
         paramLayout.addWidget(self.radControlCheckbox, 2, 0, 1, 1)
+        self.radControlCheckbox.setChecked(tinfo.rad_cont['def'])
 
         radSetpointLabel = QLabel(paramWidget,
                                   text='Rad shield/magnet setpoint (K)',
@@ -899,8 +901,9 @@ class Ui_TempWindow(Ui_MainWindow):
 
         self.radSetpointSpinbox = QDoubleSpinBox(
             paramWidget, objectName='RadSetpointSpinBox')
-        self.radSetpointSpinbox.setRange(tlims.setpt[0], tlims.setpt[1])
-        self.radSetpointSpinbox.setValue(tlims.setpt_default)
+        self.radSetpointSpinbox.setRange(tinfo.setpt['lim'][0],
+                                         tinfo.setpt['lim'][1])
+        self.radSetpointSpinbox.setValue(tinfo.setpt['def'])
         paramLayout.addWidget(self.radSetpointSpinbox, 3, 2, 1, 1)
 
         radRampLabel = QLabel(paramWidget,
@@ -910,11 +913,13 @@ class Ui_TempWindow(Ui_MainWindow):
 
         self.radRampSpinbox = QDoubleSpinBox(paramWidget,
                                              objectName='RadRampSpinBox')
-        self.radRampSpinbox.setRange(tlims.rate[2], tlims.rate[1])
-        self.radRampSpinbox.setSingleStep(tlims.rate[0])
-        self.radRampSpinbox.setValue(tlims.rate_default)
+        self.radRampSpinbox.setRange(tinfo.rate['lim'][2],
+                                     tinfo.rate['lim'][1])
+        self.radRampSpinbox.setSingleStep(tinfo.rate['lim'][0])
+        self.radRampSpinbox.setValue(tinfo.rate['def'])
         self.radRampSpinbox.setToolTip(
-            'Rad shield/magnet temperature ramp rate in K/min')
+            'Rad shield/magnet temperature ramp rate in K/min.  '
+            + 'A rate of 0 means "as fast as possible."')
         paramLayout.addWidget(self.radRampSpinbox, 4, 2, 1, 1)
 
         radPowerLabel = QLabel(paramWidget,
@@ -924,10 +929,12 @@ class Ui_TempWindow(Ui_MainWindow):
 
         self.radPowerCombobox = QComboBox(paramWidget,
                                           objectName='RadPowerComboBox')
-        self.radPowerCombobox.addItem('Off')
-        self.radPowerCombobox.addItem('Low')
-        self.radPowerCombobox.addItem('Medium')
-        self.radPowerCombobox.addItem('High')
+        # TODO Ensure that radPowerCombobox has correct items listed
+        self.radPowerCombobox.addItems(list(tinfo.power['labels'].values()))
+        # self.radPowerCombobox.addItem('Off')
+        # self.radPowerCombobox.addItem('Low')
+        # self.radPowerCombobox.addItem('Medium')
+        # self.radPowerCombobox.addItem('High')
         paramLayout.addWidget(self.radPowerCombobox, 5, 2, 1, 1)
 
         # self.radPowerSpinbox = QSpinBox(paramWidget,
@@ -950,8 +957,9 @@ class Ui_TempWindow(Ui_MainWindow):
 
         self.stageSetpointSpinbox = QDoubleSpinBox(
             paramWidget, objectName='StageSetpointSpinBox')
-        self.stageSetpointSpinbox.setRange(tlims.setpt[0], tlims.setpt[1])
-        self.stageSetpointSpinbox.setValue(tlims.setpt_default)
+        self.stageSetpointSpinbox.setRange(tinfo.setpt['lim'][0],
+                                           tinfo.setpt['lim'][1])
+        self.stageSetpointSpinbox.setValue(tinfo.setpt['def'])
         paramLayout.addWidget(self.stageSetpointSpinbox, 7, 2, 1, 1)
 
         stageRampLabel = QLabel(paramWidget, text='Stage ramp rate (K/min',
@@ -962,9 +970,10 @@ class Ui_TempWindow(Ui_MainWindow):
                                                objectName='stageRampSpinBox')
         self.stageRampSpinbox.setToolTip(
                 'Ramp rate for the sample stage temperature in K/min')
-        self.stageRampSpinbox.setRange(tlims.rate[2], tlims.rate[1])
-        self.stageRampSpinbox.setSingleStep(tlims.rate[0])
-        self.stageRampSpinbox.setValue(tlims.rate_default)
+        self.stageRampSpinbox.setRange(tinfo.rate['lim'][2],
+                                       tinfo.rate['lim'][1])
+        self.stageRampSpinbox.setSingleStep(tinfo.rate['lim'][0])
+        self.stageRampSpinbox.setValue(tinfo.rate['def'])
         paramLayout.addWidget(self.stageRampSpinbox, 8, 2, 1, 1)
 
         stagePowerLabel = QLabel(paramWidget, text='Heater power setting',
@@ -973,10 +982,12 @@ class Ui_TempWindow(Ui_MainWindow):
 
         self.stagePowerCombobox = QComboBox(paramWidget,
                                             objectName='StagePowerComboBox')
-        self.stagePowerCombobox.addItem('Off')
-        self.stagePowerCombobox.addItem('Low')
-        self.stagePowerCombobox.addItem('Medium')
-        self.stagePowerCombobox.addItem('High')
+        # TODO: Ensure that stagePowerCombobox lists items correctly
+        self.stagePowerCombobox.addItems(list(tinfo.power['labels'].values()))
+        # self.stagePowerCombobox.addItem('Off')
+        # self.stagePowerCombobox.addItem('Low')
+        # self.stagePowerCombobox.addItem('Medium')
+        # self.stagePowerCombobox.addItem('High')
         paramLayout.addWidget(self.stagePowerCombobox, 9, 2, 1, 1)
 
         # self.stagePowerSpinbox = QSpinBox(paramWidget,

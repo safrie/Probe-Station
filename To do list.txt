@@ -33,6 +33,7 @@ To do with program:
         - This is related to set_enable_trig and qenable_trig methods
     e) Fix any VISA issues
     g) Update UI from main.py in case invalid parameters set to defaults in mag
+        * This shouldn't be the case because loading from limits.py?
     h) Update limits and defaults
         - main.py
 • Fix LakeShore 336 Errors/Issues
@@ -54,10 +55,8 @@ To do with program:
     f) Add "warm" button to GUI
     g) Switch radPowerSpinbox to radPowerCombobox
         - in main.py
-        - in design.py?
     h) Switch stagePowerSpinbox to stagePowerCombobox
         - in main.py
-        - in design.py?
 • Add tooltips to:
     a) set_setpoints button
     b) set_ramps button
