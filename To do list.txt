@@ -35,7 +35,6 @@ To do with program:
     g) Update UI from main.py in case invalid parameters set to defaults in mag
     h) Update limits and defaults
         - main.py
-    i) make sure 'lims' switched out for 'info'
 • Fix LakeShore 336 Errors/Issues
     a) Implement GUI and YAML control over wait time between measurements
         - Class variable in temperature.py

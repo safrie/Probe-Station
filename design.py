@@ -618,6 +618,9 @@ class Ui_MagnetWindow(Ui_MainWindow):
 
         (lowerFrame, lowerLayout) = self.add_lower(centralWidget)
 
+        fidx = minfo.field['unit']['def']
+        tidx = minfo.time['unit']['def']
+
         self.mMeasureCheckbox = QCheckBox(topFrame,
                                           text='Record magnetic field',
                                           objectName='mMeasureCheckBox')
@@ -627,9 +630,8 @@ class Ui_MagnetWindow(Ui_MainWindow):
                           objectName='COMLabel')
         paramLayout.addWidget(COMLabel, 0, 0, 1, 1)
         self.COMSpinbox = QSpinBox(paramWidget, objectName='COMSpinBox')
-        # TODO: Find COM address range
-        self.COMSpinbox.setRange(mlims.addr[0], mlims.addr[-1])
-        self.COMSpinbox.setValue(mlims.addr_default)
+        self.COMSpinbox.setRange(minfo.addr['lim'][0], minfo.addr['lim'][-1])
+        self.COMSpinbox.setValue(minfo.addr['def'])
         paramLayout.addWidget(self.COMSpinbox, 0, 1, 1, 1)
 
         self.targetLabel = QLabel(paramWidget, text='Target TEXT',
@@ -638,29 +640,37 @@ class Ui_MagnetWindow(Ui_MainWindow):
 
         self.targetSpinbox = QDoubleSpinBox(paramWidget,
                                             objectName='TargetSpinBox')
-        self.targetSpinbox.setRange(-mlims.field[0], mlims.field[0])  # in kG
-        self.targetSpinbox.setValue(mlims.field_default[0])
+        self.targetSpinbox.setRange(-minfo.field['lim'][fidx],
+                                    minfo.field['lim'][fidx])
+        self.targetSpinbox.setValue(minfo.field['def'][fidx])
         paramLayout.addWidget(self.targetSpinbox, 1, 1, 1, 1)
 
         fieldUnitLabel = QLabel(paramWidget, text='Field Units',
                                 objectName='FieldUnitLabel')
         paramLayout.addWidget(fieldUnitLabel, 2, 0, 1, 1)
 
+        # TODO: Test fieldUnitCombobox to ensure proper items added
+        unit_list = [minfo.field['unit']['Full'][i]
+                     for i in range(len(minfo.coil_const))]
         self.fieldUnitCombobox = QComboBox(paramWidget,
                                            objectName='FieldUnitComboBox')
-        self.fieldUnitCombobox.addItem('Kilogauss')
-        self.fieldUnitCombobox.addItem('Tesla')
-        self.fieldUnitCombobox.addItem('Amps')
+        self.fieldUnitCombobox.addItems(unit_list)
+        # self.fieldUnitCombobox.addItem('Kilogauss')
+        # self.fieldUnitCombobox.addItem('Tesla')
+        # self.fieldUnitCombobox.addItem('Amps')
         paramLayout.addWidget(self.fieldUnitCombobox, 2, 1, 1, 1)
 
         timeUnitLabel = QLabel(paramWidget, text='Time Units',
                                objectName='TimeUnitLabel')
         paramLayout.addWidget(timeUnitLabel, 3, 0, 1, 1)
 
+        # TODO: test timeUnitCombobox to ensure proper items added
         self.timeUnitCombobox = QComboBox(paramWidget,
                                           objectName='TimeUnitComboBox')
-        self.timeUnitCombobox.addItem('Seconds')
-        self.timeUnitCombobox.addItem('Minutes')
+        self.timeUnitCombobox.addItems([minfo.time['unit']['Full'][i]
+                                        for i in (0, 1)])
+        # self.timeUnitCombobox.addItem('Seconds')
+        # self.timeUnitCombobox.addItem('Minutes')
         paramLayout.addWidget(self.timeUnitCombobox, 3, 1, 1, 1)
 
         segmentsLabel = QLabel(paramWidget, text='Ramp Segments',
@@ -669,7 +679,8 @@ class Ui_MagnetWindow(Ui_MainWindow):
 
         self.segmentsSpinbox = QSpinBox(paramWidget,
                                         objectName='SegmentsSpinBox')
-        self.segmentsSpinbox.setRange(mlims.seg[0], mlims.seg[1])
+        self.segmentsSpinbox.setRange(minfo.seg['lim'][0],
+                                      minfo.seg['lim'][-1])
         paramLayout.addWidget(self.segmentsSpinbox, 4, 1, 1, 1)
 
         self.setpointsLabel = QLabel(paramWidget, text='Ramp Setpoints UNIT',
@@ -679,10 +690,13 @@ class Ui_MagnetWindow(Ui_MainWindow):
         self.setpointsButton = QPushButton(paramWidget, text='List',
                                            objectName='SetpointsButton')
         # TODO: Set tooltip for SetpointsButton
-        self.setpointsButton.setToolTip('')
+        self.setpointsButton.setToolTip('A TOOLTIP')
         paramLayout.addWidget(self.setpointsButton, 5, 1, 1, 1)
 
-        self.ratesLabel = QLabel(paramWidget, text='Ramp rates UNIT',
+        rate_txt = (f"{minfo.rate['txt'][1]}"
+                    + f"{minfo.field['unit']['Abbv'][fidx]}/"
+                    + f"{minfo.time['unit']['Abbv'][tidx]}")
+        self.ratesLabel = QLabel(paramWidget, text=f"{rate_txt}",
                                  objectName='RatesLabel')
         paramLayout.addWidget(self.ratesLabel, 6, 0, 1, 1)
 
@@ -703,6 +717,7 @@ class Ui_MagnetWindow(Ui_MainWindow):
         self.quenchDetCheckbox = QCheckBox(paramWidget, text='Quench Detect',
                                            objectName='QuenchDetCheckBox')
         paramLayout.addWidget(self.quenchDetCheckbox, 7, 0, 1, 1)
+        self.quenchDetCheckbox.setChecked(minfo.quench['def'])
 
         quenchTempLayout = QHBoxLayout(objectName='QuenchTempLayout')
         paramLayout.addLayout(quenchTempLayout, 7, 1, 1, 1)
@@ -731,8 +746,9 @@ class Ui_MagnetWindow(Ui_MainWindow):
         self.voltLimitSpinbox = QDoubleSpinBox(paramWidget,
                                                objectName='VoltLimitSpinBox')
         # TODO: determine if can change argument to mlims.volt
-        self.voltLimitSpinbox.setRange(mlims.volt[0], mlims.volt[1])
-        self.voltLimitSpinbox.setValue(mlims.volt_default)
+        self.voltLimitSpinbox.setRange(minfo.volt['lim'][0],
+                                       minfo.volt['lim'][1])
+        self.voltLimitSpinbox.setValue(minfo.volt['def'])
         paramLayout.addWidget(self.voltLimitSpinbox, 8, 1, 1, 1)
 
         currLimitLabel = QLabel(paramWidget, text='Current limit (A)',
@@ -742,8 +758,9 @@ class Ui_MagnetWindow(Ui_MainWindow):
         self.currLimitSpinbox = QDoubleSpinBox(paramWidget,
                                                objectName='CurrLimitSpinBox')
         # TODO: Figure out if can set argument to mlims.curr
-        self.currLimitSpinbox.setRange(mlims.curr[0], mlims.curr[1])
-        self.currLimitSpinbox.setValue(mlims.curr_default)
+        self.currLimitSpinbox.setRange(minfo.curr['lim'][0],
+                                       minfo.curr['lim'][1])
+        self.currLimitSpinbox.setValue(minfo.curr['def'])
         paramLayout.addWidget(self.currLimitSpinbox, 9, 1, 1, 1)
 
         self.zeroButton = QPushButton(paramWidget, text='Zero Magnet',
