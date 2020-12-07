@@ -78,4 +78,8 @@ To do with program:
     a) Implement multi-parameter properties? (depends on dev response)
 • FZF all TODO's and fix them.
 
+· Design:
+    - Make sure all defaults are loaded correctly (especially the Keithley 
+    section)
+
 Current Branch: input-validation

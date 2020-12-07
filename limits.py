@@ -404,6 +404,11 @@ class MagInfo():
             'def': 26.3}    # 1 T = 10 kG
     # coil const in {field_unit}/A
     coil_const = (30/26.3, 3/26.3, 1)
+    quench = {
+        'def': False,
+        'temp': {'range': [0.0, 8.0],
+                 'def': 6.5}
+    }
 
     state_table = {
             1: 'RAMPING to target value',
