@@ -293,7 +293,7 @@ class ProbeGui(QMainWindow):
                 ui.current1Spinbox: self.set_keith_curr1,
                 ui.current2Spinbox: self.set_keith_curr2,
                 ui.currStepSpinbox: self.set_keith_curr_step,
-                ui.field4Spinbox: self.set_keith_curr_delta,
+                ui.field4Spinbox: self.set_keith_field4,
                 ui.rateSpinbox:  self.set_keith_meas_rate,
                 ui.delaySpinbox: self.set_keith_meas_delay,
                 ui.pulseWidthSpinbox: self.set_keith_pulse_width,
@@ -569,10 +569,22 @@ class ProbeGui(QMainWindow):
         d1 = {self.set_keith_curr_step: meas.curr_step}
         self.keith_ui_internal.update(d1)
 
-    # FIXME: Change this to field4?
+    # TODO: Verify that set_keith_field4 works and propagate through main
+    def set_keith_field4(self, val: Optional[Union[float, int]] = None,
+                         meas_idx: Optional[int] = None) -> None:
+        """Set field4 in the UI--dispatch to correct function for meas_idx."""
+        ui = self.kwind.ui
+        if meas_idx is None:
+            meas_idx = ui.measureTypeCombobox.currentIndex()
+        elif meas_idx == 0:
+            self.set_keith_curr_delta(delta=val, meas_idx=meas_idx)
+            return
+        elif meas_idx > 2:
+            self.set_keith_num_points(points=val, meas_idx=meas_idx)
+
     def set_keith_curr_delta(self, delta: Optional[float] = None,
                              meas_idx: Optional[int] = None) -> None:
-        # TODO: Test set_keith_curr_delta
+        # TODO: Test set_keith_curr_delta to make sure it didn't break
         """Set differential conductance current delta, update UI if needed."""
         spinbox = self.kwind.ui.field4Spinbox
         (keith, meas) = (self.keith, self.keith.meas_type(meas_idx))
@@ -753,6 +765,7 @@ class ProbeGui(QMainWindow):
         if armed:
             # TODO: Abort just for testing. Delete this after all's good.
             self.keith.visa.write(self.keith.visa.abort_cmd)
+            print('Arming worked!')
         else:
             print("Arming didn't work.  Check the error queue.")
 
@@ -816,6 +829,7 @@ class ProbeGui(QMainWindow):
             elif 'Number Sweeps' in ui.countLabel.text():
                 ui.countSpinbox.setValue(meas.num_sweeps)
         ui.filterCheckbox.setChecked(meas.filter_on)
+        # TODO: Set filter type maybe?
         ui.filterCountSpinbox.setValue(meas.filter_count)
         ui.filterWindowSpinbox.setValue(meas.filter_window)
         if ui.lowMeasCheckbox.isVisible():
@@ -840,20 +854,24 @@ class ProbeGui(QMainWindow):
         # TODO: Test keith_ui_diffcon
         """Update UI for requisite inputs for differential conductance."""
         ui = self.kwind.ui
+        idx = key(kinfo.meas['txt'], "diffCond")
+        info = ivinfo['dic'][idx]
         self.update_keith_text()
         ui.currStepSpinbox.show()
         ui.field4Spinbox.show()
         ui.field4Spinbox.setReadOnly(False)
-        ui.field4Spinbox.editingFinished.disconnect()
-        ui.field4Spinbox.editingFinished.connect(self.set_keith_curr_delta)
-        ui.rateSpinbox.setDecimals(3)
-        ui.rateSpinbox.setRange(0.01, 60)
+        # TODO: Verify that set_keith_field4 works so we can get rid of below.
+        # ui.field4Spinbox.editingFinished.disconnect()
+        # ui.field4Spinbox.editingFinished.connect(self.set_keith_curr_delta)
+        ui.rateSpinbox.setDecimals(info.rate['decim'][idx])
+        ui.rateSpinbox.setRange(info.rate['lim'][0], info.rate['lim'][-1])
         ui.delaySpinbox.show()
-        ui.delaySpinbox.setRange(1, 9999999)
+        ui.delaySpinbox.setRange(info.delay['lim'][0]*1e3,
+                                 info.delay['lim'][-1]*1e3)
         ui.pulseWidthSpinbox.hide()
         ui.countSpinbox.hide()
         ui.filterTypeCombobox.setEnabled(True)
-        self.set_keith_filter_type(meas_idx=0)
+        self.set_keith_filter_type(meas_idx=idx)
         ui.filterTypeCombobox.setEnabled(False)
         ui.lowMeasCheckbox.hide()
         self.update_keith_values()
@@ -862,19 +880,22 @@ class ProbeGui(QMainWindow):
         # TODO: Test keith_ui_delta
         """Update UI for requisite inputs for delta measurement."""
         ui = self.kwind.ui
+        idx = key(kinfo.meas['txt'], "delta")
+        info = ivinfo['dic'][idx]
         self.update_keith_text()
         ui.currStepSpinbox.hide()
         ui.field4Spinbox.hide()
-        ui.rateSpinbox.setDecimals(3)
-        ui.rateSpinbox.setRange(0.01, 60)
+        ui.rateSpinbox.setDecimals(info.rate['decim'][idx])
+        ui.rateSpinbox.setRange(info.rate['lim'][0], info.rate['lim'][-1])
         ui.delaySpinbox.show()
-        ui.delaySpinbox.setRange(1, 9999999)
+        ui.delaySpinbox.setRange(info.delay['lim'][0]*1e3,
+                                 info.delay['lim'][-1]*1e3)
         ui.pulseWidthSpinbox.hide()
         ui.countSpinbox.show()
         ui.countSpinbox.editingFinished.disconnect()
         ui.countSpinbox.editingFinished.connect(self.set_keith_num_points)
         ui.filterTypeCombobox.setEnabled(True)
-        self.set_keith_filter_type(meas_idx=1)
+        self.set_keith_filter_type(meas_idx=idx)
         ui.lowMeasCheckbox.hide()
         self.update_keith_values()
 
@@ -882,19 +903,22 @@ class ProbeGui(QMainWindow):
         # TODO: Test keith_ui_pdelta
         """Update UI for requisite inputs for pulse delta measurement."""
         ui = self.kwind.ui
+        idx = key(kinfo.meas['txt'], "delta")
+        info = ivinfo['dic'][idx]
         self.update_keith_text()
         ui.currStepSpinbox.hide()
         ui.field4Spinbox.hide()
         ui.delaySpinbox.show()
-        ui.delaySpinbox.setRange(16, 11966)
-        ui.rateSpinbox.setDecimals(0)
-        ui.rateSpinbox.setRange(5, 999999)
+        ui.delaySpinbox.setRange(info.delay['lim'][0]*1e6,
+                                 info.delay['lim'][1]*1e6)
+        ui.rateSpinbox.setDecimals(info.rate['decim'][idx])
+        ui.rateSpinbox.setRange(info.rate['lim'][0], info.rate['lim'][-1])
         ui.pulseWidthSpinbox.show()
         ui.countSpinbox.show()
         ui.countSpinbox.editingFinished.disconnect()
         ui.countSpinbox.editingFinished.connect(self.set_keith_num_points)
         ui.filterTypeCombobox.setEnabled(True)
-        self.set_keith_filter_type(meas_idx=2)
+        self.set_keith_filter_type(meas_idx=idx)
         ui.lowMeasCheckbox.show()
         self.update_keith_values()
 
@@ -903,21 +927,25 @@ class ProbeGui(QMainWindow):
         """Update UI for requisite inputs for pulse delta stair sweep."""
         ui = self.kwind.ui
         self.update_keith_text()
+        idx = key(kinfo.meas['txt'], "sweepPulseDeltaStair")
+        info = ivinfo['dic'][idx]
         ui.currStepSpinbox.show()
         ui.field4Spinbox.show()
         ui.field4Spinbox.setReadOnly(True)
         ui.field4Spinbox.editingFinished.disconnect()
         ui.field4Spinbox.editingFinished.connect(self.set_keith_num_points)
-        ui.rateSpinbox.setDecimals(4)
-        ui.rateSpinbox.setRange(1e-3, 999999.99)
+        ui.rateSpinbox.setDecimals(info.rate['decim'][idx])
+        ui.rateSpinbox.setRange(info.rate['lim'][0]*1e3,
+                                info.rate['lim'][-1]*1e3)
         ui.delaySpinbox.show()
-        ui.delaySpinbox.setRange(16, 11966)
+        ui.delaySpinbox.setRange(info.delay['lim'][0]*1e6,
+                                 info.delay['lim'][-1]*1e-6)
         ui.pulseWidthSpinbox.show()
         ui.countSpinbox.show()
         ui.countSpinbox.editingFinished.disconnect()
         ui.countSpinbox.editingFinished.connect(self.set_keith_num_sweeps)
         ui.filterTypeCombobox.setEnabled(True)
-        self.set_keith_filter_type(meas_idx=3)
+        self.set_keith_filter_type(meas_idx=idx)
         ui.filterTypeCombobox.setEnabled(False)
         ui.lowMeasCheckbox.show()
         self.update_keith_values()
@@ -927,21 +955,26 @@ class ProbeGui(QMainWindow):
         """Update UI for requisite inputs for pulse delta log sweep."""
         ui = self.kwind.ui
         self.update_keith_text()
+        idx = key(kinfo.meas['txt'], "sweepPulseDeltaLog")
+        info = ivinfo['dic'][idx]
         ui.currStepSpinbox.hide()
         ui.field4Spinbox.show()
         ui.field4Spinbox.setReadOnly(False)
-        ui.field4Spinbox.editingFinished.disconnect()
-        ui.field4Spinbox.editingFinished.connect(self.set_keith_num_points)
-        ui.rateSpinbox.setDecimals(4)
-        ui.rateSpinbox.setRange(1e-3, 999999.99)
+        # TODO: Verify main.set_keith_field4 works so not changing signal ok
+        # ui.field4Spinbox.editingFinished.disconnect()
+        # ui.field4Spinbox.editingFinished.connect(self.set_keith_num_points)
+        ui.rateSpinbox.setDecimals(info.rate['decim'][idx])
+        ui.rateSpinbox.setRange(info.rate['lim'][0]*1e3,
+                                info.rate['lim'][-1]*1e3)
         ui.delaySpinbox.show()
-        ui.delaySpinbox.setRange(16, 11966)
+        ui.delaySpinbox.setRange(info.delay['lim'][0]*1e6,
+                                 info.delay['lim'][-1]*1e6)
         ui.pulseWidthSpinbox.show()
         ui.countSpinbox.show()
         ui.countSpinbox.editingFinished.disconnect()
         ui.countSpinbox.editingFinished.connect(self.set_keith_num_sweeps)
         ui.filterTypeCombobox.setEnabled(True)
-        self.set_keith_filter_type(meas_idx=4)
+        self.set_keith_filter_type(meas_idx=idx)
         ui.filterTypeCombobox.setEnabled(False)
         ui.lowMeasCheckbox.show()
         self.update_keith_values()
@@ -959,9 +992,9 @@ class ProbeGui(QMainWindow):
         #           else 100e3)
         # FIXME: Change this to limits.py stuff
         max_A = (keith.curr_conv_mult(bound) if keith.source_range_type_idx
-                 else 100e-3)
-        max_sb_curr = keith.curr_conv_div(max_A)
-        max_points = 10e3
+                 else list(kinfo.sour_range['dic'])[-1])
+        max_sb_curr = keith.curr_conv_div(max_A)  # Max current for spinbox
+        max_points = kinfo.points['lim'][-1]
         (curr1, curr2) = (meas.curr1, meas.curr2)
         step = meas.curr_step if hasattr(meas, 'curr_step') else None
         delta = meas.curr_delta if hasattr(meas, 'curr_delta') else None
@@ -983,7 +1016,7 @@ class ProbeGui(QMainWindow):
             elif step < 0:
                 self.set_keith_curr_step(0)
 
-        if idx:
+        if idx:  # Measurement type is not differential conductance
             if points > max_points:
                 self.set_keith_points(max_points)
             elif points < 1:
@@ -997,15 +1030,12 @@ class ProbeGui(QMainWindow):
         if keith.source_range_type_idx:  # Fixed range
             ui.current1Spinbox.setRange(-bound, bound)
             ui.current2Spinbox.setRange(-bound, bound)
-            # TODO: Figure out what to do with currStepSpinbox
             ui.currStepSpinbox.setRange(0, bound)
-            # TODO: Figure out what to do with field4Spinbox (has current delt)
             f4range = (1, max_points) if idx else (0, bound)
             ui.field4Spinbox.setRange(f4range[0], f4range[1])
         else:
             ui.current1Spinbox.setRange(-max_sb_curr, max_sb_curr)
             ui.current2Spinbox.setRange(-max_sb_curr, max_sb_curr)
-            # TODO: Figure out what to do with currStepSpinbox
             ui.currStepSpinbox.setRange(-max_sb_curr, max_sb_curr)
             f4range = (1, max_points) if idx else (0, bound)
             ui.field4Spinbox.setRange(f4range[0], f4range[1])

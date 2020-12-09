@@ -171,7 +171,12 @@ class KeithInfo:
                              1: 'Measurement Rate (PLC)',
                              2: 'Cycle Interval (PLC)',
                              3: 'Cycle Time (s)',
-                             4: 'Cycle Time (s)'}
+                             4: 'Cycle Time (s)'},
+                     'decim': {0: 0,
+                               1: 0,
+                               2: 0,
+                               3: 3,
+                               4: 3}
                      }
         self.delay = {'lim': (1.0e-3, 9999.999),  # This is in seconds
                       'def': 2.0e-3,

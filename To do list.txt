@@ -17,6 +17,7 @@ To do with program:
         This is where we're holding relevant variables, not just bounds
         - Change imports and aliases
             - Main
+    k) Ensure that set_keith_field4 propagated through main
     n) Debug KeithMeasure.set_num_points when overflows b/c update_num_points
 
 • Fix AMI 430 Errors/Issues
