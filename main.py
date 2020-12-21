@@ -990,7 +990,6 @@ class ProbeGui(QMainWindow):
         (keith, meas) = (self.keith, self.keith.meas_type())
         # max_ua = (keith.curr_conv_mult(bound) if keith.source_range_type_idx
         #           else 100e3)
-        # FIXME: Change this to limits.py stuff
         max_A = (keith.curr_conv_mult(bound) if keith.source_range_type_idx
                  else list(kinfo.sour_range['dic'])[-1])
         max_sb_curr = keith.curr_conv_div(max_A)  # Max current for spinbox
@@ -1479,12 +1478,11 @@ class ProbeGui(QMainWindow):
         """
         mag = self.mag
         unit, abbv = mag.field_unit('Full'), mag.field_unit('Abbv')
-        unit_type = 'curr' if abbv == 'A' else 'field'
+        # unit_type = 'curr' if abbv == 'A' else 'field'
         unit_idx = mag.field_unit_idx
-        bounds = (-mag.info.field['lim'][unit_idx],
-                  mag.info.field['lim'][unit_idx])
+        bounds = (-minfo.field['lim'][unit_idx], minfo.field['lim'][unit_idx])
         if setpts is None:
-            title = f'{mag.info.field["txt"]["setp"][0]} ({unit})'
+            title = f"{minfo.field['txt']['setp'][0]} ({abbv})"
             label = (f'Enter your list of magnet ramp setpoints in {unit}.\n'
                      + 'Setpoints should be numbers separated by commas '
                      + '(e.g., 1, 2, 3).\n'
@@ -1507,10 +1505,10 @@ class ProbeGui(QMainWindow):
         mag = self.mag
         fabbv, fidx = mag.field_unit('Abbv'), mag.field_unit_idx
         tabbv, tunit = mag.time_unit('Abbv'), mag.time_unit('Full')
-        unit_type = 'curr' if fabbv == 'A' else 'field'
-        bounds = mag.info.rate['lim'][tunit][fidx]
+        # unit_type = 'curr' if fabbv == 'A' else 'field'
+        bounds = minfo.rate['lim'][tunit][fidx]
         if ramps is None:
-            title = f'{mag.info.rate["txt"][0]} ({fabbv}/{tabbv})'
+            title = f"{minfo.rate['txt'][0]} ({fabbv}/{tabbv})"
             label = (f'Enter list of magnet ramp rates in {fabbv}/{tabbv}.\n'
                      + 'Ramp rates should be numbers separated by commas '
                      + '(e.g., 1, 2, 3).\n'
@@ -1637,25 +1635,38 @@ class ProbeGui(QMainWindow):
         self.set_mag_pars()
         self.toggle_mag_for_run(True)
 
+    def togle_mag_for_run(self, enable: bool, safe: bool = True):
+        """Update mag UI to enable/disable elements if ramp in progress.
+
+        The safe variable indicates, when true, that this will not actually
+        relay a start command to the magnet.  It is set to True during testing.
+        """
+        # TODO: Implement this method.
+
     def update_mag_labels(self, fidx: Optional[int] = None,
                           tidx: Optional[int] = None) -> None:
         # TODO: Test update_mag_labels
         """Update the ramp list labels to correspond to current units."""
         mag, ui = self.mag, self.mwind.ui
         print(fidx)
-        fidx = fidx if fidx is not None else mag.field_unit_idx
+        if fidx is None:
+            fidx = mag.field_unit_idx
         fabbv = (mag.field_unit('Abbv') if fidx is None
-                 else mag.field_unit_switch['Abbv'][fidx])
+                 else minfo.field['unit']['Abbv'][fidx])
         tabbv = (mag.time_unit('Abbv') if tidx is None
-                 else mag.time_unit_switch['Abbv'][tidx])
-        targ_text = (f'ic Field ({fabbv})' if (fidx is not None and fidx < 2)
-                     else f'Current ({fabbv})')
+                 else minfo.time['unit']['Abbv'][tidx])
+        targ_text = (f"{minfo.field['txt']['targ']}"
+                     + ("ic Field " if (fidx is not None and fidx < 2)
+                        else "Current")
+                     + f"({fabbv})")
+        setp_label = minfo.field['txt']['setp'][0] + f" ({fabbv})"
+        ramp_label = minfo.field['txt']['setp'][1] + f" ({fabbv}/{tabbv})"
         # bound = mag.lims.field[fidx] if (fidx is not None) else 0
-        bound = mag.lims.field[fidx]
-        ui.targetLabel.setText(mag.target_label + targ_text)
+        bound = minfo.field['lim'][fidx]
+        ui.targetLabel.setText(targ_text)
         ui.targetSpinbox.setRange(-bound, bound)
-        ui.setpointsLabel.setText(mag.setpoints_label + f'({fabbv})')
-        ui.ratesLabel.setText(mag.ramps_label + f'({fabbv}/{tabbv})')
+        ui.setpointsLabel.setText(setp_label)
+        ui.ratesLabel.setText(ramp_label)
         # ui.holdLabel.setText(mag.hold_times_label + f'({tabbv})')
 
     def update_mag_ui(self) -> None:

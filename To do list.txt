@@ -13,11 +13,6 @@ To do with program:
     h) Fix any VISA issues
     i) Change all internal variables to A for ease of switching scales
         - test_environment.yaml
-    j) Change limits names to 'info'
-        This is where we're holding relevant variables, not just bounds
-        - Change imports and aliases
-            - Main
-    k) Ensure that set_keith_field4 propagated through main
     n) Debug KeithMeasure.set_num_points when overflows b/c update_num_points
 
 • Fix AMI 430 Errors/Issues
@@ -35,8 +30,6 @@ To do with program:
     e) Fix any VISA issues
     g) Update UI from main.py in case invalid parameters set to defaults in mag
         * This shouldn't be the case because loading from limits.py?
-    h) Update limits and defaults
-        - main.py
 • Fix LakeShore 336 Errors/Issues
     a) Implement GUI and YAML control over wait time between measurements
         - Class variable in temperature.py
