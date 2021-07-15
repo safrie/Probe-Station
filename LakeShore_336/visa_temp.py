@@ -75,7 +75,7 @@ class vTemp(Visa):
 
     def query(self, cmd: str) -> None:
         """Extend visa_abc's query_cmd to write to this instrument."""
-        if self.thermo() is not None:
+        if self.thermo is not None:
             return super().query(self.thermo, cmd)
         else:
             print('No query--temperature controller not connected.')
