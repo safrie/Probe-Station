@@ -140,7 +140,7 @@ devices:
                             max: 105.0e-3
                             type: float
             pdelta:
-                ids: ["SOUR:PDEL"]
+                ids: "SOUR:PDEL"
                 can_select: True
                 properties:
                     range_type: 
