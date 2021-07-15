@@ -164,6 +164,7 @@ class vKeith(Visa):
             self.source = False
             print('Keithleys not connected.')
         else:
+            print('Keithley found!')
             self.source = self.rm.open_resource(source_list[0])
             self.meter_connected = self.query('SOUR:DCON:NVPR?')
 
