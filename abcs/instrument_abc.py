@@ -40,7 +40,9 @@ class Instrument():
     def __init__(self, instr: str) -> None:
         if instr in self.infodic.keys():
             self.info = self.infodic[instr]
-            self.do_measure = self.info.measure['def']
+            self.measure = self.info.measure['def']
+            # TODO: Figure out how to initialize control
+            # self.do_measure = self.info.measure['def']
             # self.do_control = False
             # self.do_measure = False
         else:
@@ -57,32 +59,63 @@ class Instrument():
 
         NOT sent through VISA.
         """
+        pass
 
-    def set_control(self, val: bool) -> None:
-        """Change instrument do_control attribute to val."""
-        self.do_control = val
+    @property
+    def control(self) -> bool:
+        return self._control
 
-    def set_measure(self, val: bool) -> None:
-        """Change instrument do_measure attribute to val."""
-        self.do_measure = val
+    @control.setter
+    def control(self, val: bool) -> None:
+        self._control = val
 
-    def set_address(self, addr: int) -> None:
-        """Change instrument address atribute to addr."""
+    @property
+    def measure(self) -> bool:
+        return self._measure
+
+    @measure.setter
+    def measure(self, val: bool) -> None:
+        self._measure = val
+
+    # def set_control(self, val: bool) -> None:
+    #     """Change instrument do_control attribute to val."""
+    #     self.do_control = val
+
+#     def set_measure(self, val: bool) -> None:
+#         """Change instrument do_measure attribute to val."""
+#         self.do_measure = val
+
+    @property
+    def address(self) -> int:
+        """GPIB address of the instrument"""
+        return self._address
+
+    @address.setter
+    def address(self, addr: int) -> None:
+        """Change instrument address property to addr."""
         if addr not in self.info.addr['lim']:
             addr = self.info.addr['def']
             print(f"Given address out of bounds ({self.info.addr['lim']}).  "
                   + f"GPIB address set to default ({addr}).")
-        self.address = addr
-        return addr
+        self._address = addr
 
-    def get_control(self) -> bool:
-        """Return instrument do_control attribute. MAYBE DELETE."""
-        return self.do_control
+    # def set_address(self, addr: int) -> None:
+    #     """Change instrument address atribute to addr."""
+    #     if addr not in self.info.addr['lim']:
+    #         addr = self.info.addr['def']
+    #         print(f"Given address out of bounds ({self.info.addr['lim']}).  "
+    #               + f"GPIB address set to default ({addr}).")
+    #     self.address = addr
+    #     return addr
 
-    def get_measure(self) -> bool:
-        """Return instrument do_measure attribute. MAYBE DELETE."""
-        return self.do_measure
+    # def get_control(self) -> bool:
+    #     """Return instrument do_control attribute. MAYBE DELETE."""
+    #     return self.do_control
 
-    def get_address(self) -> int:
-        """Return instrument GPIB/COM address."""
-        return self.address
+    # def get_measure(self) -> bool:
+    #     """Return instrument do_measure attribute. MAYBE DELETE."""
+    #     return self.do_measure
+
+    # def get_address(self) -> int:
+    #     """Return instrument GPIB/COM address."""
+    #     return self.address
