@@ -8,7 +8,7 @@ Part of the probe station V3 collection
 """
 
 from abc import ABCMeta, abstractmethod
-from limits import (KeithInfo as kinfo, TempLims as tinfo, MagLims as minfo)
+from limits import (KeithInfo as kinfo, TempInfo as tinfo, MagInfo as minfo)
 
 
 class Instrument():
@@ -40,9 +40,12 @@ class Instrument():
     def __init__(self, instr: str) -> None:
         if instr in self.infodic.keys():
             self.info = self.infodic[instr]
+            self.do_measure = self.info.measure['def']
             # self.do_control = False
             # self.do_measure = False
         else:
+            # Consider not doing this and raising an exception instead after
+            # testing
             self.info = self.infodic['Keith']
             print("Invalid instrument given.  Setting to default instrument "
                   + "(Keith).")
