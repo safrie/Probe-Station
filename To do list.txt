@@ -1,4 +1,7 @@
 To do with program:
+• see if @property decorator useful for attributes I want to always have the return value of a 
+  function call--useful instead of setter/getter methods(see: 
+  https://treyhunner.com/2019/05/python-builtins-worth-learning/#The_5_debugging_functions)
 • Fix Keithley Errors/Issues
     a) on diffcon modify stop current: keith_ui_internal.update(d1) TypeError
         cannot convert dictionary update sequence element #0 to a sequence
@@ -13,7 +16,18 @@ To do with program:
     h) Fix any VISA issues
     i) Change all internal variables to A for ease of switching scales
         - test_environment.yaml
+    j) pulse delta pulse delay is fucked up (all)
+        - spinbox acting like seconds, not microseconds
+    k) pulse delta cycle int/meas rate fucked up
+        - also the pulse delta sweeps cycle int/cycle time fucked
+        - "PDeltaLog" object has no attribute 'meas_rate'
+    l) pulse delta pulse width fucked up
+        - spinbox acting like seconds, not microseconds.
+    m) pulse delta stair count fucked up
     n) Debug KeithMeasure.set_num_points when overflows b/c update_num_points
+    o) pulse delta stair sweep count missing from arm statement
+    p) delta measurement rate not set correctly in spinbox initially
+    q) delta pulse count spinbox tops out at 99--make bigger?
 
 • Fix AMI 430 Errors/Issues
     a) On open of Magwindow, for spinbox.setValue(targ), targ is the bound
@@ -47,10 +61,7 @@ To do with program:
     c) Create get_header_string method
     d) Fix any VISA issues
     f) Add "warm" button to GUI
-    g) Switch radPowerSpinbox to radPowerCombobox
-        - in main.py
-    h) Switch stagePowerSpinbox to stagePowerCombobox
-        - in main.py
+    g) temperature.py line 112 info.out.name[1] has no attribute 'name'
 • Add tooltips to:
     a) set_setpoints button
     b) set_ramps button
