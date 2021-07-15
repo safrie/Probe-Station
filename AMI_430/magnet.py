@@ -69,9 +69,9 @@ class Mag(Instrument):
         super().__init__('Mag')
         self.address = info.addr['def']
         self.visa = visa(self.address)
-        self.field_unit_idx = info.field['unit']['def']
+        self.field_unit_idx = info().field['unit']['def']
         self.time_unit_idx = info.time['unit']['def']
-        self.target = info.field['def'][self.field_unit_idx]
+        self.target = info().field['def'][self.field_unit_idx]
         self.ramp_segments = info.seg['def']
         self.setpoints_list = []
         self.setpoints_text = None
@@ -98,7 +98,8 @@ class Mag(Instrument):
         """Set the target magnetic field or current."""
         # TODO: Test set_target()
         fidx, unit = self.field_unit_idx, self.field_unit('Abbv')
-        inf = info.field
+        inf = info().field
+        print(type(targ))
         if abs(targ) > inf['lim'][fidx]:
             targ = inf['def'][fidx]
             print(f"Target out of bounds. |targ| must be < "
@@ -123,7 +124,7 @@ class Mag(Instrument):
         These are the ramp interval upper bounds.
         """
         # TODO: Test set_setpoints
-        lim = info.field['lim'][self.field_unit_idx]
+        lim = info().field['lim'][self.field_unit_idx]
         if isinstance(stpts, str):
             stpts = [float(x) for x in stpts.split(', ')]
         if len(stpts) not in info.seg['lim']:
@@ -144,9 +145,9 @@ class Mag(Instrument):
     def set_ramps(self, ramps: Union[list, str]) -> Tuple:
         """Set list of magnet ramp rates to ramps, return tuple of values."""
         # TODO: Test set_ramps
-        fidx, fabbv = self.field_unit_idx, self.field_unit['Abbv']
-        tunit, tabbv = self.time_unit['Full'], self.time_unit['Abbv']
-        bounds = info.rate['lim'][tunit][fidx]
+        fidx, fabbv = self.field_unit_idx, self.field_unit('Abbv')
+        tunit, tabbv = self.time_unit['Full'], self.time_unit('Abbv')
+        bounds = info().rate['lim'][tunit][fidx]
         if isinstance(ramps, str):
             ramps = [float(x) for x in ramps.split(', ')]
         if len(ramps) not in info.seg['lim']:
@@ -230,7 +231,7 @@ class Mag(Instrument):
     def set_field_unit(self, unit_val: Union[int, str]) -> None:
         """Set unit for magnetic field and update magnet."""
         # TODO: Test set_field_unit
-        inf = info.field['unit']
+        inf = info().field['unit']
         index = (unit_val if unit_val in (0, 1, 2)
                  else key(dic=inf['Full'], val=unit_val) if len(unit_val) > 2
                  else key(dic=inf['Abbv'], val=unit_val)
@@ -252,11 +253,11 @@ class Mag(Instrument):
         if form.lower() not in valid:
             print(f'field_unit form must be in {valid}.')
         else:
-            return info.field['unit'][form.capitalize()][self.field_unit_idx]
+            return info().field['unit'][form.capitalize()][self.field_unit_idx]
 
     def field_type(self) -> str:
         """Look up the field type string for the field unit."""
-        return info.field['unit']['typ'][self.field_unit_idx]
+        return info().field['unit']['typ'][self.field_unit_idx]
 
     def set_time_unit(self, unit_val: Union[int, str]) -> None:
         """Set unit for time and update magnet."""
@@ -308,7 +309,7 @@ class Mag(Instrument):
             print("Time unit index out of bounds.  Please fix and try again.")
             return
 
-        if abs(targ) > info.field['lim'][fidx] or targ is None:
+        if abs(targ) > info().field['lim'][fidx] or targ is None:
             err = True
             mes += "Magnet target out of bounds.  "
         if segs not in info.seg['lim']:
@@ -319,10 +320,10 @@ class Mag(Instrument):
             mes += ("Number of segments, ramp setpoints, and ramp rates not "
                     + "all equal.  ")
         for i in range(0, segs):
-            if abs(ramps[i]) > info.rate['lim'][tunit][fidx]:
+            if abs(ramps[i]) > info().rate['lim'][tunit][fidx]:
                 err = True
                 mes += f"Ramp rate {i} out of bounds.  "
-            if abs(setpts[i]) > info.field['lim'][fidx]:
+            if abs(setpts[i]) > info().field['lim'][fidx]:
                 err = True
                 mes += f"Setpoint {i} out of bounds.  "
 
