@@ -369,10 +369,12 @@ class ProbeGui(QMainWindow):
         spinbox = self.kwind.ui.GPIBSpinbox
         keith = self.keith
         if addr is not None:
-            addr = keith.set_address(addr)
-            spinbox.setValue(addr)
+            # addr = keith.set_address(addr)
+            keith.address(addr)
+            spinbox.setValue(keith.address)
         else:
-            keith.set_address(spinbox.value())
+            # keith.set_address(spinbox.value())
+            keith.address(spinbox.value())
         d1 = {self.set_keith_address: keith.address}
         self.keith_ui_internal.update(d1)
 
@@ -1092,7 +1094,7 @@ class ProbeGui(QMainWindow):
 
         self.temp_ui_internal = {
             self.set_temp_address: temp.address,
-            self.set_temp_measure: temp.do_measure,
+            self.set_temp_measure: temp.measure,
             self.set_temp_rad_control: temp.rad_control,
             self.set_temp_rad_setpoint: temp.rad_setpoint,
             self.set_temp_rad_ramp: temp.rad_ramp,
@@ -1121,11 +1123,14 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_temp_address
         (temp, spinbox) = (self.temp, self.twind.ui.GPIBSpinbox)
         if addr is not None:
-            addr = temp.set_address(addr)
-            spinbox.setValue(addr)
+            # addr = temp.set_address(addr)
+            # spinbox.setValue(addr)
+            temp.address(addr)
+            spinbox.setValue(temp.address)
         else:
-            addr = temp.set_address(spinbox.value())
-        d1 = {self.set_temp_address: addr}
+            # addr = temp.set_address(spinbox.value())
+            temp.address(spinbox.value())
+        d1 = {self.set_temp_address: temp.address}
         self.temp_ui_internal.update(d1)
 
     def set_temp_measure(self, enable: Optional[bool] = None) -> None:
@@ -1141,7 +1146,7 @@ class ProbeGui(QMainWindow):
             checkbox.setChecked(enable)
         else:
             temp.set_measure(checkbox.isChecked())
-        d1 = {self.set_temp_measure: temp.do_measure}
+        d1 = {self.set_temp_measure: temp.measure}
         self.temp_ui_internal.update(d1)
 
     def set_temp_rad_control(self, enable: Optional[bool] = None) -> None:
@@ -1363,7 +1368,7 @@ class ProbeGui(QMainWindow):
 
         self.mag_ui_internal = {
             self.set_mag_address: mag.address,
-            self.set_mag_measure: mag.do_measure,
+            self.set_mag_measure: mag.measure,
             self.set_mag_field_unit: mag.field_unit_idx,
             self.set_mag_time_unit: mag.time_unit_idx,
             self.set_mag_target: mag.target,
@@ -1394,11 +1399,14 @@ class ProbeGui(QMainWindow):
         # TODO: Test set_mag_address
         mag, spinbox = self.mag, self.mwind.ui.COMSpinbox
         if addr is not None:
-            addr = mag.set_address(addr)
-            spinbox.setValue(addr)
+            # addr = mag.set_address(addr)
+            # spinbox.setValue(addr)
+            mag.address(addr)
+            spinbox.setValue(mag.address)
         else:
-            addr = mag.set_address(spinbox.value())
-        d1 = {self.set_mag_address: addr}
+            # addr = mag.set_address(spinbox.value())
+            mag.address(spinbox.value())
+        d1 = {self.set_mag_address: mag.address}
         self.mag_ui_internal.update(d1)
 
     def set_mag_measure(self, enable: Optional[bool] = None) -> None:
@@ -1413,7 +1421,7 @@ class ProbeGui(QMainWindow):
             checkbox.setChecked(enable)
         else:
             mag.set_measure(checkbox.isChecked())
-        d1 = {self.set_mag_measure: mag.do_measure}
+        d1 = {self.set_mag_measure: mag.measure}
         self.mag_ui_internal.update(d1)
 
     def set_mag_target(self, targ: Optional[float] = None) -> None:
