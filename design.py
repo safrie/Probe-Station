@@ -41,40 +41,57 @@ class Ui_MainWindow(object, metaclass=ABCMeta):
     def setupUi(self, Window) -> Tuple[QWidget, QVBoxLayout]:
         """Set up the window's UI.  Extended/overridden in daughter methods."""
         Window.setObjectName(str(Window))
-        centralWidget = QWidget(Window, objectName='CentralWidget')
+        centralWidget = QWidget(
+            Window,
+            objectName='CentralWidget')
         Window.setCentralWidget(centralWidget)
 
-        centralLayout = QVBoxLayout(centralWidget,
-                                    objectName='CentralWidgetLayout')
+        centralLayout = QVBoxLayout(
+            centralWidget,
+            objectName='CentralWidgetLayout')
         return (centralWidget, centralLayout)
 
     def add_top(self, widget) -> Tuple[QFrame, QGridLayout]:
         """Create a top frame for the window."""
-        topFrame = QFrame(widget, objectName='TopFrame')
+        topFrame = QFrame(
+            widget,
+            objectName='TopFrame')
         style = QFrame.Panel | QFrame.Raised
         topFrame.setFrameStyle(style)
         topFrame.setLineWidth(2)
-        topLayout = QGridLayout(topFrame, objectName='TopFrameLayout')
+        topLayout = QGridLayout(
+            topFrame,
+            objectName='TopFrameLayout')
         return (topFrame, topLayout)
 
     def add_config(self, widget) -> Tuple[QHBoxLayout, QLineEdit, QPushButton,
                                           QPushButton]:
         """Add a config layout to a window."""
-        configLayout = QHBoxLayout(widget, objectName='ConfigLayout')
-        configLabel = QLabel(widget, objectName='ConfigLabel',
-                             text='Configuration File')
+        configLayout = QHBoxLayout(
+            widget,
+            objectName='ConfigLayout')
+        configLabel = QLabel(
+            widget,
+            objectName='ConfigLabel',
+            text='Configuration File')
         configLayout.addWidget(configLabel)
-        configFile = QLineEdit(widget, objectName='ConfigFile')
+        configFile = QLineEdit(
+            widget,
+            objectName='ConfigFile')
         configFile.setToolTip(
             'Configuration file for measurement settings.  YAML files only.')
         configLayout.addWidget(configFile)
-        configLoadButton = QPushButton(widget, objectName='ConfigLoadButton',
-                                       text='Load')
+        configLoadButton = QPushButton(
+            widget,
+            objectName='ConfigLoadButton',
+            text='Load')
         configLoadButton.setToolTip(
             'Load measurement parameters from a YAML file.')
         configLayout.addWidget(configLoadButton)
-        configSaveButton = QPushButton(widget, objectName='ConfigSaveButton',
-                                       text='Save')
+        configSaveButton = QPushButton(
+            widget,
+            objectName='ConfigSaveButton',
+            text='Save')
         configSaveButton.setToolTip(
             'Save measurement parameters defined in UI to a YAML file.')
         configLayout.addWidget(configSaveButton)
@@ -218,7 +235,9 @@ class Ui_KeithWindow(Ui_MainWindow):
         (topFrame, topLayout) = self.add_top(centralWidget)
         centralLayout.addWidget(topFrame)
 
-        configFrame = QFrame(topFrame, objectName='ConfigFrame')
+        configFrame = QFrame(
+            topFrame,
+            objectName='ConfigFrame')
         topLayout.addWidget(configFrame, 0, 0, 1, 1)
         (configLayout, self.configFile, self.configLoadButton,
          self.configSaveButton) = self.add_config(configFrame)
@@ -228,138 +247,160 @@ class Ui_KeithWindow(Ui_MainWindow):
 
         (lowerFrame, lowerLayout) = self.add_lower(centralWidget)
 
-        # TODO: Determine if () not needed at end of below line
         info = ivinfo['dic'][kinfo.meas['def']]()
 
-        GPIBLabel = QLabel(paramWidget, text='GPIB Address: ',
-                           objectName='GPIBLabel')
+        GPIBLabel = QLabel(
+            paramWidget,
+            text='GPIB Address: ',
+            objectName='GPIBLabel')
         paramLayout.addWidget(GPIBLabel, 0, 0, 1, 1)
 
-        self.GPIBSpinbox = QSpinBox(paramWidget, objectName='GPIBSpinBox')
+        self.GPIBSpinbox = QSpinBox(
+            paramWidget,
+            objectName='GPIBSpinBox')
         self.GPIBSpinbox.setToolTip('GPIB address of Keithley 6221/2182a')
-        self.GPIBSpinbox.setRange(info.addr['lim'][0], info.addr['lim'][-1])
+        self.GPIBSpinbox.setRange(info.addr['lim'][0],
+                                  info.addr['lim'][-1])
         self.GPIBSpinbox.setValue(info.addr['def'])
         paramLayout.addWidget(self.GPIBSpinbox, 0, 1, 1, 1)
 
-        measureTypeLabel = QLabel(paramWidget, text='Measurement Type: ',
-                                  objectName='MeasurementTypeLabel')
+        measureTypeLabel = QLabel(
+            paramWidget,
+            text='Measurement Type: ',
+            objectName='MeasurementTypeLabel')
         paramLayout.addWidget(measureTypeLabel, 1, 0, 1, 1)
 
-        self.measureTypeCombobox = QComboBox(paramWidget,
-                                             objectName='MeasureTypeComboBox')
-        # TODO: Test that AddItems behaves properly
-        self.MeasureTypeComboBox.addItems(info.meas['labels'])
-        # TODO: Determine that info.idx calls properly
+        self.measureTypeCombobox = QComboBox(
+            paramWidget,
+            objectName='MeasureTypeComboBox')
+        self.measureTypeCombobox.addItems(info.meas['labels'])
         self.measureTypeCombobox.setCurrentIndex(info.idx)
-        print(f"For measure type combobox, idx = {info.idx}")
         paramLayout.addWidget(self.measureTypeCombobox, 1, 1, 1, 1)
 
-        unitsLabel = QLabel(paramWidget, text='Units:', objectName='UnitLabel')
+        unitsLabel = QLabel(
+            paramWidget,
+            text='Units:',
+            objectName='UnitLabel')
         paramLayout.addWidget(unitsLabel, 2, 0, 1, 1)
 
-        self.unitsCombobox = QComboBox(paramWidget, objectName='UnitsComboBox')
-        # TODO: Determine if below loads correctly
+        self.unitsCombobox = QComboBox(
+            paramWidget,
+            objectName='UnitsComboBox')
         self.unitsCombobox.addItems(info.unit['labels'])
         self.unitsCombobox.setCurrentIndex(info.unit['def'])
         paramLayout.addWidget(self.unitsCombobox, 2, 1, 1, 1)
 
         sourceRangeTypeLabel = QLabel(
-            paramWidget, text='Source (6221) range type:',
+            paramWidget,
+            text='Source (6221) range type:',
             objectName='SourceRangeTypeLabel')
         paramLayout.addWidget(sourceRangeTypeLabel, 3, 0, 1, 1)
 
         self.sourceRangeTypeCombobox = QComboBox(
-            paramWidget, objectName='SourceRangeTypeComboBox')
+            paramWidget,
+            objectName='SourceRangeTypeComboBox')
         self.sourceRangeTypeCombobox.addItems(
-            str(info.sour_range['typ']['dic'].items()))
+            list(kinfo.sour_range['typ']['dic'].values()))
         self.sourceRangeTypeCombobox.setCurrentIndex(
             info.sour_range['typ']['def'])
         paramLayout.addWidget(self.sourceRangeTypeCombobox, 3, 1, 1, 1)
 
-        sourceRangeLayout = QGridLayout(paramWidget,
-                                        objectName='SourceRangeLayout')
+        sourceRangeLayout = QGridLayout(
+            paramWidget,
+            objectName='SourceRangeLayout')
         paramLayout.addLayout(
             sourceRangeLayout, 4, 1, 1, 1, QtCore.Qt.AlignHCenter)
 
-        sourceRangeLabel = QLabel(paramWidget, text='Range:',
-                                  objectName='SourceRangeLabel')
+        sourceRangeLabel = QLabel(
+            paramWidget,
+            text='Range:',
+            objectName='SourceRangeLabel')
         sourceRangeLayout.addWidget(
             sourceRangeLabel, 0, 0, 1, 1, QtCore.Qt.AlignRight)
 
-        self.sourceRangeCombobox = QComboBox(paramWidget,
-                                             objectName='SourceRangeComboBox')
-        sr_items = [str(info.sour_range['minmax'][i]) + ' '
+        self.sourceRangeCombobox = QComboBox(
+            paramWidget,
+            objectName='SourceRangeComboBox')
+        sr_items = [str(limit)
+                    + ' '
                     + info.sour_range['txt'][i]
-                    for i in info.sour_range['dic'].keys()]
-        # self.sourceRangeCombobox.addItem('2 nA')
-        # self.sourceRangeCombobox.addItem('20 nA')
-        # self.sourceRangeCombobox.addItem('200 nA')
-        # self.sourceRangeCombobox.addItem('2 \u03BCA')
-        # self.sourceRangeCombobox.addItem('20 \u03BCA')
-        # self.sourceRangeCombobox.addItem('200 \u03BCA')
-        # self.sourceRangeCombobox.addItem('2 mA')
-        # self.sourceRangeCombobox.addItem('20 mA')
-        # self.sourceRangeCombobox.addItem('100 mA')
-        self.sourceRangeCombobox.setCurrentIndex(sr_items)
+                    for i, limit in info.sour_range['minmax'].items()]
+        # for i in info.sour_range['dic'].keys()]
+        self.sourceRangeCombobox.addItems(sr_items)
+        self.sourceRangeCombobox.setCurrentIndex(info.sour_range['def'])
         sourceRangeLayout.addWidget(self.sourceRangeCombobox, 0, 1, 1, 1)
 
-        complianceLayout = QHBoxLayout(paramWidget,
-                                       objectName='ComplianceLayout')
+        complianceLayout = QHBoxLayout(
+            paramWidget,
+            objectName='ComplianceLayout')
         paramLayout.addLayout(complianceLayout, 5, 0, 1, 1)
 
-        complianceLabel = QLabel(paramWidget, text='Compliance Voltage (V)',
-                                 objectName='ComplianceLabel')
+        complianceLabel = QLabel(
+            paramWidget,
+            text='Compliance Voltage (V)',
+            objectName='ComplianceLabel')
         complianceLayout.addWidget(complianceLabel)
 
-        self.complianceSpinbox = QDoubleSpinBox(paramWidget,
-                                                objectName='ComplianceSpinBox')
+        self.complianceSpinbox = QDoubleSpinBox(
+            paramWidget,
+            objectName='ComplianceSpinBox')
         comp_lim = info.compl_volt['lim']
-        self.complianceSpinbox.setRange(comp_lim[0], comp_lim[1])
+        self.complianceSpinbox.setRange(
+            comp_lim[0],
+            comp_lim[1])
         self.complianceSpinbox.setValue(info.compl_volt['def'])
         complianceLayout.addWidget(self.complianceSpinbox)
 
-        self.CABCheckbox = QCheckBox(paramWidget, text='Compliance Abort',
-                                     objectName='CABCheckBox')
+        self.CABCheckbox = QCheckBox(
+            paramWidget,
+            text='Compliance Abort',
+            objectName='CABCheckBox')
         self.CABCheckbox.setChecked(info.cab_def)
         paramLayout.addWidget(
-           self.CABCheckbox, 5, 1, 1, 1, QtCore.Qt.AlignHCenter)
+            self.CABCheckbox, 5, 1, 1, 1, QtCore.Qt.AlignHCenter)
 
         # TODO: Determine if I want autorange option
 
-        meterRangeLabel = QLabel(paramWidget, text='Voltmeter (2182a) Range:',
-                                 objectName='MeterRangeLabel')
+        meterRangeLabel = QLabel(
+            paramWidget,
+            text='Voltmeter (2182a) Range:',
+            objectName='MeterRangeLabel')
         paramLayout.addWidget(meterRangeLabel, 6, 0, 1, 1)
 
-        self.meterRangeCombobox = QComboBox(paramWidget,
-                                            objectName='MeterRangeComboBox')
+        self.meterRangeCombobox = QComboBox(
+            paramWidget,
+            objectName='MeterRangeComboBox')
         self.meterRangeCombobox.addItems(info.volt_range['labels'])
-        # self.meterRangeCombobox.addItem('10 mV')
-        # self.meterRangeCombobox.addItem('100 mV')
-        # self.meterRangeCombobox.addItem('1 V')
-        # self.meterRangeCombobox.addItem('10 V')
-        # self.meterRangeCombobox.addItem('100 V')
         self.meterRangeCombobox.setCurrentIndex(info.volt_range['def'])
         paramLayout.addWidget(self.meterRangeCombobox, 6, 1, 1, 1)
 
-        measureWidget = QWidget(centralWidget, objectName='MeasureWidget')
+        measureWidget = QWidget(
+            centralWidget,
+            objectName='MeasureWidget')
         centralLayout.addWidget(measureWidget)
 
-        measureLayout = QGridLayout(measureWidget, objectName='MeasureLayout')
+        measureLayout = QGridLayout(
+            measureWidget,
+            objectName='MeasureLayout')
 
         current1Layout = QHBoxLayout(objectName='Curr1Layout')
         measureLayout.addLayout(current1Layout, 0, 0, 1, 1)
 
-        label = (info.curr1['txt'][info.idx] +
-                 info.sour_range['txt'][info.sour_range['def']])
-        self.current1Label = QLabel(measureWidget, text=label,
-                                    objectName='Curr1Label')
+        label = (info.curr1['txt'][info.idx]
+                 + info.sour_range['txt'][info.sour_range['def']])
+        self.current1Label = QLabel(
+            measureWidget,
+            text=label,
+            objectName='Curr1Label')
         current1Layout.addWidget(self.current1Label)
 
-        self.current1Spinbox = QDoubleSpinBox(measureWidget,
-                                              objectName='Curr1SpinBox')
+        self.current1Spinbox = QDoubleSpinBox(
+            measureWidget,
+            objectName='Curr1SpinBox')
         # TODO: Verify curr1 range, value set correctly
-        self.current1Spinbox.setRange(info.curr1['lim'][0],
-                                      info.curr1['lim'][1])
+        self.current1Spinbox.setRange(
+            info.curr1['lim'][0],
+            info.curr1['lim'][1])
         self.current1Spinbox.setValue(info.curr1['def'])
         current1Layout.addWidget(self.current1Spinbox)
 
@@ -368,15 +409,19 @@ class Ui_KeithWindow(Ui_MainWindow):
 
         label = (info.curr2['txt'][info.idx]
                  + info.sour_range['txt'][info.sour_range['def']])
-        self.current2Label = QLabel(measureWidget, text=label,
-                                    objectName='Curr2Label')
+        self.current2Label = QLabel(
+            measureWidget,
+            text=label,
+            objectName='Curr2Label')
         current2Layout.addWidget(self.current2Label)
 
-        self.current2Spinbox = QDoubleSpinBox(measureWidget,
-                                              objectName='Curr2SpinBox')
+        self.current2Spinbox = QDoubleSpinBox(
+            measureWidget,
+            objectName='Curr2SpinBox')
         # TODO: Verify curr2 range, value set correctly
-        self.current2Spinbox.setRange(info.curr2['lim'][0],
-                                      info.curr2['lim'][1])
+        self.current2Spinbox.setRange(
+            info.curr2['lim'][0],
+            info.curr2['lim'][1])
         self.current2Spinbox.setValue(info.curr2['def'])
         current2Layout.addWidget(self.current2Spinbox)
 
@@ -384,14 +429,18 @@ class Ui_KeithWindow(Ui_MainWindow):
         measureLayout.addLayout(currStepLayout, 2, 0, 1, 1)
         label = (info.curr_step['txt'][info.idx]
                  + info.sour_range['txt'][info.sour_range['def']])
-        self.currStepLabel = QLabel(measureWidget, text=label,
-                                    objectName='CurrStepLabel')
+        self.currStepLabel = QLabel(
+            measureWidget,
+            text=label,
+            objectName='CurrStepLabel')
         currStepLayout.addWidget(self.currStepLabel)
 
-        self.currStepSpinbox = QDoubleSpinBox(measureWidget,
-                                              objectName='CurrStepSpinBox')
-        self.currStepSpinbox.setRange(info.curr_step['lim'][0],
-                                      info.curr_step['lim'][1])
+        self.currStepSpinbox = QDoubleSpinBox(
+            measureWidget,
+            objectName='CurrStepSpinBox')
+        self.currStepSpinbox.setRange(
+            info.curr_step['lim'][0],
+            info.curr_step['lim'][1])
         self.currStepSpinbox.setValue(info.curr_step['def'])
         currStepLayout.addWidget(self.currStepSpinbox)
 
@@ -399,19 +448,24 @@ class Ui_KeithWindow(Ui_MainWindow):
         measureLayout.addLayout(field4Layout, 3, 0, 1, 1)
 
         # TODO: Verify this prints the correct label
-        label = (info.field4['labels'][info.idx]
-                 + (info.sour_range['txt'][info.sour_range['def']] if
-                    info.idx == 0 else ''))
+        label = (info.field4['label'][info.idx]
+                 + (info.sour_range['txt'][info.sour_range['def']]
+                    if info.idx == 0 else ''))
         print(f"Field4 Label = {label}")
-        self.field4Label = QLabel(measureWidget, text=label,
-                                  objectName='Field4Label')
+        self.field4Label = QLabel(
+            measureWidget,
+            text=label,
+            objectName='Field4Label')
         field4Layout.addWidget(self.field4Label)
 
         f4dic = ivinfo['field4'][info.idx]
-        self.field4Spinbox = QDoubleSpinBox(measureWidget,
-                                            objectName='Field4SpinBox')
+        self.field4Spinbox = QDoubleSpinBox(
+            measureWidget,
+            objectName='Field4SpinBox')
         if ivinfo['field4'][info.idx] is not None:
-            self.field4Spinbox.setRange(f4dic['lim'][0], f4dic['lim'][-1])
+            self.field4Spinbox.setRange(
+                f4dic['lim'][0],
+                f4dic['lim'][-1])
         self.field4Spinbox.setValue(f4dic['def'])
         self.field4Spinbox.setDecimals(f4dic['decim'])
         field4Layout.addWidget(self.field4Spinbox)
@@ -419,29 +473,36 @@ class Ui_KeithWindow(Ui_MainWindow):
         rateLayout = QHBoxLayout(objectName='RateLayout')
         measureLayout.addLayout(rateLayout, 4, 0, 1, 1)
 
-        self.rateLabel = QLabel(measureWidget,
-                                text=info.rate['txt'][info.idx],
-                                objectName='RateLabel')
+        self.rateLabel = QLabel(
+            measureWidget,
+            text=info.rate['txt'][info.idx],
+            objectName='RateLabel')
         rateLayout.addWidget(self.rateLabel)
 
-        self.rateSpinbox = QDoubleSpinBox(measureWidget,
-                                          objectName='RateSpinBox')
-        self.rateSpinbox.setRange(info.rate['lim'][0], info.rate['lim'][-1])
+        self.rateSpinbox = QDoubleSpinBox(
+            measureWidget,
+            objectName='RateSpinBox')
+        self.rateSpinbox.setRange(
+            info.rate['lim'][0],
+            info.rate['lim'][-1])
         self.rateSpinbox.setValue(info.rate['def'])
         rateLayout.addWidget(self.rateSpinbox)
 
         delayLayout = QHBoxLayout(objectName='DelayLayout')
         measureLayout.addLayout(delayLayout, 5, 0, 1, 1)
 
-        self.delayLabel = QLabel(measureWidget,
-                                 text=info.delay['txt'][info.idx],
-                                 objectName='DelayLabel')
+        self.delayLabel = QLabel(
+            measureWidget,
+            text=info.delay['txt'][info.idx],
+            objectName='DelayLabel')
         delayLayout.addWidget(self.delayLabel)
 
-        self.delaySpinbox = QDoubleSpinBox(measureWidget,
-                                           objectName='DelaySpinBox')
-        self.delaySpinbox.setRange(info.delay['lim'][0],
-                                   info.delay['lim'][-1])
+        self.delaySpinbox = QDoubleSpinBox(
+            measureWidget,
+            objectName='DelaySpinBox')
+        self.delaySpinbox.setRange(
+            info.delay['lim'][0],
+            info.delay['lim'][-1])
         self.delaySpinbox.setValue(info.delay['def'])
         delayLayout.addWidget(self.delaySpinbox)
 
@@ -449,74 +510,93 @@ class Ui_KeithWindow(Ui_MainWindow):
         measureLayout.addLayout(pulseWidthLayout, 6, 0, 1, 1)
 
         self.pulseWidthLabel = QLabel(
-            measureWidget, text=info.width['txt'][info.idx],
+            measureWidget,
+            text=info.width['txt'][info.idx],
             objectName='PulseWidthLabel')
         pulseWidthLayout.addWidget(self.pulseWidthLabel)
 
-        self.pulseWidthSpinbox = QDoubleSpinBox(measureWidget,
-                                                objectName='PulseWidthSpinBox')
+        self.pulseWidthSpinbox = QDoubleSpinBox(
+            measureWidget,
+            objectName='PulseWidthSpinBox')
         if info.width['lim'] is not None:
-            self.pulseWidthSpinbox.setRange(info.width['lim'][0],
-                                            info.width['lim'][-1])
+            self.pulseWidthSpinbox.setRange(
+                info.width['lim'][0],
+                info.width['lim'][-1])
         pulseWidthLayout.addWidget(self.pulseWidthSpinbox)
 
         countLayout = QHBoxLayout(objectName='CountLayout')
         measureLayout.addLayout(countLayout, 7, 0, 1, 1)
 
-        self.countLabel = QLabel(measureWidget,
-                                 text=info.count['txt'][info.idx],
-                                 objectName='CountLabel')
+        self.countLabel = QLabel(
+            measureWidget,
+            text=info.count['txt'][info.idx],
+            objectName='CountLabel')
         countLayout.addWidget(self.countLabel)
 
-        self.countSpinbox = QSpinBox(measureWidget, objectName='CountSpinBox')
+        self.countSpinbox = QSpinBox(
+            measureWidget,
+            objectName='CountSpinBox')
         if info.idx in (1, 2):
-            self.countSpinbox.setRange(info.points['lim'][0],
-                                       info.points['lim'][-1])
+            self.countSpinbox.setRange(
+                info.points['lim'][0],
+                info.points['lim'][-1])
             self.countSpinbox.setValue(info.points['def'])
         elif info.idx in (3, 4):
-            self.countSpinbox.setRange(info.sweeps['lim'][0],
-                                       info.sweeps['lim'][-1])
+            self.countSpinbox.setRange(
+                info.sweeps['lim'][0],
+                info.sweeps['lim'][-1])
             self.countSpinbox.setValue(info.sweeps['def'])
         countLayout.addWidget(self.countSpinbox)
 
-        self.lowMeasCheckbox = QCheckBox(measureWidget, text='Low Measure',
-                                         objectName='LowMeasCheckBox')
-        measureLayout.addWidget(self.lowMeasCheckbox,
-                                1, 1, 1, 1, QtCore.Qt.AlignHCenter)
+        self.lowMeasCheckbox = QCheckBox(
+            measureWidget,
+            text='Low Measure',
+            objectName='LowMeasCheckBox')
+        measureLayout.addWidget(
+            self.lowMeasCheckbox, 1, 1, 1, 1, QtCore.Qt.AlignHCenter)
         if info.idx > 1:
             self.lowMeasCheckbox.setChecked(info.low_meas['def'])
 
-        self.filterCheckbox = QCheckBox(measureWidget, text='Filter on',
-                                        objectName='FilterCheckBox')
-        measureLayout.addWidget(self.filterCheckbox,
-                                4, 1, 1, 1, QtCore.Qt.AlignRight)
+        self.filterCheckbox = QCheckBox(
+            measureWidget,
+            text='Filter on',
+            objectName='FilterCheckBox')
+        measureLayout.addWidget(
+            self.filterCheckbox, 4, 1, 1, 1, QtCore.Qt.AlignRight)
         self.filterCheckbox.setChecked(info.filt['ondef'])
 
         filterTypeLayout = QHBoxLayout(objectName='FilterTypeLayout')
         measureLayout.addLayout(filterTypeLayout, 5, 1, 1, 1)
 
-        filterTypeLabel = QLabel(measureWidget, text='Filter Type:',
-                                 objectName='FilterTypeLabel',
-                                 alignment=QtCore.Qt.AlignRight)
+        filterTypeLabel = QLabel(
+            measureWidget,
+            text='Filter Type:',
+            objectName='FilterTypeLabel',
+            alignment=QtCore.Qt.AlignRight)
         filterTypeLayout.addWidget(filterTypeLabel)
 
-        self.filterTypeCombobox = QComboBox(measureWidget,
-                                            objectName='FilterTypeComboBox')
+        self.filterTypeCombobox = QComboBox(
+            measureWidget,
+            objectName='FilterTypeComboBox')
         self.filterTypeCombobox.addItems(info.filt['labels'])
         filterTypeLayout.addWidget(self.filterTypeCombobox)
 
         filterWindowLayout = QHBoxLayout(objectName='FilterWindowLayout')
         measureLayout.addLayout(filterWindowLayout, 6, 1, 1, 1)
 
-        filterWindowLabel = QLabel(measureWidget, text='Filter Window:',
-                                   objectName='FilterWindowLabel',
-                                   alignment=QtCore.Qt.AlignRight)
+        filterWindowLabel = QLabel(
+            measureWidget,
+            text='Filter Window:',
+            objectName='FilterWindowLabel',
+            alignment=QtCore.Qt.AlignRight)
         filterWindowLayout.addWidget(filterWindowLabel)
 
         self.filterWindowSpinbox = QDoubleSpinBox(
-            measureWidget, objectName='FilterWindowSpinBox')
-        self.filterWindowSpinbox.setRange(info.fwindow['lim'][0],
-                                          info.fwindow['lim'][-1])
+            measureWidget,
+            objectName='FilterWindowSpinBox')
+        self.filterWindowSpinbox.setRange(
+            info.fwindow['lim'][0],
+            info.fwindow['lim'][-1])
         self.filterWindowSpinbox.setValue(info.fwindow['def'])
         self.filterWindowSpinbox.setToolTip('EXPLANATORY TOOLTIP HERE')
         # TODO: Add tooltip
@@ -525,26 +605,34 @@ class Ui_KeithWindow(Ui_MainWindow):
         filterCountLayout = QHBoxLayout(objectName='FilterCountLayout')
         measureLayout.addLayout(filterCountLayout, 7, 1, 1, 1)
 
-        filterCountLabel = QLabel(measureWidget, text='Filter Count:',
-                                  objectName='FilterCountLabel',
-                                  alignment=QtCore.Qt.AlignRight)
+        filterCountLabel = QLabel(
+            measureWidget,
+            text='Filter Count:',
+            objectName='FilterCountLabel',
+            alignment=QtCore.Qt.AlignRight)
         filterCountLayout.addWidget(filterCountLabel)
 
-        self.filterCountSpinbox = QSpinBox(measureWidget,
-                                           objectName='FilterCountSpinBox')
-        self.filterCountSpinbox.setRange(info.fcount['lim'][0],
-                                         info.fcount['lim'][-1])
+        self.filterCountSpinbox = QSpinBox(
+            measureWidget,
+            objectName='FilterCountSpinBox')
+        self.filterCountSpinbox.setRange(
+            info.fcount['lim'][0],
+            info.fcount['lim'][-1])
         self.filterCountSpinbox.setValue(info.fcount['def'])
         self.filterCountSpinbox.setToolTip('EXPLANATORY TOOLTIP HERE')
         # TODO: Add tooltip
         filterCountLayout.addWidget(self.filterCountSpinbox)
 
         centralLayout.addWidget(lowerFrame)
-        self.armButton = QPushButton(lowerFrame, text='Arm',
-                                     objectName='ArmButton')
+        self.armButton = QPushButton(
+            lowerFrame,
+            text='Arm',
+            objectName='ArmButton')
         lowerLayout.addWidget(self.armButton, 0, 0, 1, 1)
-        self.startButton = QPushButton(lowerFrame, text='Start',
-                                       objectName='StartButton')
+        self.startButton = QPushButton(
+            lowerFrame,
+            text='Start',
+            objectName='StartButton')
         self.startButton.setCheckable(True)
         self.startButton.setChecked(False)
         lowerLayout.addWidget(self.startButton, 0, 1, 1, 1)
@@ -606,7 +694,9 @@ class Ui_MagnetWindow(Ui_MainWindow):
         (topFrame, topLayout) = self.add_top(centralWidget)
         centralLayout.addWidget(topFrame)
 
-        configFrame = QFrame(topFrame, objectName='ConfigFrame')
+        configFrame = QFrame(
+            topFrame,
+            objectName='ConfigFrame')
         topLayout.addWidget(configFrame, 0, 0, 1, 1)
         (configLayout, self.configFile, self.configLoadButton,
          self.configSaveButton) = self.add_config(configFrame)
@@ -616,90 +706,116 @@ class Ui_MagnetWindow(Ui_MainWindow):
 
         (lowerFrame, lowerLayout) = self.add_lower(centralWidget)
 
-        fidx = minfo.field['unit']['def']
+        fidx = minfo().field['unit']['def']
         tidx = minfo.time['unit']['def']
 
-        self.mMeasureCheckbox = QCheckBox(topFrame,
-                                          text='Record magnetic field',
-                                          objectName='mMeasureCheckBox')
+        self.mMeasureCheckbox = QCheckBox(
+            topFrame,
+            text='Record magnetic field',
+            objectName='mMeasureCheckBox')
         topLayout.addWidget(self.mMeasureCheckbox, 1, 0, 1, 1)
 
-        COMLabel = QLabel(paramWidget, text='COM Address',
-                          objectName='COMLabel')
+        COMLabel = QLabel(
+            paramWidget,
+            text='COM Address',
+            objectName='COMLabel')
         paramLayout.addWidget(COMLabel, 0, 0, 1, 1)
-        self.COMSpinbox = QSpinBox(paramWidget, objectName='COMSpinBox')
-        self.COMSpinbox.setRange(minfo.addr['lim'][0], minfo.addr['lim'][-1])
+        self.COMSpinbox = QSpinBox(
+            paramWidget,
+            objectName='COMSpinBox')
+        self.COMSpinbox.setRange(
+            minfo.addr['lim'][0],
+            minfo.addr['lim'][-1])
         self.COMSpinbox.setValue(minfo.addr['def'])
         paramLayout.addWidget(self.COMSpinbox, 0, 1, 1, 1)
 
-        self.targetLabel = QLabel(paramWidget, text='Target TEXT',
-                                  objectName='TargetLabel')
+        self.targetLabel = QLabel(
+            paramWidget,
+            text='Target TEXT',
+            objectName='TargetLabel')
         paramLayout.addWidget(self.targetLabel, 1, 0, 1, 1)
 
-        self.targetSpinbox = QDoubleSpinBox(paramWidget,
-                                            objectName='TargetSpinBox')
-        self.targetSpinbox.setRange(-minfo.field['lim'][fidx],
-                                    minfo.field['lim'][fidx])
-        self.targetSpinbox.setValue(minfo.field['def'][fidx])
+        self.targetSpinbox = QDoubleSpinBox(
+            paramWidget,
+            objectName='TargetSpinBox')
+        self.targetSpinbox.setRange(
+            -minfo().field['lim'][fidx],
+            minfo().field['lim'][fidx])
+        self.targetSpinbox.setValue(minfo().field['def'][fidx])
         paramLayout.addWidget(self.targetSpinbox, 1, 1, 1, 1)
 
-        fieldUnitLabel = QLabel(paramWidget, text='Field Units',
-                                objectName='FieldUnitLabel')
+        fieldUnitLabel = QLabel(
+            paramWidget,
+            text='Field Units',
+            objectName='FieldUnitLabel')
         paramLayout.addWidget(fieldUnitLabel, 2, 0, 1, 1)
 
-        # TODO: Test fieldUnitCombobox to ensure proper items added
-        unit_list = [minfo.field['unit']['Full'][i]
-                     for i in range(len(minfo.coil_const))]
-        self.fieldUnitCombobox = QComboBox(paramWidget,
-                                           objectName='FieldUnitComboBox')
-        self.fieldUnitCombobox.addItems(unit_list)
-        # self.fieldUnitCombobox.addItem('Kilogauss')
-        # self.fieldUnitCombobox.addItem('Tesla')
-        # self.fieldUnitCombobox.addItem('Amps')
+        # unit_list = [minfo().field['unit']['Full'][i]
+        #              for i, v in enumerate(minfo.coil_const)]
+        self.fieldUnitCombobox = QComboBox(
+            paramWidget,
+            objectName='FieldUnitComboBox')
+        # TODO: Make more elegant than getting the indices from elsewhere
+        self.fieldUnitCombobox.addItems([minfo().field['unit']['Full'][i]
+                                         for i, v in enumerate(
+                                             minfo.coil_const)])
         paramLayout.addWidget(self.fieldUnitCombobox, 2, 1, 1, 1)
 
-        timeUnitLabel = QLabel(paramWidget, text='Time Units',
-                               objectName='TimeUnitLabel')
+        timeUnitLabel = QLabel(
+            paramWidget,
+            text='Time Units',
+            objectName='TimeUnitLabel')
         paramLayout.addWidget(timeUnitLabel, 3, 0, 1, 1)
 
-        # TODO: test timeUnitCombobox to ensure proper items added
-        self.timeUnitCombobox = QComboBox(paramWidget,
-                                          objectName='TimeUnitComboBox')
-        self.timeUnitCombobox.addItems([minfo.time['unit']['Full'][i]
-                                        for i in (0, 1)])
-        # self.timeUnitCombobox.addItem('Seconds')
-        # self.timeUnitCombobox.addItem('Minutes')
+        self.timeUnitCombobox = QComboBox(
+            paramWidget,
+            objectName='TimeUnitComboBox')
+        # TODO: Can I make this more elegant than for i in (0, 1)?
+        self.timeUnitCombobox.addItems(
+            [minfo.time['unit']['Full'][i] for i in (0, 1)])
         paramLayout.addWidget(self.timeUnitCombobox, 3, 1, 1, 1)
 
-        segmentsLabel = QLabel(paramWidget, text='Ramp Segments',
-                               objectName='SegmentsLabel')
+        segmentsLabel = QLabel(
+            paramWidget,
+            text='Ramp Segments',
+            objectName='SegmentsLabel')
         paramLayout.addWidget(segmentsLabel, 4, 0, 1, 1)
 
-        self.segmentsSpinbox = QSpinBox(paramWidget,
-                                        objectName='SegmentsSpinBox')
-        self.segmentsSpinbox.setRange(minfo.seg['lim'][0],
-                                      minfo.seg['lim'][-1])
+        self.segmentsSpinbox = QSpinBox(
+            paramWidget,
+            objectName='SegmentsSpinBox')
+        self.segmentsSpinbox.setRange(
+            minfo.seg['lim'][0],
+            minfo.seg['lim'][-1])
         paramLayout.addWidget(self.segmentsSpinbox, 4, 1, 1, 1)
 
-        self.setpointsLabel = QLabel(paramWidget, text='Ramp Setpoints UNIT',
-                                     objectName='SetpointsLabel')
+        self.setpointsLabel = QLabel(
+            paramWidget,
+            text='Ramp Setpoints UNIT',
+            objectName='SetpointsLabel')
         paramLayout.addWidget(self.setpointsLabel, 5, 0, 1, 1)
 
-        self.setpointsButton = QPushButton(paramWidget, text='List',
-                                           objectName='SetpointsButton')
+        self.setpointsButton = QPushButton(
+            paramWidget,
+            text='List',
+            objectName='SetpointsButton')
         # TODO: Set tooltip for SetpointsButton
         self.setpointsButton.setToolTip('A TOOLTIP')
         paramLayout.addWidget(self.setpointsButton, 5, 1, 1, 1)
 
-        rate_txt = (f"{minfo.rate['txt'][1]}"
-                    + f"{minfo.field['unit']['Abbv'][fidx]}/"
+        rate_txt = (f"{minfo().rate['txt'][1]}"
+                    + f"{minfo().field['unit']['Abbv'][fidx]}/"
                     + f"{minfo.time['unit']['Abbv'][tidx]}")
-        self.ratesLabel = QLabel(paramWidget, text=f"{rate_txt}",
-                                 objectName='RatesLabel')
+        self.ratesLabel = QLabel(
+            paramWidget,
+            text=rate_txt,
+            objectName='RatesLabel')
         paramLayout.addWidget(self.ratesLabel, 6, 0, 1, 1)
 
-        self.ratesButton = QtWidgets.QPushButton(paramWidget, text='List',
-                                                 objectName='RatesButton')
+        self.ratesButton = QtWidgets.QPushButton(
+            paramWidget,
+            text='List',
+            objectName='RatesButton')
         paramLayout.addWidget(self.ratesButton, 6, 1, 1, 1)
 
         # ???: Initialize holdLabel properly
@@ -712,8 +828,10 @@ class Ui_MagnetWindow(Ui_MainWindow):
 #                                      objectName='HoldButton')
 #        paramLayout.addWidget(self.holdButton, 7, 1, 1, 1)
 
-        self.quenchDetCheckbox = QCheckBox(paramWidget, text='Quench Detect',
-                                           objectName='QuenchDetCheckBox')
+        self.quenchDetCheckbox = QCheckBox(
+            paramWidget,
+            text='Quench Detect',
+            objectName='QuenchDetCheckBox')
         paramLayout.addWidget(self.quenchDetCheckbox, 7, 0, 1, 1)
         self.quenchDetCheckbox.setChecked(minfo.quench['def'])
 
@@ -737,32 +855,40 @@ class Ui_MagnetWindow(Ui_MainWindow):
 #           'These temperatures will not be recorded.')
 #        quenchTempLayout.addWidget(self.quenchTempSpinbox)
 
-        voltLimitLabel = QLabel(paramWidget, text='Voltage Limit (V)',
-                                objectName='VoltLimitLabel')
+        voltLimitLabel = QLabel(
+            paramWidget,
+            text='Voltage Limit (V)',
+            objectName='VoltLimitLabel')
         paramLayout.addWidget(voltLimitLabel, 8, 0, 1, 1)
 
-        self.voltLimitSpinbox = QDoubleSpinBox(paramWidget,
-                                               objectName='VoltLimitSpinBox')
-        # TODO: determine if can change argument to mlims.volt
-        self.voltLimitSpinbox.setRange(minfo.volt['lim'][0],
-                                       minfo.volt['lim'][1])
+        self.voltLimitSpinbox = QDoubleSpinBox(
+            paramWidget,
+            objectName='VoltLimitSpinBox')
+        self.voltLimitSpinbox.setRange(
+            minfo.volt['lim'][0],
+            minfo.volt['lim'][1])
         self.voltLimitSpinbox.setValue(minfo.volt['def'])
         paramLayout.addWidget(self.voltLimitSpinbox, 8, 1, 1, 1)
 
-        currLimitLabel = QLabel(paramWidget, text='Current limit (A)',
-                                objectName='CurrLimitLabel')
+        currLimitLabel = QLabel(
+            paramWidget,
+            text='Current limit (A)',
+            objectName='CurrLimitLabel')
         paramLayout.addWidget(currLimitLabel, 9, 0, 1, 1)
 
-        self.currLimitSpinbox = QDoubleSpinBox(paramWidget,
-                                               objectName='CurrLimitSpinBox')
-        # TODO: Figure out if can set argument to mlims.curr
-        self.currLimitSpinbox.setRange(minfo.curr['lim'][0],
-                                       minfo.curr['lim'][1])
+        self.currLimitSpinbox = QDoubleSpinBox(
+            paramWidget,
+            objectName='CurrLimitSpinBox')
+        self.currLimitSpinbox.setRange(
+            minfo.curr['lim'][0],
+            minfo.curr['lim'][1])
         self.currLimitSpinbox.setValue(minfo.curr['def'])
         paramLayout.addWidget(self.currLimitSpinbox, 9, 1, 1, 1)
 
-        self.zeroButton = QPushButton(paramWidget, text='Zero Magnet',
-                                      objectName='ZeroButton')
+        self.zeroButton = QPushButton(
+            paramWidget,
+            text='Zero Magnet',
+            objectName='ZeroButton')
         paramLayout.addWidget(self.zeroButton, 10, 0, 1, 1)
 
         # TODO: Determine if using rampdown at all
@@ -782,30 +908,38 @@ class Ui_MagnetWindow(Ui_MainWindow):
         # self.rampdownSpinbox.setValue()
         # rampdownLayout.addWidget(self.rampdownSpinbox)
 
-        mCalibrationFileLabel = QLabel(paramWidget,
-                                       text='Magnet Calibration file:',
-                                       objectName='MCalibrationFileLabel')
+        mCalibrationFileLabel = QLabel(
+            paramWidget,
+            text='Magnet Calibration file:',
+            objectName='MCalibrationFileLabel')
         paramLayout.addWidget(mCalibrationFileLabel, 11, 0, 1, 1)
 
         mCalibrationLayout = QHBoxLayout(objectName='MCalibrationLayout')
         paramLayout.addLayout(mCalibrationLayout, 11, 1, 1, 1)
 
-        self.mCalibrationFile = QLineEdit(paramWidget,
-                                          objectName='MCalibrationFile')
+        self.mCalibrationFile = QLineEdit(
+            paramWidget,
+            objectName='MCalibrationFile')
         mCalibrationLayout.addWidget(self.mCalibrationFile)
 
         self.mCalibrationLoadButton = QPushButton(
-            paramWidget, text='Load', objectName='MCalibrationLoadButton')
+            paramWidget,
+            text='Load',
+            objectName='MCalibrationLoadButton')
         mCalibrationLayout.addWidget(self.mCalibrationLoadButton)
 
         centralLayout.addWidget(lowerFrame)
 
-        self.setButton = QPushButton(lowerFrame, text='Set',
-                                     objectName='SetButton')
+        self.setButton = QPushButton(
+            lowerFrame,
+            text='Set',
+            objectName='SetButton')
         lowerLayout.addWidget(self.setButton)
 
-        self.startButton = QPushButton(lowerFrame, text='Start',
-                                       objectName='StartButton')
+        self.startButton = QPushButton(
+            lowerFrame,
+            text='Start',
+            objectName='StartButton')
         self.startButton.setCheckable(True)
         self.startButton.setChecked(False)
         lowerLayout.addWidget(self.startButton)
@@ -849,7 +983,9 @@ class Ui_TempWindow(Ui_MainWindow):
         (topFrame, topLayout) = self.add_top(centralWidget)
         centralLayout.addWidget(topFrame)
 
-        configFrame = QFrame(topFrame, objectName='ConfigFrame')
+        configFrame = QFrame(
+            topFrame,
+            objectName='ConfigFrame')
         topLayout.addWidget(configFrame, 0, 0, 1, 1)
         (configLayout, self.configFile, self.configLoadButton,
          self.configSaveButton) = self.add_config(configFrame)
@@ -860,61 +996,74 @@ class Ui_TempWindow(Ui_MainWindow):
         (lowerFrame, lowerLayout) = self.add_lower(centralWidget)
         centralLayout.addWidget(lowerFrame)
 
-        self.tMeasureCheckbox = QCheckBox(topFrame, text='Record Temperature',
-                                          objectName='tMeasureCheckBox')
+        self.tMeasureCheckbox = QCheckBox(
+            topFrame,
+            text='Record Temperature',
+            objectName='tMeasureCheckBox')
         topLayout.addWidget(self.tMeasureCheckbox, 1, 0, 1, 1)
 
-        GPIBLabel = QLabel(paramWidget, text='GPIB address',
-                           objectName='GPIBLabel')
+        GPIBLabel = QLabel(
+            paramWidget,
+            text='GPIB address',
+            objectName='GPIBLabel')
         paramLayout.addWidget(GPIBLabel, 0, 0, 1, 1)
 
-        self.GPIBSpinbox = QSpinBox(paramWidget, objectName='GPIBSpinBox')
+        self.GPIBSpinbox = QSpinBox(
+            paramWidget,
+            objectName='GPIBSpinBox')
         self.GPIBSpinbox.setToolTip('GPIB address of LakeShore 336')
-        self.GPIBSpinbox.setRange(tinfo.addr['lim'][0], tinfo.addr['lim'][-1])
+        self.GPIBSpinbox.setRange(
+            tinfo.addr['lim'][0],
+            tinfo.addr['lim'][-1])
         self.GPIBSpinbox.setValue(tinfo.addr['def'])
         paramLayout.addWidget(self.GPIBSpinbox, 0, 1, 1, 1)
 
-        measuredTempLabel = QLabel(paramWidget, text='Temperatures to measure',
-                                   objectName='MeasuredTempLabel')
+        measuredTempLabel = QLabel(
+            paramWidget,
+            text='Temperatures to measure',
+            objectName='MeasuredTempLabel')
         paramLayout.addWidget(measuredTempLabel, 1, 0, 1, 1)
 
-        self.measuredTempCombobox = QComboBox(paramWidget,
-                                              objectName='MeasuredTempComboBox'
-                                              )
-        # TODO: Make sure MeasuredTempComboBox adds items correctly
-        self.measuredTempCombobox.addItems(list(
-            tinfo.to_measure['dic'].values()))
-        # self.measuredTempCombobox.addItem('Controlled')
-        # self.measuredTempCombobox.addItem('All')
+        self.measuredTempCombobox = QComboBox(
+            paramWidget,
+            objectName='MeasuredTempComboBox')
+        self.measuredTempCombobox.addItems(
+            list(tinfo.to_measure['dic'].values()))
         paramLayout.addWidget(self.measuredTempCombobox, 1, 1, 1, 1)
 
         self.radControlCheckbox = QCheckBox(
-            paramWidget, text='Control rad shield/magnet temperature',
+            paramWidget,
+            text='Control rad shield/magnet temperature',
             objectName='RadControlCheckBox')
         paramLayout.addWidget(self.radControlCheckbox, 2, 0, 1, 1)
         self.radControlCheckbox.setChecked(tinfo.rad_cont['def'])
 
-        radSetpointLabel = QLabel(paramWidget,
-                                  text='Rad shield/magnet setpoint (K)',
-                                  objectName='RadSetpointLabel')
+        radSetpointLabel = QLabel(
+            paramWidget,
+            text='Rad shield/magnet setpoint (K)',
+            objectName='RadSetpointLabel')
         paramLayout.addWidget(radSetpointLabel, 3, 1, 1, 1)
 
         self.radSetpointSpinbox = QDoubleSpinBox(
             paramWidget, objectName='RadSetpointSpinBox')
-        self.radSetpointSpinbox.setRange(tinfo.setpt['lim'][0],
-                                         tinfo.setpt['lim'][1])
+        self.radSetpointSpinbox.setRange(
+            tinfo.setpt['lim'][0],
+            tinfo.setpt['lim'][1])
         self.radSetpointSpinbox.setValue(tinfo.setpt['def'])
         paramLayout.addWidget(self.radSetpointSpinbox, 3, 2, 1, 1)
 
-        radRampLabel = QLabel(paramWidget,
-                              text='Rad shield/magnet ramp rate (K/min)',
-                              objectName='RadRampLabel')
+        radRampLabel = QLabel(
+            paramWidget,
+            text='Rad shield/magnet ramp rate (K/min)',
+            objectName='RadRampLabel')
         paramLayout.addWidget(radRampLabel, 4, 1, 1, 1)
 
-        self.radRampSpinbox = QDoubleSpinBox(paramWidget,
-                                             objectName='RadRampSpinBox')
-        self.radRampSpinbox.setRange(tinfo.rate['lim'][2],
-                                     tinfo.rate['lim'][1])
+        self.radRampSpinbox = QDoubleSpinBox(
+            paramWidget,
+            objectName='RadRampSpinBox')
+        self.radRampSpinbox.setRange(
+            tinfo.rate['lim'][2],
+            tinfo.rate['lim'][1])
         self.radRampSpinbox.setSingleStep(tinfo.rate['lim'][0])
         self.radRampSpinbox.setValue(tinfo.rate['def'])
         self.radRampSpinbox.setToolTip(
@@ -922,93 +1071,87 @@ class Ui_TempWindow(Ui_MainWindow):
             + 'A rate of 0 means "as fast as possible."')
         paramLayout.addWidget(self.radRampSpinbox, 4, 2, 1, 1)
 
-        radPowerLabel = QLabel(paramWidget,
-                               text='Rad shield/heater power setting',
-                               objectName='RadPowerLabel')
+        radPowerLabel = QLabel(
+            paramWidget,
+            text='Rad shield/heater power setting',
+            objectName='RadPowerLabel')
         paramLayout.addWidget(radPowerLabel, 5, 1, 1, 1)
 
-        self.radPowerCombobox = QComboBox(paramWidget,
-                                          objectName='RadPowerComboBox')
-        # TODO Ensure that radPowerCombobox has correct items listed
+        self.radPowerCombobox = QComboBox(
+            paramWidget,
+            objectName='RadPowerComboBox')
         self.radPowerCombobox.addItems(list(tinfo.power['labels'].values()))
-        # self.radPowerCombobox.addItem('Off')
-        # self.radPowerCombobox.addItem('Low')
-        # self.radPowerCombobox.addItem('Medium')
-        # self.radPowerCombobox.addItem('High')
         paramLayout.addWidget(self.radPowerCombobox, 5, 2, 1, 1)
 
-        # self.radPowerSpinbox = QSpinBox(paramWidget,
-        #                                 objectName='RadPowerSpinBox')
-        # self.radPowerSpinbox.setToolTip(
-        #         '0 = off, 1 = low, 2 = medium, 3 = high')
-        # self.radPowerSpinbox.setRange(tlims.heatmode[0], tlims.heatmode[-1])
-
-        # paramLayout.addWidget(self.radPowerSpinbox, 5, 2, 1, 1)
-
-        self.stageControlCheckbox = QCheckBox(paramWidget,
-                                              text='Control stage temperature',
-                                              objectName='StageControlCheckBox'
-                                              )
+        self.stageControlCheckbox = QCheckBox(
+            paramWidget,
+            text='Control stage temperature',
+            objectName='StageControlCheckBox')
         paramLayout.addWidget(self.stageControlCheckbox, 6, 0, 1, 1)
 
-        stageSetpointLabel = QLabel(paramWidget, text='Stage setpoint (K)',
-                                    objectName='StageSetpointLabel')
+        stageSetpointLabel = QLabel(
+            paramWidget,
+            text='Stage setpoint (K)',
+            objectName='StageSetpointLabel')
         paramLayout.addWidget(stageSetpointLabel, 7, 1, 1, 1)
 
         self.stageSetpointSpinbox = QDoubleSpinBox(
-            paramWidget, objectName='StageSetpointSpinBox')
-        self.stageSetpointSpinbox.setRange(tinfo.setpt['lim'][0],
-                                           tinfo.setpt['lim'][1])
+            paramWidget,
+            objectName='StageSetpointSpinBox')
+        self.stageSetpointSpinbox.setRange(
+            tinfo.setpt['lim'][0],
+            tinfo.setpt['lim'][1])
         self.stageSetpointSpinbox.setValue(tinfo.setpt['def'])
         paramLayout.addWidget(self.stageSetpointSpinbox, 7, 2, 1, 1)
 
-        stageRampLabel = QLabel(paramWidget, text='Stage ramp rate (K/min',
-                                objectName='StageRampLabel')
+        stageRampLabel = QLabel(
+            paramWidget,
+            text='Stage ramp rate (K/min)',
+            objectName='StageRampLabel')
         paramLayout.addWidget(stageRampLabel, 8, 1, 1, 1)
 
-        self.stageRampSpinbox = QDoubleSpinBox(paramWidget,
-                                               objectName='stageRampSpinBox')
+        self.stageRampSpinbox = QDoubleSpinBox(
+            paramWidget,
+            objectName='stageRampSpinBox')
         self.stageRampSpinbox.setToolTip(
                 'Ramp rate for the sample stage temperature in K/min')
-        self.stageRampSpinbox.setRange(tinfo.rate['lim'][2],
-                                       tinfo.rate['lim'][1])
+        self.stageRampSpinbox.setRange(
+            tinfo.rate['lim'][2],
+            tinfo.rate['lim'][1])
         self.stageRampSpinbox.setSingleStep(tinfo.rate['lim'][0])
         self.stageRampSpinbox.setValue(tinfo.rate['def'])
         paramLayout.addWidget(self.stageRampSpinbox, 8, 2, 1, 1)
 
-        stagePowerLabel = QLabel(paramWidget, text='Heater power setting',
-                                 objectName='StagePowerLabel')
+        stagePowerLabel = QLabel(
+            paramWidget,
+            text='Heater power setting',
+            objectName='StagePowerLabel')
         paramLayout.addWidget(stagePowerLabel, 9, 1, 1, 1)
 
-        self.stagePowerCombobox = QComboBox(paramWidget,
-                                            objectName='StagePowerComboBox')
-        # TODO: Ensure that stagePowerCombobox lists items correctly
+        self.stagePowerCombobox = QComboBox(
+            paramWidget,
+            objectName='StagePowerComboBox')
         self.stagePowerCombobox.addItems(list(tinfo.power['labels'].values()))
-        # self.stagePowerCombobox.addItem('Off')
-        # self.stagePowerCombobox.addItem('Low')
-        # self.stagePowerCombobox.addItem('Medium')
-        # self.stagePowerCombobox.addItem('High')
         paramLayout.addWidget(self.stagePowerCombobox, 9, 2, 1, 1)
 
-        # self.stagePowerSpinbox = QSpinBox(paramWidget,
-        #                                   objectName='StagePowerSpinBox')
-        # self.stagePowerSpinbox.setRange(0, 3)
-        # self.stagePowerSpinbox.setToolTip(
-        #         '0 = off, 1 = low, 2 = medium, 3 = high')
-        # paramLayout.addWidget(self.stagePowerSpinbox, 9, 2, 1, 1)
-
-        self.setButton = QPushButton(lowerFrame, text='Set',
-                                     objectName='SetButton')
+        self.setButton = QPushButton(
+            lowerFrame,
+            text='Set',
+            objectName='SetButton')
         lowerLayout.addWidget(self.setButton, 0, 0, 1, 1)
 
-        self.runButton = QPushButton(lowerFrame, text='Ramp',
-                                     objectName='RunButton')
+        self.runButton = QPushButton(
+            lowerFrame,
+            text='Ramp',
+            objectName='RunButton')
         self.runButton.setCheckable(True)
         self.runButton.setChecked(False)
         lowerLayout.addWidget(self.runButton, 0, 1, 1, 1)
 
-        self.stopButton = QPushButton(lowerFrame, text='Stop',
-                                      objectName='StopButton')
+        self.stopButton = QPushButton(
+            lowerFrame,
+            text='Stop',
+            objectName='StopButton')
         lowerLayout.addWidget(self.stopButton, 0, 2, 1, 1)
 
 
