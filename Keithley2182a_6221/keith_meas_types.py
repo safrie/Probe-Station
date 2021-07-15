@@ -60,14 +60,15 @@ class DiffCon(KeithMeasure):
         """Instantiate differntial conductance measurement."""
         super().__init__(0)
         info = self.info
-        self.curr1 = info.curr1['def']
-        self.curr2 = info.curr2['def']
+        # TODO: Verify commented out bits don't need to be set here.
+        # self.curr1 = info.curr1['def']
+        # self.curr2 = info.curr2['def']
         self.curr_step = info.curr_step['def']
         self.curr_delta = info.curr_delta['def']
         self.meas_rate = info.rate['def']
-        self.filter_idx = info.filt['def']
+        # self.filter_idx = info.filt['def']
         self.filter_type = info.filt['txt'][self.filter_idx]
-        self.num_points = info.points['def']
+        # self.num_points = info.points['def']
 
     def get_meas_type_str(self) -> str:
         """Return type of measurement followed by a new line."""
@@ -142,9 +143,10 @@ class Delta(KeithMeasure):
         """Instantiate delta measurement."""
         super().__init__(1)
         info = self.info
-        self.curr1 = info.curr1['def']
-        self.curr2 = info.curr2['def']
-        self.num_points = info.points['def']
+        # TODO: Ensure that curr1 and curr2 don't need to be defined here.
+        # self.curr1 = info.curr1['def']
+        # self.curr2 = info.curr2['def']
+        # self.num_points = info.points['def']
         self.meas_rate = info.rate['def']
         self.set_filter_idx(info.filt['def'])
 
@@ -201,12 +203,13 @@ class PDelta(KeithMeasure):
         """Instantiate pulse delta measurement."""
         super().__init__(2)
         info = self.info
-        self.curr1 = info.curr1['def']
-        self.curr2 = info.curr2['def']
-        self.num_points = info.points['def']
-        self.pulse_width = info.width['def']
+        # TODO: Verify that things commented out are handled by abc
+        # self.curr1 = info.curr1['def']
+        # self.curr2 = info.curr2['def']
+        # self.num_points = info.points['def']
+        # self.pulse_width = info.width['def']
         self.cycle_int = info.rate['def']
-        self.meas_delay = info.delay['def']
+        # self.meas_delay = info.delay['def']
         self.set_filter_idx(info.filt['def'])
 
     def get_meas_type_str(self) -> str:
@@ -298,16 +301,17 @@ class PDeltaStair(KeithMeasure):
         """Instantiate pulse delta staircase sweep measurement."""
         super().__init__(3)
         info = self.info
-        self.curr1 = info.curr1['def']
-        self.curr2 = info.curr2['def']
+        # TODO: Verify that things commented out here are handled by abc
+        # self.curr1 = info.curr1['def']
+        # self.curr2 = info.curr2['def']
         self.curr_step = info.curr_step['def']
         self.num_points = self.calc_num_points(self.curr1, self.curr2,
                                                self.curr_step)
-        self.num_sweeps = info.sweeps['def']
-        self.pulse_width = info.width['def']
-        self.meas_delay = info.delay['def']
+        # self.num_sweeps = info.sweeps['def']
+        # self.pulse_width = info.width['def']
+        # self.meas_delay = info.delay['def']
         self.cycle_time = info.rate['def']
-        self.filter_idx = info.filt['def']
+        # self.filter_idx = info.filt['def']
         self.filter_type = info.filt['txt'][self.filter_idx]
 
     def get_meas_type_str() -> str:
@@ -419,14 +423,15 @@ class PDeltaLog(KeithMeasure):
         """Instantiate pulse delta log sweep."""
         super().__init__(4)
         info = self.info
-        self.curr1 = info.curr1['def']
-        self.curr2 = info.curr2['def']
-        self.num_points = info.points['def']
-        self.num_sweeps = info.sweeps['def']
-        self.pulse_width = info.width['def']
-        self.meas_delay = info.delay['def']
+        # TODO: Verify that things commented out here are set in abc
+        # self.curr1 = info.curr1['def']
+        # self.curr2 = info.curr2['def']
+        # self.num_points = info.points['def']
+        # self.num_sweeps = info.sweeps['def']
+        # self.pulse_width = info.width['def']
+        # self.meas_delay = info.delay['def']
         self.cycle_time = info.rate['def']
-        self.filter_idx = info.filt['def']
+        # self.filter_idx = info.filt['def']
         self.filter_type = info.filt['txt'][self.filter_idx]
 
     def get_meas_type_str(self) -> None:
