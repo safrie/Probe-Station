@@ -43,10 +43,10 @@ class Visa():
 
     def __init__(self) -> list:
         """Open pyvisa resource manager and list connected instruments."""
-        # self.rm = visa.ResourceManager()
-        self.rm = visa.ResourceManager(f'{simulator}@sim')
+        self.rm = visa.ResourceManager()
+        # self.rm = visa.ResourceManager(f'{simulator}@sim')
         self.instruments = self.rm.list_resources()
-        # print(self.instruments)
+        print(self.instruments)
         return self.instruments
 
     @abstractmethod
