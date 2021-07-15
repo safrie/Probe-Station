@@ -9,7 +9,7 @@ Part of the probe station V3 collection.
 @author: Sarah Friedensen
 """
 from abc import ABCMeta, abstractmethod
-from Typing import Union
+from typing import Union
 from limits import KeithInfo as kinfo, ivinfo, key
 
 
@@ -74,22 +74,20 @@ class KeithMeasure():
 
     def __init__(self, meas_idx: int) -> None:
         """Instantiate general Keithley 6221/2182A transport measurement."""
-        self.info = ivinfo['dic'][meas_idx]
+        self.info = ivinfo['dic'][meas_idx]()
         self.meas_idx = meas_idx
-        self.unit_idx = kinfo.unit['def']
+        self.unit_idx = kinfo().unit['def']
         self.curr1 = self.info.curr1['def']
         self.curr2 = self.info.curr2['def']
         self.num_points = self.info.points['def']
         self.meas_delay = self.info.delay['def']
-        # NOTE: This conditional may break initialization.  Remove if so
-        if meas_idx > 1:
-            self.low_meas = self.info.low_meas['def']
-        if meas_idx > 2:
-            self.num_sweeps = self.info.sweeps['def']
+        # NOTE: This generator expression may break initialization?
+        self.low_meas = (self.info.low_meas['def'] if meas_idx > 1 else None)
+        self.num_sweeps = (self.info.sweeps['def'] if meas_idx > 2 else None)
         self.filter_idx = self.info.filt['def']
-        self.filter_on = kinfo.filt['ondef']
-        self.filter_window = kinfo.fwindow['def']
-        self.filter_count = kinfo.fcount['def']
+        self.filter_on = kinfo().filt['ondef']
+        self.filter_window = kinfo().fwindow['def']
+        self.filter_count = kinfo().fcount['def']
         self.pulse_width = self.info.width['def']
 
     @abstractmethod
@@ -98,11 +96,11 @@ class KeithMeasure():
 
     def set_unit(self, unit: Union[int, str]) -> int:
         """Set the unit index for Keithleys to unit or corresponding index."""
-        dic = kinfo.unit['dic']
+        dic = kinfo().unit['dic']
         if unit in dic.values():
             unit = key(dic=dic, val=unit)
         elif unit not in dic.keys():
-            unit = kinfo.unit['def']
+            unit = kinfo().unit['def']
             print(f"Unit index invalid.  Setting to default ({unit}).")
         self.unit_idx = unit
         return unit
