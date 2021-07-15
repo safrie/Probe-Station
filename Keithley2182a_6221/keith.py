@@ -119,17 +119,18 @@ class Keith(Instrument):
                             2: self.pdelta,
                             3: self.pdelt_stair,
                             4: self.pdelt_log}
-        self.meas_typ_idx = info.meas['def']
+        self.meas_type_idx = info().meas['def']
 
-        self.address = info.addr['def']
+        # This looks like it's already set in super
+        # self.address = info().addr['def']
         self.visa = vKeith(self.address)
 
-        self.source_range_type_idx = info.source_range_type['def']
-        self.source_range_idx = info.source_range['def']
-        self.volt_range_idx = info.volt_range['def'] - 2
+        self.source_range_type_idx = info().sour_range['typ']['def']
+        self.source_range_idx = info().sour_range['def']
+        self.volt_range_idx = info().volt_range['def'] - 2
 
-        self.compl_volt = info.compl_volt['def']
-        self.compl_abort = info.cab_def
+        self.compl_volt = info().compl_volt['def']
+        self.compl_abort = info().cab_def
 
         # FIXME: Just call this 'arm'
         self.arm_switch = {
@@ -148,13 +149,13 @@ class Keith(Instrument):
         """Return measurement type class instance."""
         if idx is None:
             idx = self.meas_type_idx
-        elif idx not in info.meas['dic'].keys():
-            idx = info.meas['def']
+        elif idx not in info().meas['dic'].keys():
+            idx = info().meas['def']
             print("Measurement type index out of bounds.  Setting to default "
-                  + f"measurement type ({info.meas['txt'][idx]})."
+                  + f"measurement type ({info().meas['txt'][idx]})."
                   )
-        print(type(info.meas['dic'][idx]))
-        return info.meas['dic'][idx]
+        # print(type(info().meas['dic'][idx]))
+        return info().meas['dic'][idx]
 
     def info_type(self, idx: Optional[int] = None) -> info:
         """Return measurement type info class instance."""
@@ -164,7 +165,7 @@ class Keith(Instrument):
             idx = ivinfo['def']
             print("Measurement type index out of bounds.  Setting to default "
                   + f"measurement type ({ivinfo['def']}).")
-        return ivinfo['dic'][idx]
+        return ivinfo['dic'][idx]()
 
     def get_header_string(self, idx: Optional[int] = None) -> str:
         """Return header string for a measurement type.
@@ -181,10 +182,10 @@ class Keith(Instrument):
         curr2 = self.curr2_text(idx)
         step = self.curr_step_text(idx)
         delta = self.curr_delta_text(idx)
-        rate = info.rate['txt'][idx]
-        delay = info.delay['txt'][idx]
-        pulse_width = info.width['txt'][idx]
-        pulse_count = info.points['txt'][idx]
+        rate = info().rate['txt'][idx]
+        delay = info().delay['txt'][idx]
+        pulse_width = info().width['txt'][idx]
+        pulse_count = info().points['txt'][idx]
         out = (meas.get_meas_type_str()
                + f'{curr1}{meas.curr1}\t'
                + f'{curr2}{meas.curr2}\t'
@@ -216,11 +217,12 @@ class Keith(Instrument):
         caller wants the index.
         """
         # TODO: Test set_source_range_type str input
-        dic = info.sour_range['typ']['dic']
+        # TODO: get source range returned from Keithley when "best"
+        dic = info().sour_range['typ']['dic']
         if value in dic.values():
             value = key(dic=dic, val=value)
         elif value not in dic.keys():
-            value = info.sour_range['typ']['def']
+            value = info().sour_range['typ']['def']
             print("Source range type invalid.  Source range type set to "
                   + f"default ({value})")
         self.source_range_type_idx = value
@@ -231,7 +233,7 @@ class Keith(Instrument):
 
     def source_range_type(self) -> str:
         """Look up string for source_range_type.  Convenience function."""
-        return info.sour_range['typ']['dic'][self.source_range_type_idx]
+        return info().sour_range['typ']['dic'][self.source_range_type_idx]
 
     def set_source_range(self, value: Union[int, float, str]) -> int:
         """Set source_range_idx to given value and update Keithleys.
@@ -239,11 +241,11 @@ class Keith(Instrument):
         Returns source_range_idx in case input was a float or str.
         """
         # TODO: Test set_source_range str input
-        dic = info.sour_range['dic']
+        dic = info().sour_range['dic']
         if (value in dic.values() or float(value) in dic.values()):
             value = key(dic=dic, val=float(value))
         elif value not in dic.keys():
-            value = info.sour_range['def']
+            value = info().sour_range['def']
             print("Source range index out of bounds.  Source range set to "
                   + f"default value ({dic[value]}).")
         self.source_range_idx = value
@@ -255,7 +257,7 @@ class Keith(Instrument):
     def source_range(self, typ: type = float) -> Union[float, str]:
         """Return Keithley source range as either a float or a str."""
         # TODO: Test source_range
-        out = info.sour_range['dic'][self.source_range_idx]
+        out = info().sour_range['dic'][self.source_range_idx]
         if typ not in (float, str):
             print('Valid output type not given.  source_range: typ '
                   + 'must be either float or str (default is float).')
@@ -263,36 +265,35 @@ class Keith(Instrument):
         else:
             return (out if typ is float else format(out, '.0e'))
 
-    def set_volt_range(self, value: Union[int, float]) -> int:
+    def set_volt_range(self, value: Union[int, float], typ: type = int) -> int:
         """Set index for voltmeter range and update Keithleys.
 
         The math determines whether the passed value is a range or the index
         for the range.  Returns volt_range_idx in case input was a float
         """
-        # TODO: Verify set_volt_range actually works
-        dic = info.volt_range['dic']
-        print(f'volt range value = {value} and is int = {type(value) is int}')
-        if value in dic.values():
+        dic = info().volt_range['dic']
+        valid = (int, float)
+        if typ not in valid:
+            print("Type argument must be either int or float.  Try again.")
+            return
+        if value in dic.values() and typ == float:
             out = value
             value = key(dic=dic, val=value)
         else:
-            if isinstance(value, int):
-                value += 2
+            value += 2
             if value not in dic.keys():
-                value = info.volt_range['def']
+                value = info().volt_range['def']
                 print("Voltmeter range index out of bounds.  Setting to "
                       + f"default ({dic[value]} V).")
             out = dic[value]
         self.volt_range_idx = value
-        print(f"keith volt range idx = {value}")
-        print(f"volt range = {out} V")
         self.visa.set_meter_range(out)
         return value
 
     def volt_range(self, typ: type = float) -> Union[float, str]:
         """Return Keithley voltmeter range as either float or str."""
         # TODO: Test volt_range exhaustively as well.
-        out = info.volt_range['dic'][self.volt_range_idx]
+        out = info().volt_range['dic'][self.volt_range_idx]
 #        out = num if int(num) > 0 else format(num, '.0e')
         if typ not in (float, str):
             typ = float
@@ -310,13 +311,13 @@ class Keith(Instrument):
 
     def unit(self, meas_idx: Optional[int] = None) -> int:
         """Look up unit string for measurement index. Convenience function."""
-        return info.unit['dic'][self.meas_type(meas_idx).unit_idx]
+        return info().unit['dic'][self.meas_type(meas_idx).unit_idx]
 
     def set_compl_volt(self, volt: float) -> None:
         """Set compliance voltage and update Keithleys."""
-        lim = info.compl_volt['lim']
+        lim = info().compl_volt['lim']
         if not lim[0] <= volt <= lim[1]:
-            volt = info.compl_volt['def']
+            volt = info().compl_volt['def']
             print("Compliance voltage out of bounds.  Setting to default "
                   f"value ({volt} V).")
         self.compl_volt = volt
@@ -325,37 +326,35 @@ class Keith(Instrument):
     def set_compl_abort(self, enable: bool) -> None:
         """Set compliance abort."""
         if not isinstance(enable, bool):
-            enable = info.cab_default
+            enable = info().cab_default
             print("Setting for compliance abort not available. "
-                  + f" Setting to default ({info.cab_default}).")
+                  + f" Setting to default ({info().cab_default}).")
         self.compl_abort = enable
 
     def set_meas_type(self, value: Union[int, str]) -> KeithMeasure:
         """Set meas_typ_idx to index represented by value."""
-        if value in info.meas['txt'].values():
-            value = key(dic=info.meas['txt'], val=value)
-        elif value not in info.meas['txt'].keys():
-            value = info.meas['def']
+        if value in info().meas['txt'].values():
+            value = key(dic=info().meas['txt'], val=value)
+        elif value not in info().meas['txt'].keys():
+            value = info().meas['def']
             print("Measurement type index out of bounds.  Setting to default "
-                  + f"value ({info.meas['txt'][value]}).")
+                  + f"value ({info().meas['txt'][value]}).")
         self.meas_type_idx = value
-        return self.meas_type(value)
+        return value, self.meas_type(value)
 
     def meas_type_txt(self) -> str:
         """Return str of measurement type.  Convenience function."""
-        return info.meas['txt'].get(self.meas_type_idx, 'ERR')
+        return info().meas['txt'].get(self.meas_type_idx, 'ERR')
 
     def curr_conv_mult(self, num: float) -> float:
         """Convert a number to Amps based on multiplication by source range."""
-        val = numpy.log10(info.sour_range['dic'][self.source_range_idx])
-        mult_idx = val // 3
-        return num * info.sour_range['mult'][mult_idx]
+        mult_idx = self.source_range_idx // 3
+        return num * info().sour_range['mult'][mult_idx]
 
     def curr_conv_div(self, num: float) -> float:
         """Convert a number from Amps based on division by the source range."""
-        val = numpy.log10(info.sour_range['dic'][self.source_range_idx])
-        mult_idx = val // 3
-        return num / info.sour_range['mult'][mult_idx]
+        mult_idx = self.source_range_idx // 3
+        return num / info().sour_range['mult'][mult_idx]
 
     # %% Measurement variables section
 
@@ -386,6 +385,7 @@ class Keith(Instrument):
                        meas_idx: Optional[int] = None) -> None:
         """Set meas_delay of desired meas type instance to delay."""
         self.meas_type(meas_idx).set_meas_delay(delay)
+        print(f"Meas delay set to {self.meas_type(meas_idx).meas_delay}")
 
     def set_pulse_width(self, width: float,
                         meas_idx: Optional[int] = None) -> None:
@@ -528,7 +528,7 @@ class Keith(Instrument):
         """Arm the Keithleys to perform a measurement."""
         cmd = f'{self.visa.format_cmd}{self.arm_switch[self.meas_type_idx]()}'
         # TODO: Test arming thoroughly.
-        print(cmd)
+        # print(cmd)
         self.visa.write(cmd)
         out = self.visa.query(self.visa.qarm[self.meas_type_idx])
         print(f'armed = {out}')
@@ -577,7 +577,7 @@ class Keith(Instrument):
 
     def source_range_text(self) -> str:
         """Access the source range text conveniently."""
-        return info.sour_range['txt'].get(self.source_range_idx, "ERR")
+        return info().sour_range['txt'].get(self.source_range_idx, "ERR")
 
     def curr1_text(self, idx: Optional[int]) -> str:
         """Label curr1 in UI and headers."""
@@ -600,12 +600,14 @@ class Keith(Instrument):
     def field4_text(self, idx: Optional[int]) -> str:
         """Label field4 in UI and headers.  field4 changes with meas_type."""
         idx = self.meas_type_idx if idx is None else idx
-        field4 = self.info_type(idx).field4['txt'][idx]
+        field4 = self.info_type(idx).field4['label'][idx]
         if idx == 0:
             field4 += self.source_range_text()
         return field4
 
     def source_range_minmax(self, idx: Optional[int] = None) -> float:
-        """Retrieve minimum and maximum values for spinboxes in the UI."""
+        """Retrieve minimum and maximum values for spinboxes in the UI.
+        NOT IN AMPS!!!
+        """
         idx = self.source_range_idx if idx is None else idx
-        return info.sour_range['minmax'][idx]
+        return info().sour_range['minmax'][idx]
