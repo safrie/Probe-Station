@@ -70,9 +70,11 @@ class Temp(Instrument):
         self.stage_ramp = info.rate['def']
         self.stage_power = info.power['def']
         self.address = info.addr['def']
+        self.do_measure = info.measure['def']
         self.to_measure_idx = info.to_measure['def']
         self.to_measure_str = info.to_measure['dic'][self.to_measure_idx]
-        self.outnames = (j for i in info.out.name.values() for j in i)
+        # TODO: Ensure that below can be a genex and not a tuple
+        self.outnames = (j for i in info.out['name'].values() for j in i)
         self.visa = visa.vTemp(self.address)
         self.running = False
 
@@ -108,7 +110,7 @@ class Temp(Instrument):
             temp = info.setpt['def']
             print("Temperature setpoint not in valid range.  Setting to "
                   + f"default value instead ({temp} K).")
-        if output in info.out.name[1]:
+        if output in info.out["name"][1]:
             self.rad_setpoint = temp
         else:
             self.stage_setpoint = temp
@@ -126,7 +128,7 @@ class Temp(Instrument):
             rate = info.rate['def']
             print(f"Ramp rate must be within [{lim[0]}, {lim[1]}] or equal to "
                   + f"{lim[2]}.  Setting to default value ({rate}).")
-        if output in info.out.name[1]:
+        if output in info.out["name"][1]:
             self.rad_ramp = rate
         else:
             self.stage_ramp = rate
@@ -143,7 +145,7 @@ class Temp(Instrument):
             power = info.power['def']
             print(f"Heater power must be in {list(info.power['lim'])}.  "
                   + f"Setting to default heater power ({power}).")
-        if output in info.out.name[1]:
+        if output in info.out["name"][1]:
             self.rad_power = power
         else:
             self.stage_power = power
@@ -170,7 +172,7 @@ class Temp(Instrument):
         t0 is the initial time from which the elapsed time will be calculated.
         """
         inputs = list(range(1, 9)) if self.to_measure_idx else [6, 7]
-        outT = [self.visa.query_temp(i)[1:-2] for i in inputs]
+        outT = [self.visa.qtemp(i)[1:-2] for i in inputs]
         return outT + [time.monotonic() - t0]
 
     def ramp_status(self, output: int) -> int:
@@ -194,7 +196,7 @@ class Temp(Instrument):
         """
         print('Temperature control running.')
         data = []
-        self.set()
+        self.set_pars()
 
         self.visa.enable_output(1, int(self.rad_control))
         self.visa.enable_heater(1, self.rad_power)
