@@ -42,7 +42,7 @@ from file_io import Save, Config
 from LakeShore_336.temperature import Temp
 from Keithley2182a_6221.keith import Keith
 from AMI_430.magnet import Mag
-from limits import (KeithInfo as kinfo, TempLims as tinfo, MagLims as minfo,
+from limits import (KeithInfo as kinfo, TempInfo as tinfo, MagInfo as minfo,
                     key, ivinfo)
 
 
@@ -162,7 +162,7 @@ class ProbeGui(QMainWindow):
         update_keith_text()
         keith_ui_diffcon()
         keith_ui_delta()
-        keith_ui_pdelta()·
+        keith_ui_pdelta()
         keith_ui_pdelt_stair()
         update_keith_source_minmax(float)
         toggle_keith_for_run(bool)
@@ -356,7 +356,6 @@ class ProbeGui(QMainWindow):
         # TODO: Test to see if need to alter close_event to make invisible to
         # make this work.
         """Toggle visibility of the Keithley window."""
-        print(f'Type = {type(self.kwind)}')
         if enable is not None:
             self.kwind.window.setVisible(enable)
         else:
@@ -383,14 +382,18 @@ class ProbeGui(QMainWindow):
         """Set the Keithley IV measurement type."""
         ui = self.kwind.ui
         keith = self.keith
-        if idx is not None:
-            if isinstance(idx, str):
-                dic = kinfo.meas['txt']
-                idx = key(dic=dic, val=idx)
-            ui.measureTypeCombobox.setCurrentIndex(idx)
-        else:
+        if idx is None:
             idx = ui.measureTypeCombobox.currentIndex()
-        meas = keith.set_meas_type(idx)
+        idx, meas = keith.set_meas_type(idx)
+        ui.measureTypeCombobox.setCurrentIndex(idx)
+        # if idx is not None:
+        #     if isinstance(idx, str):
+        #         dic = kinfo.meas['txt']
+        #         idx = key(dic=dic, val=idx)
+        #     ui.measureTypeCombobox.setCurrentIndex(idx)
+        # else:
+        #     idx = ui.measureTypeCombobox.currentIndex()
+        # meas = keith.set_meas_type(idx)
         ui.unitsCombobox.setCurrentIndex(meas.unit_idx)
         rate = (meas.meas_rate if hasattr(meas, 'meas_rate') else
                 meas.cycle_int if hasattr(meas, 'cycle_int') else
@@ -423,7 +426,6 @@ class ProbeGui(QMainWindow):
         for d in dlist:
             d1.update(d)
         self.keith_ui_internal.update(d1)
-        print(self.keith_ui_internal)  # Testing print
         self.keith_ui_modify[idx]()
 
     def set_keith_unit(self, idx: Optional[int] = None,
@@ -490,7 +492,6 @@ class ProbeGui(QMainWindow):
 
     def set_keith_compliance_abort(self,
                                    enable: Optional[bool] = None) -> None:
-        # TODO: Test set_keith_compliance_abort
         """Enable/disable compliance abort for Keithley IV measurement."""
         checkbox = self.kwind.ui.CABCheckbox
         keith = self.keith
@@ -502,29 +503,22 @@ class ProbeGui(QMainWindow):
         d1 = {self.set_keith_compliance_abort: keith.compl_abort}
         self.keith_ui_internal.update(d1)
 
-    # TODO: Determine typing on volt range argument, test set_keith_volt_range
     def set_keith_volt_range(self, value=None) -> None:
         """Set the Keithley 2182a range."""
         combobox = self.kwind.ui.meterRangeCombobox
         keith = self.keith
-        # Testing print below
-        print(f'main volt range value is {value} of type {type(value)}\n')
         if value is not None:
             idx = keith.set_volt_range(value)
             combobox.blockSignals(True)
             combobox.setCurrentIndex(idx - 2)
-            print(f'box index = {idx - 2}')  # Testing print
             combobox.blockSignals(False)
         else:
-            print('combo index = '  # Testing print
-                  f'{self.kwind.meterRangeCombobox.currentIndex()}')
             idx = keith.set_volt_range(combobox.currentIndex())
         d1 = {self.set_keith_volt_range: idx}
         self.keith_ui_internal.update(d1)
 
     def set_keith_curr1(self, curr: Optional[float] = None,
                         meas_idx: Optional[int] = None) -> None:
-        # TODO: Test set_keith_curr1
         """Set the 1st current for the Keithleys and update UI if needed."""
         spinbox = self.kwind.ui.current1Spinbox
         (keith, meas) = (self.keith, self.keith.meas_type(meas_idx))
@@ -539,7 +533,6 @@ class ProbeGui(QMainWindow):
 
     def set_keith_curr2(self, curr: Optional[float] = None,
                         meas_idx: Optional[int] = None) -> None:
-        # TODO: Test set_keith_curr2
         """Set the 2nd current for the Keithleys and update UI if needed."""
         spinbox = self.kwind.ui.current2Spinbox
         (keith, meas) = (self.keith, self.keith.meas_type(meas_idx))
@@ -554,7 +547,6 @@ class ProbeGui(QMainWindow):
 
     def set_keith_curr_step(self, step: Optional[float] = None,
                             meas_idx: Optional[int] = None) -> None:
-        # TODO: Test set_keith_curr_step
         """Set the Keithley current step size and update UI if needed."""
         spinbox = self.kwind.ui.currStepSpinbox
         label = self.kwind.ui.currStepLabel
@@ -569,22 +561,23 @@ class ProbeGui(QMainWindow):
         d1 = {self.set_keith_curr_step: meas.curr_step}
         self.keith_ui_internal.update(d1)
 
-    # TODO: Verify that set_keith_field4 works and propagate through main
     def set_keith_field4(self, val: Optional[Union[float, int]] = None,
                          meas_idx: Optional[int] = None) -> None:
         """Set field4 in the UI--dispatch to correct function for meas_idx."""
         ui = self.kwind.ui
+        print(f"field4 val = {val}")
         if meas_idx is None:
             meas_idx = ui.measureTypeCombobox.currentIndex()
-        elif meas_idx == 0:
+
+        if meas_idx == 0:
             self.set_keith_curr_delta(delta=val, meas_idx=meas_idx)
             return
         elif meas_idx > 2:
             self.set_keith_num_points(points=val, meas_idx=meas_idx)
+            print(f"keith_num_points set to {val}")
 
     def set_keith_curr_delta(self, delta: Optional[float] = None,
                              meas_idx: Optional[int] = None) -> None:
-        # TODO: Test set_keith_curr_delta to make sure it didn't break
         """Set differential conductance current delta, update UI if needed."""
         spinbox = self.kwind.ui.field4Spinbox
         (keith, meas) = (self.keith, self.keith.meas_type(meas_idx))
@@ -623,9 +616,9 @@ class ProbeGui(QMainWindow):
         if delay is not None:
             keith.set_meas_delay(delay, meas_idx)
             if (meas_idx is None or meas_idx == keith.meas_type_idx):
-                spinbox.setValue(delay)
+                spinbox.setValue(delay / 1e-3)
         elif label:
-            keith.set_meas_delay(spinbox.value(), meas_idx)
+            keith.set_meas_delay(spinbox.value() * 1e-3, meas_idx)
         d1 = {self.set_keith_meas_delay: meas.meas_delay}
         self.keith_ui_internal.update(d1)
 
@@ -654,6 +647,8 @@ class ProbeGui(QMainWindow):
         spinbox = (self.kwind.ui.countSpinbox if index < 3
                    else self.kwind.ui.field4SpinBox)
         if points is not None:
+            # TODO: Why is points = int(points) here? form loading?
+            points = int(points)
             keith.set_num_points(points, meas_idx)
             if (meas_idx is None or meas_idx == keith.meas_type_idx):
                 spinbox.setValue(points)
@@ -836,26 +831,26 @@ class ProbeGui(QMainWindow):
             ui.lowMeasCheckbox.setChecked(meas.low_meas)
 
     def update_keith_text(self) -> None:
-        # TODO: Test update_keith_text
         """Update UI labels for a different measurement type or range."""
         ui = self.kwind.ui
-        (keith, meas) = (self.keith, self.keith.meas_type())
+        keith = self.keith
         idx = keith.meas_type_idx
+        info = ivinfo['dic'][idx]()
         ui.current1Label.setText(keith.curr1_text(idx))
         ui.current2Label.setText(keith.curr2_text(idx))
         ui.currStepLabel.setText(keith.curr_step_text(idx))
         ui.field4Label.setText(keith.field4_text(idx))
-        ui.rateLabel.setText(meas.meas_rate_text)
-        ui.delayLabel.setText(meas.meas_delay_text)
-        ui.pulseWidthLabel.setText(meas.pulse_width_text)
-        ui.countLabel.setText(meas.pulse_count_text)
+        ui.rateLabel.setText(info.rate['txt'][idx])
+        ui.delayLabel.setText(info.delay['txt'][idx])
+        ui.pulseWidthLabel.setText(info.width['txt'][idx])
+        ui.countLabel.setText(info.count['txt'][idx])
 
     def keith_ui_diffcon(self) -> None:
         # TODO: Test keith_ui_diffcon
         """Update UI for requisite inputs for differential conductance."""
         ui = self.kwind.ui
         idx = key(kinfo.meas['txt'], "diffCond")
-        info = ivinfo['dic'][idx]
+        info = ivinfo['dic'][idx]()
         self.update_keith_text()
         ui.currStepSpinbox.show()
         ui.field4Spinbox.show()
@@ -871,7 +866,7 @@ class ProbeGui(QMainWindow):
         ui.pulseWidthSpinbox.hide()
         ui.countSpinbox.hide()
         ui.filterTypeCombobox.setEnabled(True)
-        self.set_keith_filter_type(meas_idx=idx)
+        self.set_keith_filter_type(ftype=info.filt['def'])
         ui.filterTypeCombobox.setEnabled(False)
         ui.lowMeasCheckbox.hide()
         self.update_keith_values()
@@ -881,7 +876,7 @@ class ProbeGui(QMainWindow):
         """Update UI for requisite inputs for delta measurement."""
         ui = self.kwind.ui
         idx = key(kinfo.meas['txt'], "delta")
-        info = ivinfo['dic'][idx]
+        info = ivinfo['dic'][idx]()
         self.update_keith_text()
         ui.currStepSpinbox.hide()
         ui.field4Spinbox.hide()
@@ -904,7 +899,7 @@ class ProbeGui(QMainWindow):
         """Update UI for requisite inputs for pulse delta measurement."""
         ui = self.kwind.ui
         idx = key(kinfo.meas['txt'], "delta")
-        info = ivinfo['dic'][idx]
+        info = ivinfo['dic'][idx]()
         self.update_keith_text()
         ui.currStepSpinbox.hide()
         ui.field4Spinbox.hide()
@@ -928,12 +923,12 @@ class ProbeGui(QMainWindow):
         ui = self.kwind.ui
         self.update_keith_text()
         idx = key(kinfo.meas['txt'], "sweepPulseDeltaStair")
-        info = ivinfo['dic'][idx]
+        info = ivinfo['dic'][idx]()
         ui.currStepSpinbox.show()
         ui.field4Spinbox.show()
         ui.field4Spinbox.setReadOnly(True)
-        ui.field4Spinbox.editingFinished.disconnect()
-        ui.field4Spinbox.editingFinished.connect(self.set_keith_num_points)
+        # ui.field4Spinbox.editingFinished.disconnect()
+        # ui.field4Spinbox.editingFinished.connect(self.set_keith_num_points)
         ui.rateSpinbox.setDecimals(info.rate['decim'][idx])
         ui.rateSpinbox.setRange(info.rate['lim'][0]*1e3,
                                 info.rate['lim'][-1]*1e3)
@@ -945,7 +940,7 @@ class ProbeGui(QMainWindow):
         ui.countSpinbox.editingFinished.disconnect()
         ui.countSpinbox.editingFinished.connect(self.set_keith_num_sweeps)
         ui.filterTypeCombobox.setEnabled(True)
-        self.set_keith_filter_type(meas_idx=idx)
+        self.set_keith_filter_type(ftype=info.filt['def'])
         ui.filterTypeCombobox.setEnabled(False)
         ui.lowMeasCheckbox.show()
         self.update_keith_values()
@@ -956,7 +951,7 @@ class ProbeGui(QMainWindow):
         ui = self.kwind.ui
         self.update_keith_text()
         idx = key(kinfo.meas['txt'], "sweepPulseDeltaLog")
-        info = ivinfo['dic'][idx]
+        info = ivinfo['dic'][idx]()
         ui.currStepSpinbox.hide()
         ui.field4Spinbox.show()
         ui.field4Spinbox.setReadOnly(False)
@@ -974,7 +969,7 @@ class ProbeGui(QMainWindow):
         ui.countSpinbox.editingFinished.disconnect()
         ui.countSpinbox.editingFinished.connect(self.set_keith_num_sweeps)
         ui.filterTypeCombobox.setEnabled(True)
-        self.set_keith_filter_type(meas_idx=idx)
+        self.set_keith_filter_type(ftype=info.filt['def'])
         ui.filterTypeCombobox.setEnabled(False)
         ui.lowMeasCheckbox.show()
         self.update_keith_values()
@@ -988,12 +983,10 @@ class ProbeGui(QMainWindow):
         ui = self.kwind.ui
         idx = self.keith.meas_type_idx
         (keith, meas) = (self.keith, self.keith.meas_type())
-        # max_ua = (keith.curr_conv_mult(bound) if keith.source_range_type_idx
-        #           else 100e3)
         max_A = (keith.curr_conv_mult(bound) if keith.source_range_type_idx
                  else list(kinfo.sour_range['dic'])[-1])
         max_sb_curr = keith.curr_conv_div(max_A)  # Max current for spinbox
-        max_points = kinfo.points['lim'][-1]
+        max_points = kinfo().points['lim'][-1]
         (curr1, curr2) = (meas.curr1, meas.curr2)
         step = meas.curr_step if hasattr(meas, 'curr_step') else None
         delta = meas.curr_delta if hasattr(meas, 'curr_delta') else None
@@ -1068,14 +1061,17 @@ class ProbeGui(QMainWindow):
         # Note that the fields for temperature will remain editable during
         # a ramp because of time reasons.
         self.twind.signals_slots = {
-            'combo': {ui.measuredTempCombobox: self.set_temp_to_measure},
+            'combo': {ui.measuredTempCombobox: self.set_temp_to_measure,
+                      ui.radPowerCombobox: self.set_temp_rad_power,
+                      ui.stagePowerCombobox: self.set_temp_stage_power},
             'field': {ui.GPIBSpinbox: self.set_temp_address,
                       ui.radSetpointSpinbox: self.set_temp_rad_setpoint,
                       ui.radRampSpinbox: self.set_temp_rad_ramp,
-                      ui.radPowerSpinbox: self.set_temp_rad_power,
+                      # ui.radPowerCombobox: self.set_temp_rad_power,
                       ui.stageSetpointSpinbox: self.set_temp_stage_setpoint,
                       ui.stageRampSpinbox: self.set_temp_stage_ramp,
-                      ui.stagePowerSpinbox: self.set_temp_stage_power},
+                      # ui.stagePowerSpinbox: self.set_temp_stage_power
+                      },
             'button1': {},
             # TODO: Connect runButton.
             'button2': {ui.setButton: self.set_temp_pars,
@@ -1187,12 +1183,12 @@ class ProbeGui(QMainWindow):
     def set_temp_rad_power(self, power: Optional[int] = None) -> None:
         """Set the rad shield heater power to power or UI value."""
         # TODO: Test set_temp_rad_power
-        temp, spinbox = self.temp, self.twind.ui.radPowerSpinbox
+        temp, combobox = self.temp, self.twind.ui.radPowerCombobox
         if power is not None:
             power = temp.set_power(power, 'rad')
-            spinbox.setValue(power)
+            combobox.setCurrentIndex(power)
         else:
-            power = temp.set_power(spinbox.value(), 'rad')
+            power = temp.set_power(combobox.currentIndex(), 'rad')
         d1 = {self.set_temp_rad_power: power}
         self.temp_ui_internal.update(d1)
 
@@ -1220,15 +1216,27 @@ class ProbeGui(QMainWindow):
         d1 = {self.set_temp_stage_setpoint: setpt}
         self.temp_ui_internal.update(d1)
 
+    def set_temp_stage_ramp(self, rate: Optional[float] = None) -> None:
+        """Set the ramp rate for the temperature of the stage."""
+        # TODO: Test set_temp_stage_ramp
+        temp, spinbox = self.temp, self.twind.ui.stageRampSpinbox
+        if rate is not None:
+            rate = temp.set_ramp(rate, 'stage')
+            spinbox.setValue(rate)
+        else:
+            rate = temp.set_ramp(spinbox.value(), 'stage')
+        d1 = {self.set_temp_stage_ramp: rate}
+        self.temp_ui_internal.update(d1)
+
     def set_temp_stage_power(self, power: Optional[int] = None) -> None:
         """Set the stage heater to power level power."""
         # TODO: Test set_temp_stage_power
-        temp, spinbox = self.temp, self.twind.ui.stagePowerSpinbox
+        temp, combobox = self.temp, self.twind.ui.stagePowerCombobox
         if power is not None:
             power = temp.set_power(power, 'stage')
-            spinbox.setValue(power)
+            combobox.setCurrentIndex(power)
         else:
-            power = temp.set_power(spinbox.value(), 'stage')
+            power = temp.set_power(combobox.value(), 'stage')
         d1 = {self.set_temp_stage_power: power}
         self.temp_ui_internal.update(d1)
 
@@ -1291,7 +1299,7 @@ class ProbeGui(QMainWindow):
             k.setEnabled(not running)
         for k, v in self.twind.signals_slots['checkbox'].items():
             k.setCheckable(not running)
-        self.twind.signals_slots.GPIBSpinbox.setReadOnly(running)
+        self.twind.ui.GPIBSpinbox.setReadOnly(running)
         self.trunning = running
 
 # %% Magnet section
@@ -1358,8 +1366,8 @@ class ProbeGui(QMainWindow):
             self.set_mag_measure: mag.do_measure,
             self.set_mag_field_unit: mag.field_unit_idx,
             self.set_mag_time_unit: mag.time_unit_idx,
-            self.set_mag_target: mag.set_target,
-            self.set_mag_ramp_segments: mag.set_ramp_segments,
+            self.set_mag_target: mag.target,
+            self.set_mag_ramp_segments: mag.ramp_segments,
             self.set_mag_ramp_setpoints: mag.setpoints_list,
             self.set_mag_ramp_rates: mag.ramps_list,
             self.set_mag_quench_detect: mag.quench_detect,
@@ -1413,9 +1421,11 @@ class ProbeGui(QMainWindow):
         """Set the target magnetic field or current to targ or UI value."""
         mag, spinbox = self.mag, self.mwind.ui.targetSpinbox
         if targ is not None:
+            print(f"targ not none, type = {type(targ)}")
             targ = mag.set_target(targ)
             spinbox.setValue(targ)
         else:
+            print(f"targ was None, spin value = {spinbox.value()}")
             targ = mag.set_target(spinbox.value())
         d1 = {self.set_mag_target: targ}
         self.mag_ui_internal.update(d1)
@@ -1437,7 +1447,7 @@ class ProbeGui(QMainWindow):
     def set_mag_time_unit(self, idx: Optional[Union[int, str]] = None) -> None:
         # TODO: Test set_mag_time_unit
         """Set the time unit of the magnet power supply to idx or UI value."""
-        mag, combobox = self.mag, self.mwind.ui.timeUnitComboBox
+        mag, combobox = self.mag, self.mwind.ui.timeUnitCombobox
         if idx is not None:
             idx = mag.set_time_unit(idx)
             combobox.setCurrentIndex(idx)
@@ -1480,15 +1490,18 @@ class ProbeGui(QMainWindow):
         unit, abbv = mag.field_unit('Full'), mag.field_unit('Abbv')
         # unit_type = 'curr' if abbv == 'A' else 'field'
         unit_idx = mag.field_unit_idx
-        bounds = (-minfo.field['lim'][unit_idx], minfo.field['lim'][unit_idx])
+        bounds = (-minfo().field['lim'][unit_idx],
+                  minfo().field['lim'][unit_idx])
         if setpts is None:
-            title = f"{minfo.field['txt']['setp'][0]} ({abbv})"
+            title = f"{minfo().field['txt']['setp'][0]} ({abbv})"
             label = (f'Enter your list of magnet ramp setpoints in {unit}.\n'
                      + 'Setpoints should be numbers separated by commas '
                      + '(e.g., 1, 2, 3).\n'
                      + f'Range is {bounds[0]} {abbv} to {bounds[1]} {abbv}.')
             txt = self.list_box.getText(self, title, label)[0]
-        (lst, txt) = mag.set_setpoints(txt)
+            (lst, txt) = mag.set_setpoints(txt)
+        else:
+            (lst, txt) = mag.set_setpoints(setpts)
         d1 = {self.set_mag_ramp_setpoints: lst}
         self.mag_ui_internal.update(d1)
         # if not len(lst) == mag.ramp_segments:
@@ -1504,18 +1517,20 @@ class ProbeGui(QMainWindow):
         """Open dialog box to set magnet ramp rates."""
         mag = self.mag
         fabbv, fidx = mag.field_unit('Abbv'), mag.field_unit_idx
-        tabbv, tunit = mag.time_unit('Abbv'), mag.time_unit('Full')
+        tabbv, tunit = mag.time_unit('Abbv'), mag.time_unit('Full').lower()
         # unit_type = 'curr' if fabbv == 'A' else 'field'
-        bounds = minfo.rate['lim'][tunit][fidx]
+        bounds = minfo().rate['lim'][tunit][fidx]
         if ramps is None:
-            title = f"{minfo.rate['txt'][0]} ({fabbv}/{tabbv})"
+            title = f"{minfo().rate['txt'][0]} ({fabbv}/{tabbv})"
             label = (f'Enter list of magnet ramp rates in {fabbv}/{tabbv}.\n'
                      + 'Ramp rates should be numbers separated by commas '
                      + '(e.g., 1, 2, 3).\n'
                      + f'Range is {bounds[0]} {fabbv}/{tabbv} to '
                      + f'{bounds[2]} {fabbv}/{tabbv}.')
             txt = self.list_box.getText(self, title, label)[0]
-        (lst, txt) = mag.set_ramps(txt)
+            (lst, txt) = mag.set_ramps(txt)
+        else:
+            (lst, txt) = mag.set_ramps(ramps)
         d1 = {self.set_mag_ramp_rates: lst}
         self.mag_ui_internal.update(d1)
         # if len(lst) == len(mag.setpoints_list) == mag.ramp_segments:
@@ -1652,17 +1667,17 @@ class ProbeGui(QMainWindow):
         if fidx is None:
             fidx = mag.field_unit_idx
         fabbv = (mag.field_unit('Abbv') if fidx is None
-                 else minfo.field['unit']['Abbv'][fidx])
+                 else minfo().field['unit']['Abbv'][fidx])
         tabbv = (mag.time_unit('Abbv') if tidx is None
                  else minfo.time['unit']['Abbv'][tidx])
-        targ_text = (f"{minfo.field['txt']['targ']}"
+        targ_text = (f"{minfo().field['txt']['targ']}"
                      + ("ic Field " if (fidx is not None and fidx < 2)
                         else "Current")
                      + f"({fabbv})")
-        setp_label = minfo.field['txt']['setp'][0] + f" ({fabbv})"
-        ramp_label = minfo.field['txt']['setp'][1] + f" ({fabbv}/{tabbv})"
+        setp_label = minfo().field['txt']['setp'][0] + f" ({fabbv})"
+        ramp_label = minfo().field['txt']['setp'][1] + f" ({fabbv}/{tabbv})"
         # bound = mag.lims.field[fidx] if (fidx is not None) else 0
-        bound = minfo.field['lim'][fidx]
+        bound = minfo().field['lim'][fidx]
         ui.targetLabel.setText(targ_text)
         ui.targetSpinbox.setRange(-bound, bound)
         ui.setpointsLabel.setText(setp_label)
