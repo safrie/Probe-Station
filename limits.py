@@ -22,7 +22,7 @@ from typing import Dict
 
 
 mu = u"\xb5"
-ohm = u"\xe2"
+ohm = u"\u2126"
 
 
 def key(dic: Dict, val, initer=False):
@@ -30,7 +30,8 @@ def key(dic: Dict, val, initer=False):
 
     initer is an optional argument indicating that val is inside an iterable
     structure such as a tuple, and its existence within that tuple is enough
-    to match it with the key."""
+    to match it with the key.
+    """
     if initer:
         return tuple(k for k, v in dic.items() if (val == v or val in v))[0]
     return tuple(k for k, v in dic.items() if val == v)[0]
@@ -42,6 +43,8 @@ class KeithInfo:
 
     addr = {'lim': range(1, 32),
             'def': 12}
+
+    measure = {'def': False}
 
     meas = {'txt': {0: "diffCond",
                     1: "delta",
@@ -79,7 +82,7 @@ class KeithInfo:
                           6: 2.0e-3,
                           7: 20.0e-3,
                           8: 100.0e-3},
-                  'def': 5,
+                  'def': 4,
                   'txt': {0: "(nA)",
                           1: "(nA)",
                           2: "(nA)",
@@ -89,9 +92,9 @@ class KeithInfo:
                           6: "(mA)",
                           7: "(mA)",
                           8: "(mA)"},
-                  'mult': {-1: 1.0e-9,
-                           0: 1.0e-6,
-                           1: 1.0e-3},
+                  'mult': {0: 1.0e-9,
+                           1: 1.0e-6,
+                           2: 1.0e-3},
                   'minmax': {0: 2.0,
                              1: 20.0,
                              2: 200.0,
@@ -103,11 +106,11 @@ class KeithInfo:
                              8: 100.0},
                   'typ': {'dic': {0: "Best",
                                   1: "Fixed"},
-                          'def': 0}
+                          'def': 1}
                   }
 
-    volt_range = {'dic': {2: 100.0e-3,
-                          3: 10.0e-3,
+    volt_range = {'dic': {2: 10.0e-3,
+                          3: 100.0e-3,
                           4: 1.0,
                           5: 10.0,
                           6: 100.0},
@@ -119,11 +122,11 @@ class KeithInfo:
     cab_def = False
 
     field4 = {'def': 0,
-              'labels': {0: 'Current Delta ',
-                         1: None,
-                         2: None,
-                         3: 'Number Points',
-                         4: 'Number Points'}
+              'label': {0: 'Current Delta ',
+                        1: None,
+                        2: None,
+                        3: 'Number Points',
+                        4: 'Number Points'}
               }
 
     count = {'def': 11,
@@ -337,6 +340,8 @@ class TempInfo():
     addr = {'lim': range(1, 32),
             'def': 11}
 
+    measure = {'def': True}
+
     out = {'lim': (1, 2),  # FIXME: Is this ever used? .keys() works fine...
            'def': 2,
            'txt': {1: 'Radiation Shield Heater',
@@ -356,7 +361,6 @@ class TempInfo():
                     6: ('D4', 'Sample Control'),
                     7: ('D5', 'Inner Radiation Shield')}
             }
-
     to_measure = {'dic': {0: 'controlled',
                           1: 'all'},
                   'def': 0}
@@ -388,8 +392,11 @@ class MagInfo():
     """Contains instrument parameter info and limits for the AMI 430."""
     # TODO: Get COM address limits
     # HACK: addr limits are currently (1, 10) just to have something.
+    measure = {'def': False}
+
     addr = {'lim': range(1, 11),
             'def': 2}
+
     time = {'unit': {'Full': {0: 'Seconds',
                               1: 'Minutes',
                               2: 'second',
@@ -401,14 +408,19 @@ class MagInfo():
                               'Seconds': 's',
                               'Minutes': 'min'},
                      'def': 0}}
+
     seg = {'lim': range(1, 11),
            'def': 1}
+
     volt = {'lim': (0.001, 6),
             'def': 2}
+
     curr = {'lim': (0, 26.3),
             'def': 26.3}    # 1 T = 10 kG
+
     # coil const in {field_unit}/A
     coil_const = (30/26.3, 3/26.3, 1)
+
     quench = {
         'def': False,
         'temp': {'range': [0.0, 8.0],
@@ -426,6 +438,7 @@ class MagInfo():
             8: 'At ZERO current',
             9: 'Heating persistent switch',
             10: 'Cooling persistent switch'}
+
     trig_out_reg = {
             0: 'Magnet Voltage',
             1: 'Magnet Current',
@@ -442,7 +455,7 @@ class MagInfo():
             'lim': {0: 30,
                     1: 3,
                     2: 26.3},
-            'def': {i: 0 for i in range(len(self.coil_const))},
+            'def': {i: 0 for i, v in enumerate(self.coil_const)},
             'unit': {'Full': {0: 'Kilogauss',
                               1: 'Tesla',
                               2: 'Amps',
@@ -467,15 +480,14 @@ class MagInfo():
             # {0: (1.90e-6, 11.4), 1: (1.90e-7, 1.14), 2: (2.67e-6, 10)}
             # values for minutes are:
             # {0: (1.14e-4, 684), 1: (1.14e-5, 68.4), 2: (1.0e-4, 600)}
-            'lim': {'seconds': {i: (1.0e-4/60*self.coil_const[i],
-                                    10*self.coil_const[i])
-                                for i in range(len(self.coil_const))},
-                    'minutes': {i: (1.0e-4*self.coil_const[i],
-                                    600*self.coil_const[i])
-                                for i in range(len(self.coil_const))}
+            # TODO: Verify this is correct
+            'lim': {'seconds': {i: (1.0e-4/60*val, 10*val)
+                                for i, val in enumerate(self.coil_const)},
+                    'minutes': {i: (1.0e-4*val, 600*val)
+                                for i, val in enumerate(self.coil_const)}
                     },
-            'def': {i: 0.1*self.coil_const[i]
-                    for i in range(len(self.coil_const))},
+            'def': {i: 0.1*val
+                    for i, val in enumerate(self.coil_const)},
             'txt': ('Magnetic Field Ramp Rates', 'Ramp Rates ')
             # Format for above is (Title, Label)
         }
