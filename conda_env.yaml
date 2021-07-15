@@ -24,6 +24,7 @@ dependencies:
     - qtpy
     - ruamel_yaml
     - scipy
+    - spyder-kernels
     - typing_extensions
 
     - pip:
