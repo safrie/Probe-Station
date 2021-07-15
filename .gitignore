@@ -1,3 +1,6 @@
 .spyproject/
 __pycache__/
 tags
+ProbeStationSoftware_Requirements.txt
+keytest.py
+limits2.py
