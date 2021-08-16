@@ -37,7 +37,6 @@ def key(dic: Dict, val, initer=False):
     return tuple(k for k, v in dic.items() if val == v)[0]
 
 
-# TODO: Change veryone over to KeithInfo
 class KeithInfo:
     """Contains instrument limits and defaults for the Keithley stack."""
 

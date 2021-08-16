@@ -25,7 +25,7 @@ class KeithMeasure():
         meas_delay_text: What meas_delay represents in labels/headers.
         pulse_width_text: What pulse_width represents in labels/headers.
         pulse_count_text: What pulse_count represents in labels/headers.
-        unit_idx: Index for what unit measurement uses.
+        unit: Index for what unit measurement uses.
         curr1: Float for current1.
         curr2: Float for current2.
         num_points: Number of points for the measurement.
@@ -41,7 +41,7 @@ class KeithMeasure():
     methods_
         __init__()
         get_meas_type_str()
-        set_unit_idx(int)
+        unit(int/str)
         set_curr1(float)
         set_curr2(float)
         set_curr_step(float)
@@ -76,7 +76,8 @@ class KeithMeasure():
         """Instantiate general Keithley 6221/2182A transport measurement."""
         self.info = ivinfo['dic'][meas_idx]()
         self.meas_idx = meas_idx
-        self.unit_idx = kinfo().unit['def']
+        # self.unit_idx = kinfo().unit['def']
+        self.unit = kinfo().unit['def']
         self.curr1 = self.info.curr1['def']
         self.curr2 = self.info.curr2['def']
         self.num_points = self.info.points['def']
@@ -94,16 +95,35 @@ class KeithMeasure():
     def get_meas_type_str(self) -> None:
         """Return a string of the type of measurement."""
 
-    def set_unit(self, unit: Union[int, str]) -> int:
-        """Set the unit index for Keithleys to unit or corresponding index."""
+    @property
+    def unit(self) -> int:
+        """Index indicating which unit the Keithleys are working with."""
+        return self._unit
+
+    @unit.setter
+    def unit(self, unit: Union[int, str]):
+        """Set the unit index for the Keithleys.
+
+        This method will accept either the numerical index, the name of the
+        unit, or the unit abbreviation."""
         dic = kinfo().unit['dic']
         if unit in dic.values():
             unit = key(dic=dic, val=unit)
         elif unit not in dic.keys():
             unit = kinfo().unit['def']
             print(f"Unit index invalid.  Setting to default ({unit}).")
-        self.unit_idx = unit
-        return unit
+        self._unit = unit
+
+    # def set_unit(self, unit: Union[int, str]) -> int:
+    #     """Set the unit index for Keithleys to unit or corresponding index."""
+    #     dic = kinfo().unit['dic']
+    #     if unit in dic.values():
+    #         unit = key(dic=dic, val=unit)
+    #     elif unit not in dic.keys():
+    #         unit = kinfo().unit['def']
+    #         print(f"Unit index invalid.  Setting to default ({unit}).")
+    #     self.unit_idx = unit
+    #     return unit
 
     def set_curr1(self, curr: float) -> None:
         """Set curr1 to curr."""

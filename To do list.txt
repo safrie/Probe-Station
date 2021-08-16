@@ -5,6 +5,10 @@ To do with program:
   a) Propagate do_measure -> measure property (instrument_abc)
   b) Propagate do_control -> control property (instrument_abc)
   c) Propagate set_address -> address property (instrument_abc)
+  d) Change a bunch of dicts over to properties so that they update when
+     properties within them are updated.
+  e) Rename temperature.measure() because it conflicts with the measure property
+  ✗) Propagate keith.unit_idx -> keith.unit (main)
 • Fix Keithley Errors/Issues
     a) on diffcon modify stop current: keith_ui_internal.update(d1) TypeError
         cannot convert dictionary update sequence element #0 to a sequence

@@ -324,7 +324,8 @@ class ProbeGui(QMainWindow):
         self.keith_ui_internal = {
             self.set_keith_address: keith.address,
             self.set_keith_meas_type: keith.meas_type_idx,
-            self.set_keith_unit: meas.unit_idx,
+            # self.set_keith_unit: meas.unit_idx,
+            self.set_keith_unit: meas.unit,
             self.set_keith_source_range_type: keith.source_range_type_idx,
             self.set_keith_source_range: keith.source_range_idx,
             self.set_keith_compliance: keith.compl_volt,
@@ -370,11 +371,11 @@ class ProbeGui(QMainWindow):
         keith = self.keith
         if addr is not None:
             # addr = keith.set_address(addr)
-            keith.address(addr)
+            keith.address = addr
             spinbox.setValue(keith.address)
         else:
             # keith.set_address(spinbox.value())
-            keith.address(spinbox.value())
+            keith.address = spinbox.value()
         d1 = {self.set_keith_address: keith.address}
         self.keith_ui_internal.update(d1)
 
@@ -396,13 +397,15 @@ class ProbeGui(QMainWindow):
         # else:
         #     idx = ui.measureTypeCombobox.currentIndex()
         # meas = keith.set_meas_type(idx)
-        ui.unitsCombobox.setCurrentIndex(meas.unit_idx)
+        # ui.unitsCombobox.setCurrentIndex(meas.unit_idx)
+        ui.unitsCombobox.setCurrentIndex(meas.unit)
         rate = (meas.meas_rate if hasattr(meas, 'meas_rate') else
                 meas.cycle_int if hasattr(meas, 'cycle_int') else
                 meas.cycle_time if hasattr(meas, 'cycle_time') else None)
 
         d1 = {self.set_keith_meas_type: keith.meas_type_idx,
-              self.set_keith_unit: meas.unit_idx,
+              # self.set_keith_unit: meas.unit_idx,
+              self.set_keith_unit: meas.unit,
               self.set_keith_curr1: meas.curr1,
               self.set_keith_curr2: meas.curr2,
               self.set_keith_num_points: meas.num_points,
@@ -442,7 +445,8 @@ class ProbeGui(QMainWindow):
                 combobox.setCurrentIndex(idx)
         else:
             keith.set_unit(combobox.currentIndex(), meas_idx)
-        d1 = {self.set_keith_unit: meas.unit_idx}
+        # d1 = {self.set_keith_unit: meas.unit_idx}
+        d1 = {self.set_keith_unit: meas.unit}
         self.keith_ui_internal.update(d1)
 
     def set_keith_source_range_type(

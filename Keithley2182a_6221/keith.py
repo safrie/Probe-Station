@@ -311,7 +311,8 @@ class Keith(Instrument):
 
     def unit(self, meas_idx: Optional[int] = None) -> int:
         """Look up unit string for measurement index. Convenience function."""
-        return info().unit['dic'][self.meas_type(meas_idx).unit_idx]
+        # return info().unit['dic'][self.meas_type(meas_idx).unit_idx]
+        return info().unit['dic'][self.meas_type(self.meas_idx).unit]
 
     def set_compl_volt(self, volt: float) -> None:
         """Set compliance voltage and update Keithleys."""
