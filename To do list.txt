@@ -38,6 +38,8 @@ To do with program:
 
 • Fix AMI 430 Errors/Issues
     a) Remove everything related to magnets in this software.
+    b) main
+    c) limits.py
 
 • Fix LakeShore 336 Errors/Issues
     a) Implement GUI and YAML control over wait time between measurements
