@@ -37,20 +37,8 @@ To do with program:
     q) delta pulse count spinbox tops out at 99--make bigger?
 
 • Fix AMI 430 Errors/Issues
-    a) On open of Magwindow, for spinbox.setValue(targ), targ is the bound
-       method Mag.set_target, not an actual numerical value
-    b) Implement logic for 'Record magnetic field' present in GUI but not
-       elsewhere in program
-        - Class variable in magnet.py
-        - Signal/slot in main.py
-        - Config file in main.py
-    c) Get mag calibration file stuff up and running (low priority)
-        - This is for loading/saving calibration curves FOR THE MAGNET
-    d) Create get_header_string method
-        - This is related to set_enable_trig and qenable_trig methods
-    e) Fix any VISA issues
-    g) Update UI from main.py in case invalid parameters set to defaults in mag
-        * This shouldn't be the case because loading from limits.py?
+    a) Remove everything related to magnets in this software.
+
 • Fix LakeShore 336 Errors/Issues
     a) Implement GUI and YAML control over wait time between measurements
         - Class variable in temperature.py
