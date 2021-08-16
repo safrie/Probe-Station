@@ -1407,11 +1407,11 @@ class ProbeGui(QMainWindow):
         if addr is not None:
             # addr = mag.set_address(addr)
             # spinbox.setValue(addr)
-            mag.address(addr)
+            mag.address = addr
             spinbox.setValue(mag.address)
         else:
             # addr = mag.set_address(spinbox.value())
-            mag.address(spinbox.value())
+            mag.address = spinbox.value()
         d1 = {self.set_mag_address: mag.address}
         self.mag_ui_internal.update(d1)
 
@@ -1423,10 +1423,13 @@ class ProbeGui(QMainWindow):
         """
         mag, checkbox = self.mag, self.mwind.ui.mMeasureCheckbox
         if enable is not None:
-            mag.set_measure(enable)
-            checkbox.setChecked(enable)
+            # mag.set_measure(enable)
+            # checkbox.setChecked(enable)
+            mag.measure = enable
+            checkbox.setChecked(mag.measure)
         else:
-            mag.set_measure(checkbox.isChecked())
+            # mag.set_measure(checkbox.isChecked())
+            mag.measure = checkbox.isChecked()
         d1 = {self.set_mag_measure: mag.measure}
         self.mag_ui_internal.update(d1)
 
