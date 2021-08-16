@@ -377,6 +377,7 @@ class TempInfo():
                         2: 'Medium',
                         3: 'High'}}
     # Rate is in K/min. 0 means "ramp as fast as possible."
+    # TODO: Fix lim to work with new validators
     rate = {'lim': (0.1, 100.0, 0),
             'def': 1.0}
 

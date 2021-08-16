@@ -165,6 +165,7 @@ class Temp(Instrument):
         self.to_measure_str = info.to_measure['dic'][measured]
         return measured
 
+    # TODO: RENAME THIS
     def measure(self, t0: float) -> float:
         # TODO: Test measure
         """Collect a single set of temperature measurements.
