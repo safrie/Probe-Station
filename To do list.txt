@@ -36,11 +36,7 @@ To do with program:
     p) delta measurement rate not set correctly in spinbox initially
     q) delta pulse count spinbox tops out at 99--make bigger?
 
-• Fix AMI 430 Errors/Issues
-    a) Remove everything related to magnets in this software.
-    b) main
-    c) limits.py
-
+✗ Remove all AMI 430 software other than list of limits for parameters
 • Fix LakeShore 336 Errors/Issues
     a) Implement GUI and YAML control over wait time between measurements
         - Class variable in temperature.py
@@ -66,12 +62,10 @@ To do with program:
     a) Make sure loading works for:
         - Keithley
         - LakeShore 336
-        - AMI 430
         - All at once
     b) Make sure saving works for:
         - Keithley
         - LakeShore 336
-        - AMI 430
         - All at once
 •* Update probe_station_params.yaml
 • Get graphing up and running
@@ -84,4 +78,4 @@ To do with program:
     - Make sure all defaults are loaded correctly (especially the Keithley 
     section)
 
-Current Branch: input-validation
+Current Branch: delete-magnet

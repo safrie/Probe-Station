@@ -131,29 +131,30 @@ Temperature:
     stagePower: 0
 
 Magnet:
-    # Boolean for whether or not to measure magnet while ramping
-    measure: True
+    # The magnet is controlled by separate software--these are the important
+    # defaults for your reference
     address: 2
     # Number of discrete segments you want to define unique ramp rates along
-    # the magnet range
-    segs: 4
+    # the magnet range.  DO NOT CHANGE THIS
+    segs: 2
     # Options are 'Amps', 'Tesla', and 'Kilogauss'
     fieldUnit: 'Amps'
     # Options are 'Seconds' and 'Minutes'
-    timeUnit: 'Minutes'
-    # Path to calibration curve file (optional, not recommended.)
-    calibrationFile: None
-    # Magnet target field or current in fieldUnit.
-    target: 1
+    timeUnit: 'Seconds'
+    # Magnet maximum field in Tesla at the center of the magnet.
+    max_field_center: 7
+    # Magnet maximum field in Tesla at the center of the stage (APPROXIMATE).
+    #TODO: Test the stage field to get the coil constant.
+    max_field_stage: 4.667
     # Magnet setpoints in fieldUnit for upper bounds on each ramp segment.
-    rampSetpoints: [0.5, 1, 2, 3]
-    # Ramp rates are in fieldUnit/timeUnit. These are the ramp rates for the
-    # segments defined by rampSetpoints.
-    rampRates: [0.5, 0.5, 0.5, 0.5]
-    quenchDetect: true
+    # DO NOT CHANGE THESE
+    rampSetpoints: #TODO: Look these up!!!
+    # Ramp rates are in A/s.  These are the ramp rates for the segments 
+    # defined by rampSetpoints.  DO NOT CHANGE THIS!!!
+    rampRates: [0.0148, 0.00345]
     # Temperature in K at which magnet is in danger of quenching.
-    # Factory value is 6.5K. Not currently implemented.
-    quenchTemp: 6.5
+    quenchTemp: 6.0
 
-    voltLimit: 100
-    currLimit: 60
+    # DO NOT CHANGE/EXCEED THESE VALUES
+    voltLimit: 0.55  # In case you did change this, original value 0.55
+    currLimit: 39.37  # In case you did change this, original value 39.37
