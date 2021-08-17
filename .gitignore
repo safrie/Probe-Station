@@ -1,5 +1,6 @@
 .spyproject/
 __pycache__/
+AMI_430
 tags
 ProbeStationSoftware_Requirements.txt
 keytest.py
