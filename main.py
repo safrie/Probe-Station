@@ -37,13 +37,11 @@ from typing import Union, Optional, List, Dict
 from pathlib import Path
 
 from design import (Ui_PlotWindow, Ui_KeithWindow, Ui_TempWindow,
-                    Ui_MagnetWindow, Ui_SelectWindow)
+                    Ui_SelectWindow)
 from file_io import Save, Config
 from LakeShore_336.temperature import Temp
 from Keithley2182a_6221.keith import Keith
-from AMI_430.magnet import Mag
-from limits import (KeithInfo as kinfo, TempInfo as tinfo, MagInfo as minfo,
-                    key, ivinfo)
+from limits import (KeithInfo as kinfo, TempInfo as tinfo, key, ivinfo)
 
 
 def no():
@@ -102,7 +100,6 @@ class ProbeGui(QMainWindow):
         config: Config object for handling configuration files
         keith: Keith object for controlling the Keithley stack
         temp: Temp object for controlling the LakeShore336 controller
-        mag: Mag object for controlling the magnet
         list_box: QInputDialog for accepting lists of parameters
 
 
@@ -118,10 +115,6 @@ class ProbeGui(QMainWindow):
         twind: Window object for the temperature control interface
         temp_ui_internal: Dict connecting main.py methods (connect to UI) to
             Temp methods (which connect to the controller)
-
-        mwind: Window object for the magnet control interface
-        mag_ui_internal: Dict connecting main.py methods (connect to UI) to
-            Mag methods (connect to controller)
 
     methods_
         __init__()
@@ -186,33 +179,11 @@ class ProbeGui(QMainWindow):
         update_temp_ui(opt bool)
         toggle_temp_for_run(bool)
 
-        init_mwind()
-        toggle_mwind(opt bool)
-        set_mag_address(opt int)
-        set_mag_measure(opt bool)
-        set_mag_target(opt float)
-        set_mag_field_unit(opt int/str)
-        set_mag_time_unit(opt int/str)
-        set_mag_segments(opt int)
-        set_mag_ramp_setpoints(opt list)
-        set_mag_ramp_rates(opt list)
-        set_mag_quench_detect(opt bool)
-        # set_mag_quench_temp(opt float)
-        set_mag_volt_limit(opt float)
-        set_mag_curr_limit(opt float)
-        set_mag_zero(opt bool)
-        load_mag_calibration(opt str)
-        update_mag_labels(opt int, opt int)
-        update_mag_ui()
-
         update_from_config(opt str, opt str)
         load_keith_config(dict)
         get_keith_config()
         load_temp_config(dict)
         get_temp_config()
-        load_mag_config(dict)
-        get_mag_config()
-
     """
 
     # yaml = YAML()
@@ -220,7 +191,6 @@ class ProbeGui(QMainWindow):
     # config = Config()
     # keith = Keith()
     # temp = Temp()
-    # mag = Mag()
 
     def __init__(self) -> None:
         """Initialize overarching program and allow for threading."""
@@ -239,12 +209,10 @@ class ProbeGui(QMainWindow):
         self.config = Config()
         self.keith = Keith()
         self.temp = Temp()
-        self.mag = Mag()
         self.init_plwind()
         self.init_swind()
         self.init_kwind()
         self.init_twind()
-        self.init_mwind()
 
     def init_plwind(self) -> None:
         # TODO: Test init_plwind
@@ -263,7 +231,6 @@ class ProbeGui(QMainWindow):
         # self.swind.setupUi(self.swind_qmw)
         self.swind.signals_slots = {
                     ui.keithleyButton: self.toggle_kwind,
-                    ui.magnetButton: self.toggle_mwind,
                     ui.tempButton: self.toggle_twind}
         for k, v in self.swind.signals_slots.items():
             k.clicked.connect(v)
@@ -1313,414 +1280,19 @@ class ProbeGui(QMainWindow):
         self.twind.ui.GPIBSpinbox.setReadOnly(running)
         self.trunning = running
 
-# %% Magnet section
-    def init_mwind(self) -> None:
-        """Initialize Magnet Control window; connect signals/slots."""
-        self.mwind = Window(QMainWindow(), Ui_MagnetWindow())
-        mag, ui = self.mag, self.mwind.ui
-        self.update_mag_labels()
-        self.mwind.signals_slots = {
-            'combo': {
-                # Comboboxes.  Disable at start of measurement.
-                # Signal is currentIndexChanged.
-                # TODO: Determine if using mMeasureCombobox and implement.
-                # ui.mMeasureCombobox: self.set_mag_measure,
-                ui.fieldUnitCombobox: self.set_mag_field_unit,
-                ui.timeUnitCombobox: self.set_mag_time_unit
-                },
-            'field': {
-                # Fields/spinboxes in which to type/enter settings.
-                # Set to 'Read Only' at start of measurement.
-                # Signal is editingFinished.
-                ui.COMSpinbox: self.set_mag_address,
-                ui.targetSpinbox: self.set_mag_target,
-                ui.segmentsSpinbox: self.set_mag_ramp_segments,
-                # ui.quenchTempSpinbox: self.set_mag_quench_temp,
-                ui.voltLimitSpinbox: self.set_mag_volt_limit,
-                ui.currLimitSpinbox: self.set_mag_curr_limit,
-                ui.mCalibrationFile: self.load_mag_calibration
-                },
-            'button1': {
-                # Buttons set to do nothing during measurement.
-                # Signal is clicked.
-                ui.setpointsButton: self.set_mag_ramp_setpoints,
-                ui.ratesButton: self.set_mag_ramp_rates,
-                ui.mCalibrationLoadButton: self.load_mag_calibration,
-                ui.setButton: self.set_mag_pars,
-                ui.startButton: self.start_mag,
-                ui.configLoadButton: self.load_mag_config,
-                ui.configSaveButton: self.get_mag_config
-                },
-            'button2': {
-                # Buttons set to remain active during measurement.
-                # Signal is clicked.
-                ui.zeroButton: self.set_mag_zero
-                },
-            'checkbox': {
-                # Checkboxes set to 'setCheckable(False)' during measurement.
-                # Signal is clicked.
-                ui.mMeasureCheckbox: self.set_mag_measure,
-                ui.quenchDetCheckbox: self.set_mag_quench_detect
-                }
-            }
-        for k, v in self.mwind.signals_slots['combo'].items():
-            k.currentIndexChanged.connect(v)
-        for k, v in self.mwind.signals_slots['field'].items():
-            k.editingFinished.connect(v)
-        for k, v in self.mwind.signals_slots['button1'].items():
-            k.clicked.connect(v)
-        for k, v in self.mwind.signals_slots['checkbox'].items():
-            k.clicked.connect(v)
-
-        self.mag_ui_internal = {
-            self.set_mag_address: mag.address,
-            self.set_mag_measure: mag.measure,
-            self.set_mag_field_unit: mag.field_unit_idx,
-            self.set_mag_time_unit: mag.time_unit_idx,
-            self.set_mag_target: mag.target,
-            self.set_mag_ramp_segments: mag.ramp_segments,
-            self.set_mag_ramp_setpoints: mag.setpoints_list,
-            self.set_mag_ramp_rates: mag.ramps_list,
-            self.set_mag_quench_detect: mag.quench_detect,
-            # self.set_mag_quench_temp: mag.quench_temp,
-            self.set_mag_volt_limit: mag.volt_limit,
-            self.set_mag_curr_limit: mag.curr_limit,
-            # self.set_mag_zero: mag.zero,
-            self.load_mag_calibration: mag.calibration_file
-            }
-
-    def toggle_mwind(self, enable: Optional[bool] = None) -> None:
-        """Toggle visibility of the magnet control window."""
-        # TODO: Test toggle_mwind
-        window = self.mwind.window
-        if enable is not None:
-            window.setVisible(enable)
-        else:
-            window.setVisible(not window.isVisible())
-        if window.isVisible():
-            self.update_mag_ui()
-
-    def set_mag_address(self, addr: Optional[int] = None) -> None:
-        """Set COM address of magnet power supply to addr or UI value."""
-        # TODO: Test set_mag_address
-        mag, spinbox = self.mag, self.mwind.ui.COMSpinbox
-        if addr is not None:
-            # addr = mag.set_address(addr)
-            # spinbox.setValue(addr)
-            mag.address = addr
-            spinbox.setValue(mag.address)
-        else:
-            # addr = mag.set_address(spinbox.value())
-            mag.address = spinbox.value()
-        d1 = {self.set_mag_address: mag.address}
-        self.mag_ui_internal.update(d1)
-
-    def set_mag_measure(self, enable: Optional[bool] = None) -> None:
-        # TODO: Test set_mag_measure
-        """Enables/Disables recording magnetic field during a ramp.
-
-        Note this is separate from the question of whether a ramp is occurring.
-        """
-        mag, checkbox = self.mag, self.mwind.ui.mMeasureCheckbox
-        if enable is not None:
-            # mag.set_measure(enable)
-            # checkbox.setChecked(enable)
-            mag.measure = enable
-            checkbox.setChecked(mag.measure)
-        else:
-            # mag.set_measure(checkbox.isChecked())
-            mag.measure = checkbox.isChecked()
-        d1 = {self.set_mag_measure: mag.measure}
-        self.mag_ui_internal.update(d1)
-
-    def set_mag_target(self, targ: Optional[float] = None) -> None:
-        # TODO: Test set_mag_target
-        """Set the target magnetic field or current to targ or UI value."""
-        mag, spinbox = self.mag, self.mwind.ui.targetSpinbox
-        if targ is not None:
-            print(f"targ not none, type = {type(targ)}")
-            targ = mag.set_target(targ)
-            spinbox.setValue(targ)
-        else:
-            print(f"targ was None, spin value = {spinbox.value()}")
-            targ = mag.set_target(spinbox.value())
-        d1 = {self.set_mag_target: targ}
-        self.mag_ui_internal.update(d1)
-
-    def set_mag_field_unit(self,
-                           idx: Optional[Union[int, str]] = None) -> None:
-        # TODO: Test set_mag_field_unit
-        """Set field/current unit of magnet power supply to idx or UI value."""
-        mag, combobox = self.mag, self.mwind.ui.fieldUnitCombobox
-        if idx is not None:
-            idx = mag.set_field_unit(idx)
-            combobox.setCurrentIndex(idx)
-        else:
-            idx = mag.set_field_unit(combobox.currentIndex())
-        d1 = {self.set_mag_field_unit: idx}
-        self.mag_ui_internal.update(d1)
-        self.update_mag_labels()
-
-    def set_mag_time_unit(self, idx: Optional[Union[int, str]] = None) -> None:
-        # TODO: Test set_mag_time_unit
-        """Set the time unit of the magnet power supply to idx or UI value."""
-        mag, combobox = self.mag, self.mwind.ui.timeUnitCombobox
-        if idx is not None:
-            idx = mag.set_time_unit(idx)
-            combobox.setCurrentIndex(idx)
-        else:
-            idx = mag.set_time_unit(combobox.currentIndex())
-        d1 = {self.set_mag_time_unit: idx}
-        self.mag_ui_internal.update(d1)
-        self.update_mag_labels()
-
-    def set_mag_ramp_segments(self, segs: Optional[int] = None) -> None:
-        # TODO: Test set_mag_ramp_segments
-        """Set the number of ramp segments for magnet to segs or UI value.
-
-        Ramp segments define ranges at which the magnet will have a specified
-        ramp rate.  In a two-segment setup, for instance, between 0 and 1 T
-        the magnet could have a ramp rate of 0.25 T/min, and between 1 and 3 T
-        the magnet could have a ramp rate of 0.1 T/min.  You could then
-        institute a ramp from 0.75 T to 3.0 T, and the ramp rates will hold to
-        the pattern established by the segments.
-        """
-        mag, spinbox = self.mag, self.mwind.ui.segmentsSpinbox
-        if segs is not None:
-            segs = mag.set_ramp_segments(segs)
-            spinbox.setValue(segs)
-        else:
-            segs = mag.set_ramp_segments(spinbox.value())
-        d1 = {self.set_mag_ramp_segments: segs}
-        self.mag_ui_internal.update(d1)
-
-    def set_mag_ramp_setpoints(self, setpts: Optional[Union[List, str]]
-                               = None) -> None:
-        # TODO: Test set_mag_ramp_setpoints
-        # TODO: Input validation on fields
-        """Open dialog box to set magnet ramp setpoints.
-
-        For simplicity in the UI, the setpoints also serve as the ramp segment
-        dividers.
-        """
-        mag = self.mag
-        unit, abbv = mag.field_unit('Full'), mag.field_unit('Abbv')
-        # unit_type = 'curr' if abbv == 'A' else 'field'
-        unit_idx = mag.field_unit_idx
-        bounds = (-minfo().field['lim'][unit_idx],
-                  minfo().field['lim'][unit_idx])
-        if setpts is None:
-            title = f"{minfo().field['txt']['setp'][0]} ({abbv})"
-            label = (f'Enter your list of magnet ramp setpoints in {unit}.\n'
-                     + 'Setpoints should be numbers separated by commas '
-                     + '(e.g., 1, 2, 3).\n'
-                     + f'Range is {bounds[0]} {abbv} to {bounds[1]} {abbv}.')
-            txt = self.list_box.getText(self, title, label)[0]
-            (lst, txt) = mag.set_setpoints(txt)
-        else:
-            (lst, txt) = mag.set_setpoints(setpts)
-        d1 = {self.set_mag_ramp_setpoints: lst}
-        self.mag_ui_internal.update(d1)
-        # if not len(lst) == mag.ramp_segments:
-        #     self.set_mag_ramp_segments(len(lst))
-        # if len(lst) == len(mag.ramps_list):
-        #     print("Setting ramp segments")
-        #     for i in range(0, mag.ramp_segments):
-        #         mag.visa.set_rate(seg=i, rate=mag.ramps_list[i],
-        #                           upbound=lst[i], unit=unit_type)
-
-    def set_mag_ramp_rates(self, ramps: Optional[List] = None) -> None:
-        # TODO: Test set_mag_ramp_rates
-        """Open dialog box to set magnet ramp rates."""
-        mag = self.mag
-        fabbv, fidx = mag.field_unit('Abbv'), mag.field_unit_idx
-        tabbv, tunit = mag.time_unit('Abbv'), mag.time_unit('Full').lower()
-        # unit_type = 'curr' if fabbv == 'A' else 'field'
-        bounds = minfo().rate['lim'][tunit][fidx]
-        if ramps is None:
-            title = f"{minfo().rate['txt'][0]} ({fabbv}/{tabbv})"
-            label = (f'Enter list of magnet ramp rates in {fabbv}/{tabbv}.\n'
-                     + 'Ramp rates should be numbers separated by commas '
-                     + '(e.g., 1, 2, 3).\n'
-                     + f'Range is {bounds[0]} {fabbv}/{tabbv} to '
-                     + f'{bounds[2]} {fabbv}/{tabbv}.')
-            txt = self.list_box.getText(self, title, label)[0]
-            (lst, txt) = mag.set_ramps(txt)
-        else:
-            (lst, txt) = mag.set_ramps(ramps)
-        d1 = {self.set_mag_ramp_rates: lst}
-        self.mag_ui_internal.update(d1)
-        # if len(lst) == len(mag.setpoints_list) == mag.ramp_segments:
-        #     print("Setting ramp segments.")
-        #     for i in range(0, mag.ramp_segments):
-        #         mag.visa.set_rate(seg=i, rate=ramps_list[i],
-        #                           upbound=mag.setpoints_list[i],
-        #                           unit=unit_type)
-
-    def set_mag_ramp(self, stpts: Optional[list], ramps: Optional[list],
-                     segs: Optional[int], typ: Optional[str]):
-        mag = self.mag
-        stpts = self.mag.setpoints_list if stpts is None else stpts
-        ramps = self.mag.ramps_list if ramps is None else ramps
-        segs = self.mag.ramp_segments if segs is None else segs
-        typ = self.mag.field_type()
-        if not len(stpts) == len(ramps):
-            print('Number of ramp setpoints and number of ramp rates not '
-                  + 'equal.  Please correct.  No ramps set.')
-            return
-        if not len(stpts) == segs:
-            self.set_mag_ramp_segments(len(stpts))
-        print("Setting magnet ramp segments.")
-        for i in range(0, mag.ramp_segments):
-            mag.visa.set_rate(seg=i, rate=ramps[i], upbound=stpts[i],
-                              unit=typ)
-
-    def set_mag_quench_detect(self, enable: Optional[bool] = None) -> None:
-        # TODO: Test set_mag_quench_det
-        """Enable/disable magnet automatic quench detect.
-
-        This quench detect is inherent to the instrument, not the software.
-        """
-        mag, checkbox = self.mag, self.mwind.ui.quenchDetCheckbox
-        if enable is not None:
-            mag.set_quench_detect(enable)
-            checkbox.setChecked(enable)
-        else:
-            mag.set_quench_detect(checkbox.isChecked())
-        d1 = {self.set_mag_quench_detect: mag.quench_detect}
-        self.mag_ui_internal.update(d1)
-
-    # def set_mag_quench_temp(self, temp: Optional[float] = None) -> None:
-        # """Set temperature at which software will assert a magnet quench."""
-        # mag, spinbox = self.mag, self.mwind.ui.quenchTempSpinbox
-        # if temp is not None:
-        #     mag.set_quench_temp(temp)
-        #     spinbox.setValue(temp)
-        # else:
-        #     mag.set_quench_temp(spinbox.value())
-        # d1 = {self.set_mag_quench_temp: mag.quench_temp}
-        # self.mag_ui_internal.update(d1)
-
-    def set_mag_volt_limit(self, limit: Optional[float] = None) -> None:
-        # TODO: Test set_mag_volt_limit
-        """Set the voltage output limit in V for the magnet."""
-        mag, spinbox = self.mag, self.mwind.ui.voltLimitSpinbox
-        if limit is not None:
-            limit = mag.set_volt_limit(limit)
-            spinbox.setValue(limit)
-        else:
-            limit = mag.set_volt_limit(spinbox.value())
-        d1 = {self.set_mag_volt_limit: limit}
-        self.mag_ui_internal.update(d1)
-
-    def set_mag_curr_limit(self, limit: Optional[float] = None) -> None:
-        # TODO: Test set_mag_curr_limit
-        """Set the current output limit in A for the magnet."""
-        mag, spinbox = self.mag, self.mwind.ui.currLimitSpinbox
-        if limit is not None:
-            limit = mag.set_curr_limit(limit)
-            spinbox.setValue(limit)
-        else:
-            limit = mag.set_curr_limit(spinbox.value())
-        d1 = {self.set_mag_curr_limit: limit}
-        self.mag_ui_internal.update(d1)
-
-    def set_mag_zero(self, enable: Optional[bool] = None) -> None:
-        # TODO: Test set_mag_zad
-        """Enable/disable Zero After Done (ramp to 0 field after ramp)."""
-        mag, checkbox = self.mag, self.mwind.ui.zadCheckbox
-        if enable is not None:
-            mag.set_zero(enable)
-            checkbox.setChecked(enable)
-        else:
-            mag.set_zero(checkbox.isChecked())
-        d1 = {self.set_mag_zero: mag.zero}
-        self.mag_ui_internal.update(d1)
-
-    # TODO: Determine if using rampdown rate stuff, and if so, insert here.
-
-    def load_mag_calibration(self, calib: Optional[str] = None) -> None:
-        # TODO: Test and complete load_mag_calibration
-        """Load a magnet calibration file.  Normally don't do this."""
-        mag, calfile = self.mag, self.mwind.ui.mcalibrationFile
-        # TODO: Implement input validation on calib
-        if calib is None:
-            # TODO: Determine proper filetype
-            calib = QFileDialog.getOpenFileName(
-                    None, 'Load magnet calibration file', '', 'Text (*.txt)')
-        mag.set_calibration_file(calib)
-        calfile.setText(calib)
-
-    def set_mag_pars(self) -> None:
-        # TODO: Test set_mag_pars
-        """Send parameters to magnet power supply programmer.
-
-        This method will not enable output while there is not a ramp, but it
-        will affect the ramps and setpoints if a ramp is running.
-        """
-        self.mag.set_pars()
-
-    def start_mag(self) -> None:
-        # TODO: Implement and test start_mag
-        """Begin magnet ramp and collect data."""
-        # ui = self.mwind.ui
-        self.set_mag_pars()
-        self.toggle_mag_for_run(True)
-
-    def togle_mag_for_run(self, enable: bool, safe: bool = True):
-        """Update mag UI to enable/disable elements if ramp in progress.
-
-        The safe variable indicates, when true, that this will not actually
-        relay a start command to the magnet.  It is set to True during testing.
-        """
-        # TODO: Implement this method.
-
-    def update_mag_labels(self, fidx: Optional[int] = None,
-                          tidx: Optional[int] = None) -> None:
-        # TODO: Test update_mag_labels
-        """Update the ramp list labels to correspond to current units."""
-        mag, ui = self.mag, self.mwind.ui
-        print(fidx)
-        if fidx is None:
-            fidx = mag.field_unit_idx
-        fabbv = (mag.field_unit('Abbv') if fidx is None
-                 else minfo().field['unit']['Abbv'][fidx])
-        tabbv = (mag.time_unit('Abbv') if tidx is None
-                 else minfo.time['unit']['Abbv'][tidx])
-        targ_text = (f"{minfo().field['txt']['targ']}"
-                     + ("ic Field " if (fidx is not None and fidx < 2)
-                        else "Current")
-                     + f"({fabbv})")
-        setp_label = minfo().field['txt']['setp'][0] + f" ({fabbv})"
-        ramp_label = minfo().field['txt']['setp'][1] + f" ({fabbv}/{tabbv})"
-        # bound = mag.lims.field[fidx] if (fidx is not None) else 0
-        bound = minfo().field['lim'][fidx]
-        ui.targetLabel.setText(targ_text)
-        ui.targetSpinbox.setRange(-bound, bound)
-        ui.setpointsLabel.setText(setp_label)
-        ui.ratesLabel.setText(ramp_label)
-        # ui.holdLabel.setText(mag.hold_times_label + f'({tabbv})')
-
-    def update_mag_ui(self) -> None:
-        # TODO: Test update_mag_ui
-        """Update the UI so magnet values correspond to internal vars."""
-        for k, v in self.mag_ui_internal.items():
-            k(v)
-
 # %% Configuration File Section
 
     def update_from_config(self, file: Optional[str] = None,
                            instr: Optional[str] = None):
         """Update internal variables of instr based on config file.
 
-        instr can have values 'keith', 'temp', or 'mag'.  An empty value will
+        instr can have values 'keith' or 'temp'.  An empty value will
         update all internal variables.
         """
         # TODO: Test update_from_config
         self.config.name = None
         dispatch = {'keith': ('Keithley', self.kwind, self.load_keith_config),
-                    'temp': ('Temperature', self.twind, self.load_temp_config),
-                    'mag': ('Magnet', self.magwind, self.load_mag_config)}
+                    'temp': ('Temperature', self.twind, self.load_temp_config)}
         if instr is not None and instr not in dispatch.keys():
             raise ValueError('update_from_config: instr must be in'
                              f'{dispatch.keys()}.  All params loaded.')
@@ -1741,10 +1313,8 @@ class ProbeGui(QMainWindow):
             else:
                 kparams = self.config.params['Keithley']
                 tparams = self.config.params['Temperature']
-                mparams = self.config.params['Magnet']
                 self.load_keith_config(kparams)
                 self.load_temp_config(tparams)
-                self.load_mag_config(mparams)
 
     def load_keith_config(self, params: dict):
         """Load parameters from the 'Keithley' header of the config file."""
@@ -1938,37 +1508,6 @@ class ProbeGui(QMainWindow):
         tconfig['stageSetpoint'] = temp.stage_setpoint
         tconfig['stageRamp'] = temp.stage_ramp
         tconfig['stagePower'] = temp.stage_power
-
-    def load_mag_config(self, params: Dict):
-        """Load parameters from the 'Magnet' header of the config file."""
-        # TODO: Write load_mag_config
-        self.set_mag_address(params['address'])
-        self.set_mag_target(params['target'])
-        self.set_mag_field_unit(params['fieldUnit'])
-        self.set_mag_time_unit(params['time_unit'])
-        self.set_mag_segments(params['segs'])
-        self.set_mag_ramp_setpoints(params['rampSetpoints'])
-        self.set_mag_ramp_rates(params['rampRates'])
-        self.set_mag_quench_detect(params['quenchDetect'])
-        self.set_mag_volt_limit(params['voltLimit'])
-        self.set_mag_curr_limit(params['currLimit'])
-
-    def get_mag_config(self):
-        """Convert the UI to YAML data so it can be saved to a config file."""
-        # TODO: Test get_mag_config
-        mconfig = self.config.params['Magnet']
-        mag = self.mag
-
-        mconfig['address'] = mag.address
-        mconfig['target'] = mag.target
-        mconfig['fieldUnit'] = mag.fieldUnit('Full')
-        mconfig['timeUnit'] = mag.timeUnit('Full')
-        mconfig['segs'] = mag.ramp_segments
-        mconfig['rampSetpoints'] = mag.setpoints_list
-        mconfig['rampRates'] = mag.ramps_list
-        mconfig['quenchDetect'] = mag.quench_detect
-        mconfig['voltLimit'] = mag.volt_limit
-        mconfig['currLimit'] = mag.curr_limit
 
 # %% Save Data Section
 

@@ -389,43 +389,29 @@ class TempInfo():
 
 
 class MagInfo():
-    """Contains instrument parameter info and limits for the AMI 430."""
-    # TODO: Get COM address limits
-    # HACK: addr limits are currently (1, 10) just to have something.
-    measure = {'def': False}
+    """Contains instrument parameter info and limits for the AMI 430.
 
+    This is ONLY for reader reference and has no effect on the software."""
     addr = {'lim': range(1, 11),
             'def': 2}
 
-    time = {'unit': {'Full': {0: 'Seconds',
-                              1: 'Minutes',
-                              2: 'second',
-                              3: 'minute',
-                              's': 'Seconds',
-                              'min': 'Minutes'},
-                     'Abbv': {0: 's',
-                              1: 'min',
-                              'Seconds': 's',
-                              'Minutes': 'min'},
-                     'def': 0}}
-
-    seg = {'lim': range(1, 11),
-           'def': 1}
+    time = {'unit': {0: 'Seconds',
+                     1: 'Minutes'},
+            'def': 0}
 
     volt = {'lim': (0.001, 6),
-            'def': 2}
+            'def': 0.55}  # DO NOT CHANGE THE VOLT CEILING
 
-    curr = {'lim': (0, 26.3),
-            'def': 26.3}    # 1 T = 10 kG
+    curr = {'lim': (0, 39.37),
+            'def': 39.37}    # 1 T = 10 kG
 
     # coil const in {field_unit}/A
-    coil_const = (30/26.3, 3/26.3, 1)
+    # coil_const = (30/26.3, 3/26.3, 1)
+    coil_const_center = (70/39.37, 7/39.37, 1)
+    coil_const_stage = (0, 0, 1)  # TODO: Test coil constant at stage
 
-    quench = {
-        'def': False,
-        'temp': {'range': [0.0, 8.0],
-                 'def': 6.5}
-    }
+    quench_temp = {'range': [0.0, 8.0],
+                   'def': 6.0}
 
     state_table = {
             1: 'RAMPING to target value',
@@ -452,29 +438,14 @@ class MagInfo():
     def __init__(self):
         """Init all the variables that need to refer to something else."""
         self.field = {
-            'lim': {0: 30,
-                    1: 3,
-                    2: 26.3},
-            'def': {i: 0 for i, v in enumerate(self.coil_const)},
-            'unit': {'Full': {0: 'Kilogauss',
-                              1: 'Tesla',
-                              2: 'Amps',
-                              'kG': 'Kilogauss',
-                              'T': 'Tesla',
-                              'A': 'Amps'},
-                     'Abbv': {0: 'kG',
-                              1: 'T',
-                              2: 'A',
-                              'Kilogauss': 'kG',
-                              'Tesla': 'T',
-                              'Amps': 'A'},
-                     'def': 1,
-                     'typ': {0: 'field',
-                             1: 'field',
-                             2: 'curr'}},
-            'txt': {'setp': ('Magnetic Field Setpoints', 'Ramp Setpoints'),
-                    # Format for above is (Title, Label)
-                    'targ': 'Target Magnet'}}
+            'lim': {0: 70,
+                    1: 7,
+                    2: 39.37},
+            'def': {i: 0 for i, v in enumerate(self.coil_const_stage)},
+            'unit': {0: 'Kilogauss',
+                     1: 'Tesla',
+                     2: 'Amps'}
+        }
         self.rate = {
             # values for seconds are:
             # {0: (1.90e-6, 11.4), 1: (1.90e-7, 1.14), 2: (2.67e-6, 10)}
@@ -486,8 +457,10 @@ class MagInfo():
                     'minutes': {i: (1.0e-4*val, 600*val)
                                 for i, val in enumerate(self.coil_const)}
                     },
-            'def': {i: 0.1*val
-                    for i, val in enumerate(self.coil_const)},
-            'txt': ('Magnetic Field Ramp Rates', 'Ramp Rates ')
-            # Format for above is (Title, Label)
+            # Rate segments have the unit (field)/seconds
+            # DO NOT CHANGE THE RATES
+            'rates': {'seg1': (1.48e-2/60*val for i, val in enumerate(
+                        self.coil_const_stage)),
+                      'seg2': (3.45e-3/60*val for i, val in enumerate(
+                          self.coil_const_stage))}
         }
