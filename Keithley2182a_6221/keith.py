@@ -28,7 +28,7 @@ class Keith(Instrument):
     Contains/implements attributes and methods for controlling the Keithleys.
 
     Keith inherits from the Instrument abstract base class and is used as an
-    inner class in ProbeGui.  It extends __init__ and set_address and overrides
+    inner class in ProbeGui.  It extends __init__ and overrides
     get_instr_type_str.
 
     attributes_
@@ -206,7 +206,11 @@ class Keith(Instrument):
 
     def set_address(self, addr: int) -> int:
         """Set GPIB address of the stack, then check if connected."""
-        addr = super().set_address(addr)
+        # addr = super().set_address(addr)
+        # super().address = addr
+        # TODO: ensure that "self" is proper to use here rather than super()
+        self.address = addr
+        addr = self.address
         self.visa.check_connected(addr)
         return addr
 
